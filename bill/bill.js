@@ -20,16 +20,12 @@ window.BillModule = {
     init: async function() {
         console.log('🚀 Initializing Bill Module...');
         
-        // Check if already initialized
-        if (this.initialized) {
-            console.log('ℹ️ Bill module already initialized, refreshing content...');
-            if (this.config) {
-                renderBillContent(); // Just re-render with existing config
-                return;
-            }
-        }
-        
+        // Always force fresh initialization to avoid cached data
         try {
+            // Clear any existing config to force fresh load
+            this.config = null;
+            this.initialized = false;
+            
             await initializeBillModule();
             console.log('✅ Bill module initialized successfully');
             
@@ -189,20 +185,170 @@ async function initializeBillModule() {
     window.BillModule.initialized = true;
 }
 
-/**
- * Load bill configuration from JSON
- */
 async function loadBillConfig() {
+    // Check if we have cached data from recent load
+    const cachedConfig = localStorage.getItem('billConfig');
+    const cacheTimestamp = localStorage.getItem('billConfigTimestamp');
+    const currentTime = Date.now();
+    
+    // Use cache if it's less than 30 seconds old (to handle tab switching)
+    if (cachedConfig && cacheTimestamp && (currentTime - parseInt(cacheTimestamp)) < 30000) {
+        console.log('📦 Using cached bill config for quick loading');
+        const config = JSON.parse(cachedConfig);
+        window.BillModule.config = config;
+        return config;
+    }
+    
     try {
-        const response = await fetch('../bill/bill.json', {
-            cache: 'no-cache' // Always get fresh data
+        // Try to load from CSV first
+        if (window.BillCSVLoader && typeof window.BillCSVLoader.loadBillDataFromCSV === 'function') {
+            console.log('📊 Loading bill data from CSV...');
+            const config = await window.BillCSVLoader.loadBillDataFromCSV();
+            
+            // Calculate dynamic overview from bill objects
+            updateOverviewFromBillData(config);
+            
+            // Cache the configuration for quick tab switching
+            localStorage.setItem('billConfig', JSON.stringify(config));
+            localStorage.setItem('billConfigTimestamp', Date.now().toString());
+            
+            window.BillModule.config = config;
+            console.log('✅ Bill config loaded from CSV:', config);
+            return config;
+        } else {
+            console.warn('⚠️ CSV Loader not available, loading CSV manually...');
+            
+            // Manually load CSV if loader not available
+            try {
+                const csvResponse = await fetch(`../assets/bill_categories.csv?t=${Date.now()}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
+                if (csvResponse.ok) {
+                    const csvText = await csvResponse.text();
+                    console.log('📊 Manually parsing CSV data...');
+                    
+                    // Simple CSV to bill data conversion
+                    const lines = csvText.trim().split('\n');
+                    const headers = lines[0].split(',');
+                    const billRows = lines.slice(1).map(line => {
+                        const values = line.split(',');
+                        const row = {};
+                        headers.forEach((header, index) => {
+                            row[header.trim()] = values[index]?.trim() || '';
+                        });
+                        return row;
+                    }).filter(row => row.ID && row.ID.startsWith('bill-'));
+                    
+                    // Convert to bill structure
+                    const bills = billRows.map(row => ({
+                        id: row.ID,
+                        metadata: {
+                            category: row.Category.toLowerCase(),
+                            priority: row.Priority,
+                            monthlyAmount: parseFloat(row['Monthly Amount']) || 0,
+                            paymentMethod: row['Payment Method'],
+                            autoPayEnabled: row['Auto Pay Enabled'].toLowerCase() === 'true',
+                            provider: row.Provider,
+                            accountNumber: row['Account Number']
+                        },
+                        cells: [
+                            { type: "serial", value: row.Serial },
+                            { type: "text", value: row['Bill Name'], icon: row.Icon || "fas fa-file-invoice" },
+                            { type: "currency", value: parseFloat(row['Monthly Amount']) || 0, currency: "USD" },
+                            { type: "date", value: row['Due Date'] },
+                            { type: "status", value: row.Status, label: row.Status.charAt(0).toUpperCase() + row.Status.slice(1), color: getStatusColor(row.Status) },
+                            { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "fas fa-credit-card", target: "_blank" },
+                            { type: "actions", buttons: [{ text: "Edit", icon: "fas fa-edit", action: "edit", type: "outline" }] }
+                        ]
+                    }));
+                    
+                    const config = {
+                        meta: {
+                            title: "Bills - Kasa Kolawole",
+                            description: "Comprehensive bill management and tracking system",
+                            dataSource: "CSV manually loaded"
+                        },
+                        content: {
+                            title: "Bill Management",
+                            subtitle: "Track and manage your bills efficiently",
+                            sections: [
+                                {
+                                    id: "overview",
+                                    title: "Overview",
+                                    type: "stats",
+                                    data: generateOverviewStats(bills)
+                                },
+                                {
+                                    id: "recent-bills",
+                                    title: "Recent Bills",
+                                    type: "table",
+                                    data: {
+                                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+                                        rows: bills
+                                    }
+                                }
+                            ]
+                        }
+                    };
+                    
+                    updateOverviewFromBillData(config);
+                    
+                    // Cache the configuration for quick tab switching
+                    localStorage.setItem('billConfig', JSON.stringify(config));
+                    localStorage.setItem('billConfigTimestamp', Date.now().toString());
+                    
+                    window.BillModule.config = config;
+                    console.log('✅ Bill config loaded manually from CSV:', config);
+                    return config;
+                }
+            } catch (csvError) {
+                console.error('❌ Manual CSV loading failed:', csvError);
+            }
+        }
+        
+        // Fallback to JSON if CSV loading fails
+        console.log('📄 Falling back to JSON data...');
+        const timestamp = new Date().getTime();
+        const response = await fetch(`../bill/bill.json?t=${timestamp}`, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const config = await response.json();
         
+        // Add fallback message if no bill data
+        if (!config.content.sections.find(s => s.id === 'recent-bills')?.data?.rows?.length) {
+            config.content.sections.find(s => s.id === 'recent-bills').data.rows = [{
+                id: "no-data",
+                cells: [
+                    { type: "text", value: "No bill data available - CSV file may not be accessible" },
+                    { type: "text", value: "Please check bill_categories.csv file" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" }
+                ]
+            }];
+        }
+        
         // Calculate dynamic overview from bill objects
         updateOverviewFromBillData(config);
+        
+        // Cache the configuration for quick tab switching (even if it's empty)
+        localStorage.setItem('billConfig', JSON.stringify(config));
+        localStorage.setItem('billConfigTimestamp', Date.now().toString());
         
         window.BillModule.config = config;
         
@@ -212,7 +358,7 @@ async function loadBillConfig() {
             window.BillModule.configLastModified = lastModified;
         }
         
-        console.log('✅ Bill config loaded:', config);
+        console.log('✅ Bill config loaded from JSON:', config);
         return config;
         
     } catch (error) {
@@ -360,7 +506,8 @@ function updateChartsFromBillData(config) {
     // Calculate pie chart data (bills by subcategory)
     const categoryData = {};
     const categoryColors = {
-        'electricity': '#3b82f6',
+        'mortgage': '#3b82f6',
+        'electricity': '#6366f1',
         'internet': '#10b981', 
         'water': '#f59e0b',
         'gas': '#ef4444',
@@ -400,9 +547,9 @@ function updateChartsFromBillData(config) {
     });
     
     // Calculate individual bill category totals for all 4 categories
-    const electricityTotals = months.map(month => {
+    const mortgageTotals = months.map(month => {
         return bills
-            .filter(bill => bill.metadata?.subcategory === 'electricity')
+            .filter(bill => bill.metadata?.subcategory === 'mortgage')
             .reduce((sum, bill) => {
                 const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
                 return sum + historicalAmount;
@@ -437,7 +584,7 @@ function updateChartsFromBillData(config) {
     });
     
     // Update bar chart with all 4 individual bill categories
-    config.charts.barChart.data.datasets[0].data = electricityTotals;
+    config.charts.barChart.data.datasets[0].data = mortgageTotals;
     config.charts.barChart.data.datasets[1].data = internetTotals;
     config.charts.barChart.data.datasets[2].data = waterTotals;
     config.charts.barChart.data.datasets[3].data = gasTotals;
@@ -448,7 +595,7 @@ function updateChartsFromBillData(config) {
             data: pieData
         },
         barChart: {
-            electricityTotals,
+            mortgageTotals,
             internetTotals,
             waterTotals,
             gasTotals
@@ -507,6 +654,99 @@ function renderBillSections(sections) {
                 return `<div class="section-unknown">Unknown section type: ${section.type}</div>`;
         }
     }).join('');
+}
+
+/**
+ * Render statistics section
+ */
+function renderStatsSection(section) {
+    const stats = section.data;
+    return `
+        <div class="section stats-section" id="${section.id}">
+            <h3 class="section-title">${section.title}</h3>
+            <div class="stats-grid">
+                ${stats.map(stat => `
+                    <div class="stat-card stat-${stat.color}">
+                        <div class="stat-icon">
+                            <i class="${stat.icon}"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">${stat.label}</div>
+                            <div class="stat-value">${stat.value}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render table section with proper cell validation
+ */
+function renderTableSection(section) {
+    const { headers, rows } = section.data;
+    const validatedRows = validateAndFixCellStructure(rows);
+    
+    // Check if we have valid bill data
+    if (!validatedRows.length || validatedRows[0].id === 'no-data') {
+        return `
+            <div class="section table-section" id="${section.id}">
+                <h3 class="section-title">${section.title}</h3>
+                <div class="empty-state">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h4>No Bill Data Available</h4>
+                    <p>Please check if bill_categories.csv file is accessible</p>
+                </div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="section table-section" id="${section.id}">
+            <h3 class="section-title">${section.title}</h3>
+            <div class="table-container">
+                <div class="table-controls">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="table">
+                            <i class="fas fa-table"></i> Table
+                        </button>
+                        <button class="view-btn" data-view="cards">
+                            <i class="fas fa-th-large"></i> Cards
+                        </button>
+                    </div>
+                    <div class="table-actions">
+                        <button class="btn btn-primary btn-sm" data-action="refresh">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-view active">
+                    <table class="bill-table">
+                        <thead>
+                            <tr>
+                                ${headers.map(header => `<th>${header}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${validatedRows.map(row => `
+                                <tr data-id="${row.id}">
+                                    ${row.cells.map(cell => renderTableCell(cell)).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="cards-view">
+                    <div class="bill-cards-grid">
+                        ${validatedRows.map(row => renderBillCard(row)).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -580,6 +820,11 @@ function renderTableSection(section) {
  * Render table cell based on type
  */
 function renderTableCell(cell) {
+    // Debug logging for link cells
+    if (cell.type === 'link') {
+        console.log('Rendering link cell:', cell);
+    }
+    
     switch (cell.type) {
         case 'serial':
             return `<td class="cell-serial">
@@ -612,7 +857,7 @@ function renderTableCell(cell) {
             
         case 'link':
             const urgentClass = cell.urgent ? ' urgent-payment' : '';
-            return `<td class="cell-link">
+            const linkHtml = `<td class="cell-link">
                 <a href="${cell.value}" 
                    target="${cell.target || '_self'}" 
                    class="payment-link${urgentClass}"
@@ -621,6 +866,8 @@ function renderTableCell(cell) {
                     <span>${cell.text}</span>
                 </a>
             </td>`;
+            console.log('Generated link HTML:', linkHtml);
+            return linkHtml;
         
         case 'actions':
             const buttonsHTML = cell.buttons.map(btn => 
@@ -638,7 +885,8 @@ function renderTableCell(cell) {
             </td>`;
         
         default:
-            return `<td>${cell.value}</td>`;
+            console.warn('Unknown cell type:', cell.type, cell);
+            return `<td class="cell-unknown">${cell.value || ''}</td>`;
     }
 }
 
@@ -656,6 +904,11 @@ function renderBillCard(row) {
     const statusCell = cells.find(cell => cell.type === 'status');
     const linkCell = cells.find(cell => cell.type === 'link');
     const actionsCell = cells.find(cell => cell.type === 'actions');
+    
+    // Debug logging for link cell
+    if (linkCell) {
+        console.log('Rendering card link cell:', linkCell);
+    }
     
     const date = new Date(dateCell.value);
     const urgentClass = linkCell?.urgent ? ' urgent-card' : '';
@@ -1084,6 +1337,101 @@ function renderBarChart(chartData) {
     // Store chart instance for future cleanup
     window.BillModule.chartInstances.barChart = chartInstance;
     console.log('📊 Bar chart created and stored');
+}
+
+// Helper function to validate and fix cell structure
+function validateAndFixCellStructure(rows) {
+    if (!Array.isArray(rows)) return [];
+    
+    return rows.map(row => {
+        if (!row.cells || !Array.isArray(row.cells)) {
+            console.warn('Row missing cells array:', row);
+            return row;
+        }
+        
+        // Validate each cell and fix if needed
+        row.cells = row.cells.map((cell, index) => {
+            if (!cell || typeof cell !== 'object') {
+                console.warn('Invalid cell structure:', cell, 'at index', index);
+                return { type: 'text', value: cell || '' };
+            }
+            
+            // Ensure link cells have proper structure
+            if (cell.type === 'link') {
+                return {
+                    type: 'link',
+                    value: cell.value || '#',
+                    text: cell.text || 'Pay Now',
+                    icon: cell.icon || 'fas fa-credit-card',
+                    target: cell.target || '_blank',
+                    urgent: cell.urgent || false
+                };
+            }
+            
+            // Ensure other cell types have proper structure
+            if (!cell.type) {
+                cell.type = 'text';
+            }
+            
+            return cell;
+        });
+        
+        return row;
+    });
+}
+
+// Helper function to get status color
+function getStatusColor(status) {
+    const colors = {
+        'UNPAID': '#dc3545',
+        'PAID': '#28a745',
+        'OVERDUE': '#fd7e14',
+        'PENDING': '#ffc107'
+    };
+    return colors[status] || '#6c757d';
+}
+
+// Helper function to generate overview stats
+function generateOverviewStats(bills) {
+    if (!bills || bills.length === 0) {
+        return {
+            totalBills: 0,
+            totalAmount: 0,
+            paidAmount: 0,
+            unpaidAmount: 0,
+            overdueAmount: 0
+        };
+    }
+
+    let totalAmount = 0;
+    let paidAmount = 0;
+    let unpaidAmount = 0;
+    let overdueAmount = 0;
+
+    bills.forEach(bill => {
+        const amount = parseFloat(bill.amount) || 0;
+        totalAmount += amount;
+
+        switch(bill.status) {
+            case 'PAID':
+                paidAmount += amount;
+                break;
+            case 'UNPAID':
+                unpaidAmount += amount;
+                break;
+            case 'OVERDUE':
+                overdueAmount += amount;
+                break;
+        }
+    });
+
+    return {
+        totalBills: bills.length,
+        totalAmount: totalAmount,
+        paidAmount: paidAmount,
+        unpaidAmount: unpaidAmount,
+        overdueAmount: overdueAmount
+    };
 }
 
 // Export for global access

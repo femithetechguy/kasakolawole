@@ -1,17 +1,34 @@
 // Landing Page JavaScript
 // Uses global utilities from assets/js/global.js
 
+console.log('Landing.js script is being executed!');
+
 class LandingPageAuth {
     constructor() {
+        console.log('LandingPageAuth constructor called');
         this.config = null;
         this.app = window.KasaKolawole || {};
-        this.init();
+        
+        // Add a small delay to ensure global scripts are fully loaded
+        setTimeout(() => {
+            console.log('Starting LandingPageAuth initialization...');
+            this.init();
+        }, 100);
     }
 
     async init() {
         try {
             // Load configuration
             await this.loadConfig();
+            
+            // Check if global utilities are available
+            console.log('Global app available:', !!this.app);
+            console.log('Global notify available:', !!this.app.notify);
+            console.log('Window.KasaKolawole:', window.KasaKolawole);
+            
+            // Test toast notification
+            console.log('Testing toast notification...');
+            this.testToast();
             
             // Initialize event listeners
             this.initializeEventListeners();
@@ -25,6 +42,17 @@ class LandingPageAuth {
         }
     }
 
+    testToast() {
+        // Test both global and fallback toast systems
+        if (this.app && this.app.notify) {
+            console.log('Using global notification system');
+            this.app.notify.info('Landing page loaded successfully!', 3000);
+        } else {
+            console.log('Using fallback notification system');
+            this.showToast('Landing page loaded successfully!', 'info', 3000);
+        }
+    }
+
     async loadConfig() {
         try {
             // Use global HTTP utility if available
@@ -34,15 +62,21 @@ class LandingPageAuth {
                 const response = await fetch('landing/landing.json');
                 this.config = await response.json();
             }
+            console.log('Config loaded successfully:', this.config);
         } catch (error) {
             console.warn('Could not load landing config, using defaults');
             this.config = {
                 auth: {
-                    username: 'admin',
-                    password: 'admin',
-                    redirectUrl: 'home/index.html',
-                    sessionTimeout: 3600000,
-                    maxAttempts: 3
+                    fallback: {
+                        credentials: {
+                            username: 'admin',
+                            password: 'admin'
+                        }
+                    },
+                    config: {
+                        sessionTimeout: 3600000, // 1 hour
+                        redirectUrl: 'home/index.html'
+                    }
                 }
             };
         }
@@ -95,13 +129,26 @@ class LandingPageAuth {
     async handleLogin(e) {
         e.preventDefault();
         
+        console.log('Login attempt started');
+        
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         const rememberMe = document.getElementById('rememberMe').checked;
 
+        console.log('Login data:', { username, hasPassword: !!password, rememberMe });
+
         // Validate inputs
         if (!username || !password) {
-            this.showError('Please enter both username and password');
+            console.log('Validation failed: missing credentials');
+            
+            // Force test both notification systems
+            if (this.app && this.app.notify) {
+                console.log('Using global notify for validation error');
+                this.app.notify.warning('Please enter both username and password', 3000);
+            } else {
+                console.log('Using fallback toast for validation error');
+                this.showToast('Please enter both username and password', 'warning', 3000);
+            }
             return;
         }
 
@@ -115,15 +162,28 @@ class LandingPageAuth {
 
             // Authenticate user
             const isAuthenticated = await this.authenticateUser(username, password);
+            console.log('Authentication result:', isAuthenticated);
 
             if (isAuthenticated) {
+                console.log('Authentication successful - showing success toast');
                 this.handleSuccessfulLogin(username, rememberMe);
             } else {
+                console.log('Authentication failed - showing error toast');
                 this.handleFailedLogin();
             }
         } catch (error) {
             console.error('Login error:', error);
-            this.showError('An error occurred during login. Please try again.');
+            // Show appropriate error toast based on error type
+            if (this.app.notify) {
+                if (error.message.includes('network') || error.message.includes('fetch')) {
+                    this.app.notify.warning('Connection issue detected. Please check your internet and try again.', 5000);
+                } else {
+                    this.app.notify.error('An unexpected error occurred. Please try again in a moment.', 4000);
+                }
+            } else {
+                // Fallback notification
+                this.showToast('An unexpected error occurred. Please try again in a moment.', 'error');
+            }
         } finally {
             this.setLoadingState(false);
         }
@@ -132,26 +192,49 @@ class LandingPageAuth {
     async authenticateUser(username, password) {
         // For now, use simple credential check
         // TODO: Integrate with Firebase Authentication
-        const validUsername = this.config.auth.username;
-        const validPassword = this.config.auth.password;
+        
+        console.log('authenticateUser called with:', { username, password });
+        console.log('Config auth:', this.config?.auth);
+        
+        const validUsername = this.config?.auth?.fallback?.credentials?.username || this.config?.auth?.username || 'admin';
+        const validPassword = this.config?.auth?.fallback?.credentials?.password || this.config?.auth?.password || 'admin';
+        
+        console.log('Valid credentials:', { validUsername, validPassword });
 
         // Simulate Firebase authentication
         if (username === validUsername && password === validPassword) {
+            console.log('Authentication successful!');
             return true;
         }
 
         // In future, this will call Firebase Auth
         // return await this.firebaseAuth(username, password);
         
+        console.log('Authentication failed!');
         return false;
     }
 
     handleSuccessfulLogin(username, rememberMe) {
+        console.log('handleSuccessfulLogin called with:', { username, rememberMe });
+        
+        // Get session timeout (default to 1 hour if invalid)
+        const sessionTimeout = this.config?.auth?.config?.sessionTimeout || 3600000; // 1 hour default
+        console.log('Using session timeout:', sessionTimeout);
+        
         // Create session using global storage utility if available
+        const now = new Date();
+        const expirationTime = new Date(now.getTime() + sessionTimeout);
+        
+        console.log('Session timing:', {
+            now: now.toISOString(),
+            timeout: sessionTimeout,
+            expires: expirationTime.toISOString()
+        });
+        
         const sessionData = {
             username: username,
-            loginTime: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + this.config.auth.sessionTimeout).toISOString(),
+            loginTime: now.toISOString(),
+            expiresAt: expirationTime.toISOString(),
             rememberMe: rememberMe
         };
 
@@ -171,32 +254,42 @@ class LandingPageAuth {
             }
         }
 
-        // Show success message using global notification if available
-        if (this.app.notify) {
-            this.app.notify.success('Login successful! Redirecting...');
+        // Show subtle success toast - test both systems
+        const successMessage = `Welcome back, ${username}! Redirecting to dashboard...`;
+        
+        if (this.app && this.app.notify) {
+            console.log('Showing success with global notify');
+            this.app.notify.success(successMessage, 2000);
         } else {
-            this.showSuccess('Login successful! Redirecting...');
+            console.log('Showing success with fallback toast');
+            this.showToast(successMessage, 'success', 2000);
         }
 
         // Redirect after delay
         setTimeout(() => {
-            window.location.href = this.config.auth.redirectUrl || 'home/index.html';
-        }, 1500);
+            window.location.href = this.config?.auth?.config?.redirectUrl || 'home/index.html';
+        }, 2000);
     }
 
     handleFailedLogin() {
-        // Use global notification if available
-        if (this.app.notify) {
-            this.app.notify.error('Invalid username or password. Please try again.');
+        console.log('handleFailedLogin called');
+        
+        // Use subtle warning toast for retry
+        const errorMessage = 'Invalid credentials. Please check your username and password and try again.';
+        
+        if (this.app && this.app.notify) {
+            console.log('Showing error with global notify');
+            this.app.notify.warning(errorMessage, 4000);
         } else {
-            this.showError('Invalid username or password. Please try again.');
+            console.log('Showing error with fallback toast');
+            this.showToast(errorMessage, 'warning', 4000);
         }
         
         // Clear password field
         document.getElementById('password').value = '';
         document.getElementById('password').focus();
 
-        // Add shake animation
+        // Add subtle shake animation
         const loginCard = document.querySelector('.login-card');
         if (loginCard) {
             loginCard.classList.add('shake');
@@ -210,11 +303,15 @@ class LandingPageAuth {
         const sessionData = this.getSessionData();
         
         if (sessionData && this.isSessionValid(sessionData)) {
-            // User is already logged in, redirect
-            this.showSuccess('Welcome back! Redirecting...');
+            // User is already logged in, show subtle welcome toast and redirect
+            if (this.app.notify) {
+                this.app.notify.info(`Welcome back, ${sessionData.username}! Redirecting to your dashboard...`, 2000);
+            } else {
+                this.showSuccess('Welcome back! Redirecting...');
+            }
             setTimeout(() => {
                 window.location.href = this.config.auth.redirectUrl || 'home/index.html';
-            }, 1000);
+            }, 2000);
         }
     }
 
@@ -311,6 +408,135 @@ class LandingPageAuth {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // Fallback toast notification system
+    showToast(message, type = 'info', duration = 5000) {
+        // Remove any existing toasts
+        const existingToasts = document.querySelectorAll('.fallback-toast');
+        existingToasts.forEach(toast => toast.remove());
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `fallback-toast toast-${type}`;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${this.getToastColor(type)};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            max-width: 350px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideInFromRight 0.3s ease-out;
+        `;
+
+        // Add icon
+        const icon = document.createElement('i');
+        icon.className = `fas fa-${this.getToastIcon(type)}`;
+        toast.appendChild(icon);
+
+        // Add message
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+        toast.appendChild(messageSpan);
+
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.style.cssText = `
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: auto;
+            padding: 0;
+            opacity: 0.8;
+        `;
+        closeBtn.onclick = () => this.hideToast(toast);
+        toast.appendChild(closeBtn);
+
+        // Add CSS animation
+        if (!document.querySelector('#toast-animations')) {
+            const style = document.createElement('style');
+            style.id = 'toast-animations';
+            style.textContent = `
+                @keyframes slideInFromRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                @keyframes slideOutToRight {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+                .fallback-toast:hover {
+                    transform: translateY(-2px);
+                    transition: transform 0.2s ease;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Add to page
+        document.body.appendChild(toast);
+
+        // Auto-hide
+        if (duration > 0) {
+            setTimeout(() => {
+                this.hideToast(toast);
+            }, duration);
+        }
+    }
+
+    hideToast(toast) {
+        if (toast && toast.parentNode) {
+            toast.style.animation = 'slideOutToRight 0.3s ease-in';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+    }
+
+    getToastColor(type) {
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            warning: '#f59e0b',
+            info: '#3b82f6'
+        };
+        return colors[type] || colors.info;
+    }
+
+    getToastIcon(type) {
+        const icons = {
+            success: 'check-circle',
+            error: 'exclamation-triangle',
+            warning: 'exclamation-circle',
+            info: 'info-circle'
+        };
+        return icons[type] || icons.info;
+    }
+
     // Future Firebase integration methods
     async initializeFirebase() {
         // TODO: Initialize Firebase
@@ -342,11 +568,23 @@ function addShakeAnimation() {
     document.head.appendChild(style);
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize when DOM is loaded OR immediately if DOM is already loaded
+function initializeLandingAuth() {
+    console.log('Landing.js initializeLandingAuth called!');
     addShakeAnimation();
+    console.log('Creating new LandingPageAuth instance...');
     new LandingPageAuth();
-});
+}
+
+if (document.readyState === 'loading') {
+    console.log('DOM still loading, adding event listener...');
+    document.addEventListener('DOMContentLoaded', initializeLandingAuth);
+} else {
+    console.log('DOM already loaded, initializing immediately...');
+    initializeLandingAuth();
+}
+
+console.log('Landing.js script finished loading');
 
 // Export for potential module use
 if (typeof module !== 'undefined' && module.exports) {

@@ -152,11 +152,22 @@
         // Root Landing Page Controller
         class RootLandingController {
             constructor() {
-                this.init();
+                // Wait for global scripts to be fully loaded
+                if (window.KasaKolawole && window.KasaKolawole.logger) {
+                    window.KasaKolawole.logger.info('Root landing controller starting...');
+                    this.init();
+                } else {
+                    // Retry after a short delay
+                    setTimeout(() => {
+                        this.init();
+                    }, 200);
+                }
             }
 
             async init() {
                 try {
+                    console.log('Root landing controller initializing...');
+                    
                     // Load the landing page configuration and scripts
                     await this.loadLandingConfig();
                     await this.loadLandingScript();
@@ -173,6 +184,7 @@
                 try {
                     const response = await fetch('landing/landing.json');
                     this.config = await response.json();
+                    console.log('Landing config loaded:', this.config);
                 } catch (error) {
                     console.warn('Could not load landing config from folder, using defaults');
                     this.config = {
@@ -203,6 +215,7 @@
             }
 
             initBasicAuth() {
+                console.log('Initializing basic auth fallback...');
                 // Fallback authentication if landing script fails to load
                 const loginForm = document.getElementById('loginForm');
                 if (loginForm) {
@@ -212,13 +225,25 @@
                         const username = document.getElementById('username').value.trim();
                         const password = document.getElementById('password').value;
                         
+                        console.log('Basic auth attempt:', { username, hasPassword: !!password });
+                        
                         if (username === 'admin' && password === 'admin') {
-                            this.showSuccess('Login successful! Redirecting...');
+                            // Show toast using global system
+                            if (window.KasaKolawole && window.KasaKolawole.notify) {
+                                window.KasaKolawole.notify.success(`Welcome back, ${username}! Redirecting...`, 2000);
+                            } else {
+                                alert('Login successful! Redirecting...');
+                            }
                             setTimeout(() => {
                                 window.location.href = 'home/index.html';
                             }, 1500);
                         } else {
-                            this.showError('Invalid username or password');
+                            // Show error toast
+                            if (window.KasaKolawole && window.KasaKolawole.notify) {
+                                window.KasaKolawole.notify.warning('Invalid username or password', 4000);
+                            } else {
+                                alert('Invalid username or password');
+                            }
                         }
                     });
                 }
@@ -251,6 +276,7 @@
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, starting root landing controller...');
             new RootLandingController();
         });
     </script>

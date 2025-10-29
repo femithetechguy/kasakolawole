@@ -52,6 +52,24 @@
           "rows": [
             {
               "id": "bill-1",
+              "metadata": {
+                "category": "utilities",
+                "subcategory": "electricity",
+                "priority": "high",
+                "monthlyAmount": 125.50,
+                "paymentMethod": "credit_card",
+                "autoPayEnabled": false,
+                "lastPaidDate": "2025-09-15",
+                "createdDate": "2025-01-15",
+                "provider": "Metropolitan Electric Company",
+                "accountNumber": "ME-12345",
+                "billingCycle": "monthly",
+                "averageAmount": 120.75,
+                "notifications": {
+                  "dueDateReminder": 7,
+                  "overdueAlert": 1
+                }
+              },
               "cells": [
                 {
                   "type": "serial",
@@ -80,19 +98,13 @@
                 {
                   "type": "link",
                   "value": "https://pay.electricity.com/bill/12345",
-                  "text": "Pay Online",
-                  "icon": "fas fa-external-link-alt",
+                  "text": "Pay Now",
+                  "icon": "fas fa-credit-card",
                   "target": "_blank"
                 },
                 {
                   "type": "actions",
                   "buttons": [
-                    {
-                      "text": "Pay",
-                      "icon": "fas fa-credit-card",
-                      "action": "pay",
-                      "type": "primary"
-                    },
                     {
                       "text": "Edit",
                       "icon": "fas fa-edit",
@@ -105,6 +117,24 @@
             },
             {
               "id": "bill-2",
+              "metadata": {
+                "category": "utilities",
+                "subcategory": "internet",
+                "priority": "high",
+                "monthlyAmount": 79.99,
+                "paymentMethod": "bank_transfer",
+                "autoPayEnabled": true,
+                "lastPaidDate": "2025-09-10",
+                "createdDate": "2025-01-10",
+                "provider": "TechConnect Internet Services",
+                "accountNumber": "TC-98765",
+                "billingCycle": "monthly",
+                "averageAmount": 79.99,
+                "notifications": {
+                  "dueDateReminder": 5,
+                  "overdueAlert": 0
+                }
+              },
               "cells": [
                 {
                   "type": "serial",
@@ -134,19 +164,13 @@
                   "type": "link",
                   "value": "https://pay.internetprovider.com/urgent/98765",
                   "text": "Pay Now",
-                  "icon": "fas fa-exclamation-circle",
+                  "icon": "fas fa-credit-card",
                   "target": "_blank",
                   "urgent": true
                 },
                 {
                   "type": "actions",
                   "buttons": [
-                    {
-                      "text": "Pay Now",
-                      "icon": "fas fa-exclamation-triangle",
-                      "action": "pay",
-                      "type": "danger"
-                    },
                     {
                       "text": "Edit",
                       "icon": "fas fa-edit",
@@ -159,6 +183,24 @@
             },
             {
               "id": "bill-3",
+              "metadata": {
+                "category": "utilities",
+                "subcategory": "water",
+                "priority": "medium",
+                "monthlyAmount": 45.30,
+                "paymentMethod": "debit_card",
+                "autoPayEnabled": true,
+                "lastPaidDate": "2025-09-20",
+                "createdDate": "2025-01-20",
+                "provider": "City Water Department",
+                "accountNumber": "CW-54321",
+                "billingCycle": "monthly",
+                "averageAmount": 42.50,
+                "notifications": {
+                  "dueDateReminder": 10,
+                  "overdueAlert": 3
+                }
+              },
               "cells": [
                 {
                   "type": "serial",
@@ -187,19 +229,13 @@
                 {
                   "type": "link",
                   "value": "https://pay.waterutility.com/account/54321",
-                  "text": "Schedule Payment",
-                  "icon": "fas fa-calendar-check",
+                  "text": "Pay Now",
+                  "icon": "fas fa-credit-card",
                   "target": "_blank"
                 },
                 {
                   "type": "actions",
                   "buttons": [
-                    {
-                      "text": "Schedule",
-                      "icon": "fas fa-calendar-plus",
-                      "action": "schedule",
-                      "type": "secondary"
-                    },
                     {
                       "text": "Edit",
                       "icon": "fas fa-edit",
@@ -212,6 +248,24 @@
             },
             {
               "id": "bill-4",
+              "metadata": {
+                "category": "utilities",
+                "subcategory": "gas",
+                "priority": "low",
+                "monthlyAmount": 62.75,
+                "paymentMethod": "credit_card",
+                "autoPayEnabled": false,
+                "lastPaidDate": "2025-08-25",
+                "createdDate": "2025-01-25",
+                "provider": "National Gas Company",
+                "accountNumber": "NG-67890",
+                "billingCycle": "monthly",
+                "averageAmount": 58.90,
+                "notifications": {
+                  "dueDateReminder": 14,
+                  "overdueAlert": 5
+                }
+              },
               "cells": [
                 {
                   "type": "serial",
@@ -219,40 +273,34 @@
                 },
                 {
                   "type": "text",
-                  "value": "Water Bill",
-                  "icon": "fas fa-tint"
+                  "value": "Gas Bill",
+                  "icon": "fas fa-fire"
                 },
                 {
                   "type": "currency",
-                  "value": 45.30,
+                  "value": 62.75,
                   "currency": "USD"
                 },
                 {
                   "type": "date",
-                  "value": "2025-11-20"
+                  "value": "2025-11-25"
                 },
                 {
                   "type": "status",
-                  "value": "upcoming",
-                  "label": "Upcoming",
-                  "color": "info"
+                  "value": "paid",
+                  "label": "Paid",
+                  "color": "success"
                 },
                 {
                   "type": "link",
-                  "value": "https://pay.waterutility.com/account/54321",
-                  "text": "Schedule Payment",
-                  "icon": "fas fa-calendar-check",
+                  "value": "https://pay.gascompany.com/account/67890",
+                  "text": "Pay Now",
+                  "icon": "fas fa-credit-card",
                   "target": "_blank"
                 },
                 {
                   "type": "actions",
                   "buttons": [
-                    {
-                      "text": "Schedule",
-                      "icon": "fas fa-calendar-plus",
-                      "action": "schedule",
-                      "type": "secondary"
-                    },
                     {
                       "text": "Edit",
                       "icon": "fas fa-edit",

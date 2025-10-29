@@ -97,6 +97,22 @@ function setupNavigation() {
         }
     }
     
+    // Populate mobile navigation menu with tabs
+    const navList = document.querySelector('#navList');
+    if (navList && config.tabs) {
+        const navItemsHTML = Object.values(config.tabs).map(tab => 
+            `<li class="nav-item">
+                <button class="nav-link tab-nav-item ${tab.active ? 'active' : ''}" 
+                        data-tab="${tab.id}">
+                    <i class="${tab.icon}"></i>
+                    <span>${tab.title}</span>
+                </button>
+            </li>`
+        ).join('');
+        
+        navList.innerHTML = navItemsHTML;
+    }
+    
     // Setup user menu
     if (config.navigation?.user) {
         updateElement('#userName', config.navigation.user.name);
@@ -187,15 +203,21 @@ function stopAutoRefreshForPreviousTab() {
  * Update active tab styling
  */
 function updateActiveTab(tabId) {
-    // Remove active class from all tabs
+    // Remove active class from all tab navigation items (both desktop and mobile)
     document.querySelectorAll('.tab-nav-item').forEach(item => {
         item.classList.remove('active');
     });
     
-    // Add active class to selected tab
-    const activeTab = document.querySelector(`#tab-${tabId}`);
-    if (activeTab) {
-        activeTab.classList.add('active');
+    // Add active class to selected tab in desktop navigation
+    const activeDesktopTab = document.querySelector(`#tab-${tabId}`);
+    if (activeDesktopTab) {
+        activeDesktopTab.classList.add('active');
+    }
+    
+    // Add active class to selected tab in mobile navigation
+    const activeMobileTab = document.querySelector(`#navList .tab-nav-item[data-tab="${tabId}"]`);
+    if (activeMobileTab) {
+        activeMobileTab.classList.add('active');
     }
 }
 
@@ -637,6 +659,45 @@ function setupEventListeners() {
             }
         }
     });
+    
+    // Mobile menu toggle
+    const mobileMenuToggle = document.querySelector('#mobileMenuToggle');
+    const navList = document.querySelector('#navList');
+    
+    if (mobileMenuToggle && navList) {
+        mobileMenuToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🍔 Mobile menu toggle clicked');
+            
+            // Toggle active state on hamburger
+            mobileMenuToggle.classList.toggle('active');
+            
+            // Toggle nav list visibility
+            navList.classList.toggle('show');
+            
+            // Toggle body scroll lock
+            document.body.classList.toggle('menu-open');
+        });
+        
+        // Close mobile menu when clicking on nav links
+        const navLinks = document.querySelectorAll('#navList .tab-nav-item');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuToggle.classList.remove('active');
+                navList.classList.remove('show');
+                document.body.classList.remove('menu-open');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#mainNav') && !e.target.closest('#mobileMenuToggle')) {
+                mobileMenuToggle.classList.remove('active');
+                navList.classList.remove('show');
+                document.body.classList.remove('menu-open');
+            }
+        });
+    }
     
     // User menu toggle
     const userMenuToggle = document.querySelector('#userMenuToggle');

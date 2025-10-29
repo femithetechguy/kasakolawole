@@ -200,6 +200,10 @@ async function loadBillConfig() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const config = await response.json();
+        
+        // Calculate dynamic overview from bill objects
+        updateOverviewFromBillData(config);
+        
         window.BillModule.config = config;
         
         // Track last modified time for auto-refresh
@@ -215,6 +219,126 @@ async function loadBillConfig() {
         console.error('❌ Failed to load bill config:', error);
         throw error;
     }
+}
+
+/**
+ * Calculate and update overview statistics from bill objects
+ */
+function updateOverviewFromBillData(config) {
+    const billsSection = config.content.sections.find(section => section.id === 'recent-bills');
+    const overviewSection = config.content.sections.find(section => section.id === 'overview');
+    
+    if (!billsSection || !overviewSection || !billsSection.data.rows) {
+        console.warn('Cannot calculate overview: bill data not found');
+        return;
+    }
+    
+    const bills = billsSection.data.rows;
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    // Initialize counters
+    let totalBills = bills.length;
+    let pendingCount = 0;
+    let overdueCount = 0;
+    let paidThisMonthCount = 0;
+    
+    // Count bills by status and payment history
+    bills.forEach(bill => {
+        const statusCell = bill.cells.find(cell => cell.type === 'status');
+        const dateCell = bill.cells.find(cell => cell.type === 'date');
+        
+        if (statusCell) {
+            switch (statusCell.value) {
+                case 'pending':
+                case 'upcoming':
+                    pendingCount++;
+                    break;
+                case 'overdue':
+                    overdueCount++;
+                    break;
+                case 'paid':
+                    // Check if paid this month
+                    if (bill.metadata && bill.metadata.lastPaidDate) {
+                        const lastPaidDate = new Date(bill.metadata.lastPaidDate);
+                        if (lastPaidDate.getMonth() === currentMonth && lastPaidDate.getFullYear() === currentYear) {
+                            paidThisMonthCount++;
+                        }
+                    }
+                    break;
+            }
+        }
+        
+        // Check for overdue bills (due date has passed)
+        if (statusCell?.value !== 'paid' && dateCell) {
+            const dueDate = new Date(dateCell.value);
+            if (dueDate < currentDate) {
+                overdueCount++;
+                // If it was counted as pending, remove it from pending
+                if (statusCell?.value === 'pending') {
+                    pendingCount--;
+                }
+            }
+        }
+    });
+    
+    // Calculate total monthly amount
+    const totalMonthlyAmount = bills.reduce((sum, bill) => {
+        if (bill.metadata && bill.metadata.monthlyAmount) {
+            return sum + bill.metadata.monthlyAmount;
+        }
+        return sum;
+    }, 0);
+    
+    // Update overview data
+    overviewSection.data = [
+        {
+            "label": "Total Bills",
+            "value": totalBills.toString(),
+            "icon": "fas fa-file-invoice",
+            "color": "primary",
+            "metadata": {
+                "monthlyAmount": `$${totalMonthlyAmount.toFixed(2)}`,
+                "categories": [...new Set(bills.map(bill => bill.metadata?.subcategory).filter(Boolean))]
+            }
+        },
+        {
+            "label": "Pending",
+            "value": pendingCount.toString(),
+            "icon": "fas fa-clock",
+            "color": "warning",
+            "metadata": {
+                "upcoming": bills.filter(bill => bill.cells.find(cell => cell.type === 'status')?.value === 'upcoming').length
+            }
+        },
+        {
+            "label": "Overdue",
+            "value": overdueCount.toString(),
+            "icon": "fas fa-exclamation-triangle",
+            "color": "danger",
+            "metadata": {
+                "urgentCount": bills.filter(bill => bill.cells.find(cell => cell.type === 'link')?.urgent).length
+            }
+        },
+        {
+            "label": "Paid This Month",
+            "value": paidThisMonthCount.toString(),
+            "icon": "fas fa-check-circle",
+            "color": "success",
+            "metadata": {
+                "autoPayEnabled": bills.filter(bill => bill.metadata?.autoPayEnabled).length
+            }
+        }
+    ];
+    
+    console.log('📊 Overview updated from bill data:', {
+        totalBills,
+        pendingCount,
+        overdueCount,
+        paidThisMonthCount,
+        totalMonthlyAmount: `$${totalMonthlyAmount.toFixed(2)}`
+    });
 }
 
 /**
@@ -423,49 +547,51 @@ function renderBillCard(row) {
     
     return `
         <div class="bill-card${urgentClass}" data-id="${row.id}">
-            <div class="bill-card-header">
-                <div class="bill-info">
-                    <div class="bill-serial">#${serialCell.value}</div>
-                    <div class="bill-name">
-                        ${textCell.icon ? `<i class="${textCell.icon}"></i>` : ''}
-                        <span>${textCell.value}</span>
+            <div class="bill-card-content">
+                <div class="bill-card-left">
+                    <div class="bill-card-header">
+                        <div class="bill-serial">#${serialCell.value}</div>
+                        <div class="bill-name">
+                            ${textCell.icon ? `<i class="${textCell.icon}"></i>` : ''}
+                            <span>${textCell.value}</span>
+                        </div>
+                        <div class="bill-amount">$${currencyCell.value.toFixed(2)}</div>
+                    </div>
+                    
+                    <div class="bill-card-details">
+                        <div class="bill-detail">
+                            <span class="detail-label">Due Date</span>
+                            <span class="detail-value">${date.toLocaleDateString()}</span>
+                        </div>
+                        <div class="bill-detail">
+                            <span class="detail-label">Status</span>
+                            <span class="status-badge status-${statusCell.color}">${statusCell.label}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="bill-amount">$${currencyCell.value.toFixed(2)}</div>
-            </div>
-            
-            <div class="bill-card-body">
-                <div class="bill-details">
-                    <div class="bill-detail">
-                        <span class="detail-label">Due Date</span>
-                        <span class="detail-value">${date.toLocaleDateString()}</span>
-                    </div>
-                    <div class="bill-detail">
-                        <span class="detail-label">Status</span>
-                        <span class="status-badge status-${statusCell.color}">${statusCell.label}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bill-card-footer">
-                <div class="bill-payment">
+                
+                <div class="bill-card-right">
                     ${linkCell ? `
-                        <a href="${linkCell.value}" 
-                           target="${linkCell.target || '_self'}" 
-                           class="payment-link-card${linkCell.urgent ? ' urgent-payment' : ''}">
-                            ${linkCell.icon ? `<i class="${linkCell.icon}"></i>` : ''}
-                            <span>${linkCell.text}</span>
-                        </a>
+                        <div class="bill-payment-compact">
+                            <a href="${linkCell.value}" 
+                               target="${linkCell.target || '_self'}" 
+                               class="payment-link-compact${linkCell.urgent ? ' urgent-payment' : ''}">
+                                ${linkCell.icon ? `<i class="${linkCell.icon}"></i>` : ''}
+                                <span>${linkCell.text}</span>
+                            </a>
+                        </div>
                     ` : ''}
-                </div>
-                <div class="bill-actions">
-                    ${actionsCell.buttons.map(btn => 
-                        `<button class="btn btn-${btn.type} btn-sm" 
-                                data-action="${btn.action}" 
-                                title="${btn.text}">
-                            <i class="${btn.icon}"></i>
-                        </button>`
-                    ).join('')}
+                    ${actionsCell.buttons.length > 0 ? `
+                        <div class="bill-actions-compact">
+                            ${actionsCell.buttons.map(btn => 
+                                `<button class="btn btn-${btn.type} btn-compact" 
+                                        data-action="${btn.action}" 
+                                        title="${btn.text}">
+                                    <i class="${btn.icon}"></i>
+                                </button>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         </div>

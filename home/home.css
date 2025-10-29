@@ -1049,6 +1049,30 @@ body {
     .nav-link {
         padding: var(--spacing-base);
         border-radius: var(--border-radius);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-semibold);
+        justify-content: flex-start;
+        width: 100%;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+    }
+    
+    .nav-link:hover {
+        background: rgba(44, 62, 80, 0.1);
+    }
+    
+    .nav-link.active {
+        background: var(--primary-gradient);
+        color: white;
+    }
+    
+    .nav-link i {
+        margin-right: var(--spacing-sm);
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
     }
     
     .mobile-menu-toggle {
@@ -1065,6 +1089,11 @@ body {
     
     .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
         transform: rotate(-45deg) translate(6px, -6px);
+    }
+    
+    /* Prevent body scroll when mobile menu is open */
+    body.menu-open {
+        overflow: hidden;
     }
     
     .hero-title {

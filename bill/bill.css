@@ -565,21 +565,25 @@
 }
 
 /* Responsive Table/Card Layout */
-.desktop-only {
-    display: block;
+#bill-content .desktop-only,
+.table-section .desktop-only {
+    display: block !important;
 }
 
-.mobile-only {
-    display: none;
+#bill-content .mobile-only,
+.table-section .mobile-only {
+    display: none !important;
 }
 
 @media (max-width: 768px) {
-    .desktop-only {
-        display: none;
+    #bill-content .desktop-only,
+    .table-section .desktop-only {
+        display: none !important;
     }
     
-    .mobile-only {
-        display: block;
+    #bill-content .mobile-only,
+    .table-section .mobile-only {
+        display: block !important;
     }
 }
 
@@ -636,15 +640,15 @@
 }
 
 .bill-serial {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--module-primary);
     font-weight: var(--font-weight-semibold);
     font-family: 'Courier New', monospace;
     background: rgba(59, 130, 246, 0.1);
-    padding: 2px 8px;
+    padding: 4px 10px;
     border-radius: 4px;
     display: inline-block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .bill-name {
@@ -653,16 +657,17 @@
     gap: var(--spacing-xs);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    font-size: var(--font-size-base);
 }
 
 .bill-name i {
     color: var(--module-primary);
-    font-size: 1.1rem;
+    font-size: 1.4rem;
 }
 
 .bill-amount {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     font-weight: var(--font-weight-bold);
     color: var(--color-text-primary);
 }
@@ -680,17 +685,17 @@
 
 .detail-label {
     display: block;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
     font-weight: var(--font-weight-medium);
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .detail-value {
     display: block;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
     color: var(--color-text-primary);
     font-weight: var(--font-weight-semibold);
 }
@@ -703,13 +708,13 @@
 .payment-link-compact {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
+    gap: 6px;
+    padding: 8px 12px;
     background: var(--module-primary);
     color: white;
     text-decoration: none;
     border-radius: var(--border-radius);
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     transition: all var(--transition-base);
     border: 1px solid transparent;
@@ -739,9 +744,9 @@
 }
 
 .btn-compact {
-    padding: 6px 8px;
-    min-width: 32px;
-    height: 32px;
+    padding: 8px 12px;
+    min-width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -776,26 +781,26 @@
 }
 
 .btn-compact i {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
 }
 
 /* Small mobile optimizations */
 @media (max-width: 480px) {
     .bill-card {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-base);
     }
     
     .bill-card-content {
-        gap: var(--spacing-sm);
+        gap: var(--spacing-base);
     }
     
     .bill-card-right {
-        min-width: 80px;
+        min-width: 100px;
     }
     
     .bill-card-details {
         flex-direction: column;
-        gap: var(--spacing-xs);
+        gap: var(--spacing-sm);
     }
     
     .bill-detail {
@@ -803,25 +808,34 @@
     }
     
     .bill-amount {
-        font-size: 1.1rem;
+        font-size: 1.5rem;
+    }
+    
+    .bill-name {
+        font-size: var(--font-size-lg);
+    }
+    
+    .bill-name i {
+        font-size: 1.6rem;
     }
     
     .payment-link-compact {
-        padding: 4px 8px;
-        font-size: 0.75rem;
+        padding: 10px 14px;
+        font-size: var(--font-size-base);
+        gap: 8px;
     }
     
-    .payment-link-compact span {
-        display: none;
+    .payment-link-compact i {
+        font-size: 1.1rem;
     }
     
     .btn-compact {
-        min-width: 28px;
-        height: 28px;
-        padding: 4px 6px;
+        min-width: 44px;
+        height: 44px;
+        padding: 10px 12px;
     }
     
     .btn-compact i {
-        font-size: 0.8rem;
+        font-size: 1.2rem;
     }
 }

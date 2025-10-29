@@ -339,6 +339,121 @@ function updateOverviewFromBillData(config) {
         paidThisMonthCount,
         totalMonthlyAmount: `$${totalMonthlyAmount.toFixed(2)}`
     });
+    
+    // Update chart data from bill objects
+    updateChartsFromBillData(config);
+}
+
+/**
+ * Calculate and update chart data from bill objects
+ */
+function updateChartsFromBillData(config) {
+    const billsSection = config.content.sections.find(section => section.id === 'recent-bills');
+    
+    if (!billsSection || !billsSection.data.rows || !config.charts) {
+        console.warn('Cannot calculate charts: bill data or charts config not found');
+        return;
+    }
+    
+    const bills = billsSection.data.rows;
+    
+    // Calculate pie chart data (bills by subcategory)
+    const categoryData = {};
+    const categoryColors = {
+        'electricity': '#3b82f6',
+        'internet': '#10b981', 
+        'water': '#f59e0b',
+        'gas': '#ef4444',
+        'other': '#8b5cf6'
+    };
+    
+    bills.forEach(bill => {
+        const subcategory = bill.metadata?.subcategory || 'other';
+        const amount = bill.metadata?.monthlyAmount || 0;
+        
+        if (!categoryData[subcategory]) {
+            categoryData[subcategory] = 0;
+        }
+        categoryData[subcategory] += amount;
+    });
+    
+    // Update pie chart
+    const pieLabels = Object.keys(categoryData).map(key => 
+        key.charAt(0).toUpperCase() + key.slice(1)
+    );
+    const pieData = Object.values(categoryData);
+    const pieColors = Object.keys(categoryData).map(key => categoryColors[key] || '#8b5cf6');
+    
+    config.charts.pieChart.data.labels = pieLabels;
+    config.charts.pieChart.data.datasets[0].data = pieData;
+    config.charts.pieChart.data.datasets[0].backgroundColor = pieColors;
+    
+    // Calculate bar chart data from historical data
+    const months = ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10"];
+    
+    // Calculate monthly totals from historical data
+    const monthlyTotals = months.map(month => {
+        return bills.reduce((sum, bill) => {
+            const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+            return sum + historicalAmount;
+        }, 0);
+    });
+    
+    // Calculate individual bill category totals for all 4 categories
+    const electricityTotals = months.map(month => {
+        return bills
+            .filter(bill => bill.metadata?.subcategory === 'electricity')
+            .reduce((sum, bill) => {
+                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+                return sum + historicalAmount;
+            }, 0);
+    });
+    
+    const internetTotals = months.map(month => {
+        return bills
+            .filter(bill => bill.metadata?.subcategory === 'internet')
+            .reduce((sum, bill) => {
+                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+                return sum + historicalAmount;
+            }, 0);
+    });
+    
+    const waterTotals = months.map(month => {
+        return bills
+            .filter(bill => bill.metadata?.subcategory === 'water')
+            .reduce((sum, bill) => {
+                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+                return sum + historicalAmount;
+            }, 0);
+    });
+    
+    const gasTotals = months.map(month => {
+        return bills
+            .filter(bill => bill.metadata?.subcategory === 'gas')
+            .reduce((sum, bill) => {
+                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+                return sum + historicalAmount;
+            }, 0);
+    });
+    
+    // Update bar chart with all 4 individual bill categories
+    config.charts.barChart.data.datasets[0].data = electricityTotals;
+    config.charts.barChart.data.datasets[1].data = internetTotals;
+    config.charts.barChart.data.datasets[2].data = waterTotals;
+    config.charts.barChart.data.datasets[3].data = gasTotals;
+    
+    console.log('📈 Charts updated from bill data:', {
+        pieChart: {
+            labels: pieLabels,
+            data: pieData
+        },
+        barChart: {
+            electricityTotals,
+            internetTotals,
+            waterTotals,
+            gasTotals
+        }
+    });
 }
 
 /**

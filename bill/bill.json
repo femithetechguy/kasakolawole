@@ -65,6 +65,14 @@
                 "accountNumber": "ME-12345",
                 "billingCycle": "monthly",
                 "averageAmount": 120.75,
+                "historicalData": {
+                  "2025-05": { "amount": 118.25, "dueDate": "2025-05-15", "paidDate": "2025-05-12", "status": "paid" },
+                  "2025-06": { "amount": 132.80, "dueDate": "2025-06-15", "paidDate": "2025-06-14", "status": "paid" },
+                  "2025-07": { "amount": 115.60, "dueDate": "2025-07-15", "paidDate": "2025-07-16", "status": "paid" },
+                  "2025-08": { "amount": 128.90, "dueDate": "2025-08-15", "paidDate": "2025-08-13", "status": "paid" },
+                  "2025-09": { "amount": 122.45, "dueDate": "2025-09-15", "paidDate": "2025-09-15", "status": "paid" },
+                  "2025-10": { "amount": 125.50, "dueDate": "2025-10-15", "paidDate": null, "status": "pending" }
+                },
                 "notifications": {
                   "dueDateReminder": 7,
                   "overdueAlert": 1
@@ -130,6 +138,14 @@
                 "accountNumber": "TC-98765",
                 "billingCycle": "monthly",
                 "averageAmount": 79.99,
+                "historicalData": {
+                  "2025-05": { "amount": 79.99, "dueDate": "2025-05-10", "paidDate": "2025-05-08", "status": "paid" },
+                  "2025-06": { "amount": 79.99, "dueDate": "2025-06-10", "paidDate": "2025-06-09", "status": "paid" },
+                  "2025-07": { "amount": 79.99, "dueDate": "2025-07-10", "paidDate": "2025-07-08", "status": "paid" },
+                  "2025-08": { "amount": 79.99, "dueDate": "2025-08-10", "paidDate": "2025-08-09", "status": "paid" },
+                  "2025-09": { "amount": 79.99, "dueDate": "2025-09-10", "paidDate": "2025-09-10", "status": "paid" },
+                  "2025-10": { "amount": 79.99, "dueDate": "2025-10-10", "paidDate": null, "status": "overdue" }
+                },
                 "notifications": {
                   "dueDateReminder": 5,
                   "overdueAlert": 0
@@ -196,6 +212,14 @@
                 "accountNumber": "CW-54321",
                 "billingCycle": "monthly",
                 "averageAmount": 42.50,
+                "historicalData": {
+                  "2025-05": { "amount": 41.20, "dueDate": "2025-05-20", "paidDate": "2025-05-19", "status": "paid" },
+                  "2025-06": { "amount": 44.85, "dueDate": "2025-06-20", "paidDate": "2025-06-18", "status": "paid" },
+                  "2025-07": { "amount": 39.75, "dueDate": "2025-07-20", "paidDate": "2025-07-19", "status": "paid" },
+                  "2025-08": { "amount": 47.60, "dueDate": "2025-08-20", "paidDate": "2025-08-20", "status": "paid" },
+                  "2025-09": { "amount": 43.10, "dueDate": "2025-09-20", "paidDate": "2025-09-20", "status": "paid" },
+                  "2025-10": { "amount": 45.30, "dueDate": "2025-10-20", "paidDate": null, "status": "upcoming" }
+                },
                 "notifications": {
                   "dueDateReminder": 10,
                   "overdueAlert": 3
@@ -255,12 +279,20 @@
                 "monthlyAmount": 62.75,
                 "paymentMethod": "credit_card",
                 "autoPayEnabled": false,
-                "lastPaidDate": "2025-08-25",
+                "lastPaidDate": "2025-10-25",
                 "createdDate": "2025-01-25",
                 "provider": "National Gas Company",
                 "accountNumber": "NG-67890",
                 "billingCycle": "monthly",
                 "averageAmount": 58.90,
+                "historicalData": {
+                  "2025-05": { "amount": 55.80, "dueDate": "2025-05-25", "paidDate": "2025-05-24", "status": "paid" },
+                  "2025-06": { "amount": 68.45, "dueDate": "2025-06-25", "paidDate": "2025-06-26", "status": "paid" },
+                  "2025-07": { "amount": 52.30, "dueDate": "2025-07-25", "paidDate": "2025-07-23", "status": "paid" },
+                  "2025-08": { "amount": 71.90, "dueDate": "2025-08-25", "paidDate": "2025-08-25", "status": "paid" },
+                  "2025-09": { "amount": 59.20, "dueDate": "2025-09-25", "paidDate": "2025-09-24", "status": "paid" },
+                  "2025-10": { "amount": 62.75, "dueDate": "2025-10-25", "paidDate": "2025-10-25", "status": "paid" }
+                },
                 "notifications": {
                   "dueDateReminder": 14,
                   "overdueAlert": 5
@@ -356,9 +388,9 @@
       "title": "Bills by Category",
       "description": "Distribution of bills by type",
       "data": {
-        "labels": ["Utilities", "Internet", "Insurance", "Subscriptions", "Other"],
+        "labels": ["Electricity", "Internet", "Water", "Gas", "Other"],
         "datasets": [{
-          "data": [35, 25, 20, 15, 5],
+          "data": [125.50, 79.99, 45.30, 62.75, 0],
           "backgroundColor": [
             "#3b82f6",
             "#10b981", 
@@ -377,24 +409,31 @@
       "data": {
         "labels": ["May 2025", "Jun 2025", "Jul 2025", "Aug 2025", "Sep 2025", "Oct 2025"],
         "datasets": [{
-          "label": "Total Bills",
-          "data": [450, 520, 480, 610, 550, 580],
+          "label": "Electricity",
+          "data": [118.25, 132.80, 115.60, 128.90, 122.45, 125.50],
           "backgroundColor": "rgba(59, 130, 246, 0.8)",
           "borderColor": "#3b82f6",
           "borderWidth": 2,
           "borderRadius": 4
         }, {
-          "label": "Utilities",
-          "data": [180, 190, 175, 200, 185, 195],
+          "label": "Internet",
+          "data": [79.99, 79.99, 79.99, 79.99, 79.99, 79.99],
           "backgroundColor": "rgba(16, 185, 129, 0.8)",
           "borderColor": "#10b981",
           "borderWidth": 2,
           "borderRadius": 4
         }, {
-          "label": "Subscriptions",
-          "data": [85, 95, 90, 110, 100, 105],
+          "label": "Water",
+          "data": [41.20, 44.85, 39.75, 47.60, 43.10, 45.30],
           "backgroundColor": "rgba(245, 158, 11, 0.8)",
           "borderColor": "#f59e0b",
+          "borderWidth": 2,
+          "borderRadius": 4
+        }, {
+          "label": "Gas",
+          "data": [55.80, 68.45, 52.30, 71.90, 59.20, 62.75],
+          "backgroundColor": "rgba(239, 68, 68, 0.8)",
+          "borderColor": "#ef4444",
           "borderWidth": 2,
           "borderRadius": 4
         }]

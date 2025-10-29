@@ -103,6 +103,32 @@ Available `data-color` values:
 </div>
 ```
 
+### Charts & Visualizations
+```html
+<div class="charts-section">
+    <div class="charts-grid">
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Chart Title
+                </h3>
+                <p class="chart-description">Chart description</p>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chartCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+Charts are styled with:
+- Responsive grid layout (auto-fit, minmax(400px, 1fr))
+- Module-themed colors and hover effects
+- Interactive tooltips and animations
+- Mobile-friendly responsive adjustments
+
 ## 🎨 Module Theming
 
 ### Implementation

@@ -32,6 +32,18 @@ The home dashboard has been completely restructured to support dynamic tabs with
 - Payment Settings
 - Export Data
 
+#### 4. Bill Analytics (NEW! 📈)
+- **Pie Chart**: Bills by Category
+  - Visual breakdown of spending by category (Utilities, Internet, Insurance, etc.)
+  - Interactive tooltips with percentages
+  - Color-coded categories using bill theme colors
+
+- **Bar Chart**: Monthly Bill Trends
+  - 6-month historical view of bill amounts
+  - Multi-dataset comparison (Total Bills, Utilities, Subscriptions)
+  - Animated loading with smooth transitions
+  - Responsive design for all screen sizes
+
 ### 💳 Debt Management Sections
 
 #### 1. Debt Overview Stats
@@ -73,6 +85,11 @@ home/
 - **Stats Cards**: Icon, value, label with color coding
 - **Data Tables**: Multi-column with typed cells (text, currency, date, status, actions)
 - **Action Grids**: Button cards with descriptions
+- **Charts & Analytics**: Interactive pie charts and bar graphs using Chart.js
+  - Pie charts for categorical data distribution
+  - Bar charts for trend analysis and comparisons
+  - Responsive design with hover interactions
+  - Custom theming aligned with module colors
 
 #### Responsive Design
 - Mobile-friendly tab navigation

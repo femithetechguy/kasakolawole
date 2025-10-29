@@ -153,6 +153,9 @@ async function loadTab(tabId) {
     
     console.log(`📋 Loading tab: ${tabId}`);
     
+    // Stop auto-refresh for previous tab
+    stopAutoRefreshForPreviousTab();
+    
     // Update active tab state
     updateActiveTab(tabId);
     
@@ -161,6 +164,23 @@ async function loadTab(tabId) {
     
     // Update global state
     window.KasaDashboard.activeTab = tabId;
+}
+
+/**
+ * Stop auto-refresh for the previously active tab
+ */
+function stopAutoRefreshForPreviousTab() {
+    const previousTab = window.KasaDashboard.activeTab;
+    
+    if (previousTab) {
+        const moduleInitName = `${previousTab.charAt(0).toUpperCase() + previousTab.slice(1)}Module`;
+        const module = window[moduleInitName];
+        
+        if (module && typeof module.stopAutoRefresh === 'function') {
+            module.stopAutoRefresh();
+            console.log(`🛑 Stopped auto-refresh for ${previousTab} module`);
+        }
+    }
 }
 
 /**

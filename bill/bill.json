@@ -48,11 +48,15 @@
         "title": "Recent Bills",
         "type": "table",
         "data": {
-          "headers": ["Bill Name", "Amount", "Due Date", "Status", "Actions"],
+          "headers": ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
           "rows": [
             {
               "id": "bill-1",
               "cells": [
+                {
+                  "type": "serial",
+                  "value": "001"
+                },
                 {
                   "type": "text",
                   "value": "Electricity Bill",
@@ -72,6 +76,13 @@
                   "value": "pending",
                   "label": "Pending",
                   "color": "warning"
+                },
+                {
+                  "type": "link",
+                  "value": "https://pay.electricity.com/bill/12345",
+                  "text": "Pay Online",
+                  "icon": "fas fa-external-link-alt",
+                  "target": "_blank"
                 },
                 {
                   "type": "actions",
@@ -96,6 +107,10 @@
               "id": "bill-2",
               "cells": [
                 {
+                  "type": "serial",
+                  "value": "002"
+                },
+                {
                   "type": "text",
                   "value": "Internet Service",
                   "icon": "fas fa-wifi"
@@ -114,6 +129,14 @@
                   "value": "overdue",
                   "label": "Overdue",
                   "color": "danger"
+                },
+                {
+                  "type": "link",
+                  "value": "https://pay.internetprovider.com/urgent/98765",
+                  "text": "Pay Now",
+                  "icon": "fas fa-exclamation-circle",
+                  "target": "_blank",
+                  "urgent": true
                 },
                 {
                   "type": "actions",
@@ -138,6 +161,10 @@
               "id": "bill-3",
               "cells": [
                 {
+                  "type": "serial",
+                  "value": "003"
+                },
+                {
                   "type": "text",
                   "value": "Water Bill",
                   "icon": "fas fa-tint"
@@ -156,6 +183,66 @@
                   "value": "upcoming",
                   "label": "Upcoming",
                   "color": "info"
+                },
+                {
+                  "type": "link",
+                  "value": "https://pay.waterutility.com/account/54321",
+                  "text": "Schedule Payment",
+                  "icon": "fas fa-calendar-check",
+                  "target": "_blank"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Schedule",
+                      "icon": "fas fa-calendar-plus",
+                      "action": "schedule",
+                      "type": "secondary"
+                    },
+                    {
+                      "text": "Edit",
+                      "icon": "fas fa-edit",
+                      "action": "edit",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "bill-4",
+              "cells": [
+                {
+                  "type": "serial",
+                  "value": "004"
+                },
+                {
+                  "type": "text",
+                  "value": "Water Bill",
+                  "icon": "fas fa-tint"
+                },
+                {
+                  "type": "currency",
+                  "value": 45.30,
+                  "currency": "USD"
+                },
+                {
+                  "type": "date",
+                  "value": "2025-11-20"
+                },
+                {
+                  "type": "status",
+                  "value": "upcoming",
+                  "label": "Upcoming",
+                  "color": "info"
+                },
+                {
+                  "type": "link",
+                  "value": "https://pay.waterutility.com/account/54321",
+                  "text": "Schedule Payment",
+                  "icon": "fas fa-calendar-check",
+                  "target": "_blank"
                 },
                 {
                   "type": "actions",
@@ -215,6 +302,56 @@
         ]
       }
     ]
+  },
+  "charts": {
+    "pieChart": {
+      "title": "Bills by Category",
+      "description": "Distribution of bills by type",
+      "data": {
+        "labels": ["Utilities", "Internet", "Insurance", "Subscriptions", "Other"],
+        "datasets": [{
+          "data": [35, 25, 20, 15, 5],
+          "backgroundColor": [
+            "#3b82f6",
+            "#10b981", 
+            "#f59e0b",
+            "#ef4444",
+            "#8b5cf6"
+          ],
+          "borderColor": "#ffffff",
+          "borderWidth": 2
+        }]
+      }
+    },
+    "barChart": {
+      "title": "Monthly Bill Trends",
+      "description": "Bill amounts over the last 6 months",
+      "data": {
+        "labels": ["May 2025", "Jun 2025", "Jul 2025", "Aug 2025", "Sep 2025", "Oct 2025"],
+        "datasets": [{
+          "label": "Total Bills",
+          "data": [450, 520, 480, 610, 550, 580],
+          "backgroundColor": "rgba(59, 130, 246, 0.8)",
+          "borderColor": "#3b82f6",
+          "borderWidth": 2,
+          "borderRadius": 4
+        }, {
+          "label": "Utilities",
+          "data": [180, 190, 175, 200, 185, 195],
+          "backgroundColor": "rgba(16, 185, 129, 0.8)",
+          "borderColor": "#10b981",
+          "borderWidth": 2,
+          "borderRadius": 4
+        }, {
+          "label": "Subscriptions",
+          "data": [85, 95, 90, 110, 100, 105],
+          "backgroundColor": "rgba(245, 158, 11, 0.8)",
+          "borderColor": "#f59e0b",
+          "borderWidth": 2,
+          "borderRadius": 4
+        }]
+      }
+    }
   },
   "theme": {
     "primaryColor": "#3b82f6",

@@ -1,7 +1,10 @@
 // Landing Page JavaScript
+// Uses global utilities from assets/js/global.js
+
 class LandingPageAuth {
     constructor() {
         this.config = null;
+        this.app = window.KasaKolawole || {};
         this.init();
     }
 
@@ -24,8 +27,13 @@ class LandingPageAuth {
 
     async loadConfig() {
         try {
-            const response = await fetch('landing.json');
-            this.config = await response.json();
+            // Use global HTTP utility if available
+            if (this.app.http) {
+                this.config = await this.app.http.get('landing/landing.json');
+            } else {
+                const response = await fetch('landing/landing.json');
+                this.config = await response.json();
+            }
         } catch (error) {
             console.warn('Could not load landing config, using defaults');
             this.config = {
@@ -139,7 +147,7 @@ class LandingPageAuth {
     }
 
     handleSuccessfulLogin(username, rememberMe) {
-        // Create session
+        // Create session using global storage utility if available
         const sessionData = {
             username: username,
             loginTime: new Date().toISOString(),
@@ -148,14 +156,27 @@ class LandingPageAuth {
         };
 
         // Store session
-        if (rememberMe) {
-            localStorage.setItem('kasakolawole_session', JSON.stringify(sessionData));
+        if (this.app.storage) {
+            if (rememberMe) {
+                this.app.storage.set(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session', sessionData);
+            } else {
+                this.app.storage.session.set(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session', sessionData);
+            }
         } else {
-            sessionStorage.setItem('kasakolawole_session', JSON.stringify(sessionData));
+            // Fallback to direct storage
+            if (rememberMe) {
+                localStorage.setItem('kasakolawole_session', JSON.stringify(sessionData));
+            } else {
+                sessionStorage.setItem('kasakolawole_session', JSON.stringify(sessionData));
+            }
         }
 
-        // Show success message
-        this.showSuccess('Login successful! Redirecting...');
+        // Show success message using global notification if available
+        if (this.app.notify) {
+            this.app.notify.success('Login successful! Redirecting...');
+        } else {
+            this.showSuccess('Login successful! Redirecting...');
+        }
 
         // Redirect after delay
         setTimeout(() => {
@@ -164,7 +185,12 @@ class LandingPageAuth {
     }
 
     handleFailedLogin() {
-        this.showError('Invalid username or password. Please try again.');
+        // Use global notification if available
+        if (this.app.notify) {
+            this.app.notify.error('Invalid username or password. Please try again.');
+        } else {
+            this.showError('Invalid username or password. Please try again.');
+        }
         
         // Clear password field
         document.getElementById('password').value = '';
@@ -172,10 +198,12 @@ class LandingPageAuth {
 
         // Add shake animation
         const loginCard = document.querySelector('.login-card');
-        loginCard.style.animation = 'shake 0.5s';
-        setTimeout(() => {
-            loginCard.style.animation = '';
-        }, 500);
+        if (loginCard) {
+            loginCard.classList.add('shake');
+            setTimeout(() => {
+                loginCard.classList.remove('shake');
+            }, 500);
+        }
     }
 
     checkExistingSession() {
@@ -191,16 +219,24 @@ class LandingPageAuth {
     }
 
     getSessionData() {
-        const localSession = localStorage.getItem('kasakolawole_session');
-        const sessionSession = sessionStorage.getItem('kasakolawole_session');
-        
-        if (localSession) {
-            return JSON.parse(localSession);
-        } else if (sessionSession) {
-            return JSON.parse(sessionSession);
+        // Use global storage utility if available
+        if (this.app.storage) {
+            const localSession = this.app.storage.get(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session');
+            const sessionSession = this.app.storage.session.get(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session');
+            return localSession || sessionSession || null;
+        } else {
+            // Fallback to direct storage
+            const localSession = localStorage.getItem('kasakolawole_session');
+            const sessionSession = sessionStorage.getItem('kasakolawole_session');
+            
+            if (localSession) {
+                return JSON.parse(localSession);
+            } else if (sessionSession) {
+                return JSON.parse(sessionSession);
+            }
+            
+            return null;
         }
-        
-        return null;
     }
 
     isSessionValid(sessionData) {

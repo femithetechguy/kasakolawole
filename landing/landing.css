@@ -1,12 +1,10 @@
-/* Landing Page Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* Landing Page Specific Styles */
+/* Import global styles */
+@import url('../assets/css/global.css');
+
+/* Note: Common styles are now in assets/css/global.css */
 
 body {
-    font-family: 'Inter', Arial, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     overflow-x: hidden;

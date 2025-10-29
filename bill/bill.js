@@ -721,6 +721,32 @@ function renderBillContent() {
         sectionsContainer.innerHTML = renderBillSections(content.sections);
     }
     
+    // Initialize search and filter functionality with improved retry
+    let initRetryCount = 0;
+    const maxInitRetries = 8;
+    
+    function tryInitializeSearch() {
+        console.log(`🔄 Search initialization attempt ${initRetryCount + 1}/${maxInitRetries}`);
+        
+        // Check if the search container and its content exist
+        const searchContainer = document.querySelector('.search-filter-controls');
+        const searchInput = document.getElementById('billSearch');
+        
+        if (searchContainer && searchInput) {
+            console.log('✅ Search elements found, initializing...');
+            initializeSearchAndFilters();
+        } else if (initRetryCount < maxInitRetries) {
+            console.log(`❌ Search elements not ready, retrying in ${500 * (initRetryCount + 1)}ms...`);
+            initRetryCount++;
+            setTimeout(tryInitializeSearch, 500 * initRetryCount); // Exponential backoff
+        } else {
+            console.error('❌ Failed to initialize search after maximum retries');
+        }
+    }
+    
+    // Start initialization after a short delay
+    setTimeout(tryInitializeSearch, 300);
+    
     // Show and render charts
     renderBillCharts();
 }
@@ -775,15 +801,78 @@ function renderTableSection(section) {
     const { headers, rows } = section.data;
     const validatedRows = validateAndFixCellStructure(rows);
     
+    // Always render the search and filter controls, even if no data
+    const searchAndFilterControls = `
+        <div class="table-controls">
+            <div class="search-filter-controls">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           id="billSearch" 
+                           placeholder="Search bills by name, provider..." 
+                           class="search-input">
+                    <button class="clear-search" id="clearSearch" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="filter-controls">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="upcoming">Upcoming</option>
+                    </select>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="housing">Housing</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="communication">Communication</option>
+                    </select>
+                    <select id="amountFilter" class="filter-select">
+                        <option value="">All Amounts</option>
+                        <option value="0-50">$0 - $50</option>
+                        <option value="50-100">$50 - $100</option>
+                        <option value="100-500">$100 - $500</option>
+                        <option value="500-1000">$500 - $1000</option>
+                        <option value="1000+">$1000+</option>
+                    </select>
+                    <button class="btn btn-outline btn-sm" id="clearFilters">
+                        <i class="fas fa-filter-circle-xmark"></i> Clear Filters
+                    </button>
+                </div>
+            </div>
+            <div class="view-and-actions">
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="table">
+                        <i class="fas fa-table"></i> Table
+                    </button>
+                    <button class="view-btn" data-view="cards">
+                        <i class="fas fa-th-large"></i> Cards
+                    </button>
+                </div>
+                <div class="table-actions">
+                    <span class="results-count" id="resultsCount"></span>
+                    <button class="btn btn-primary btn-sm" data-action="refresh">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
     // Check if we have valid bill data
     if (!validatedRows.length || validatedRows[0].id === 'no-data') {
         return `
             <div class="section table-section" id="${section.id}">
                 <h3 class="section-title">${section.title}</h3>
-                <div class="empty-state">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <h4>No Bill Data Available</h4>
-                    <p>Please check if bill_categories.csv file is accessible</p>
+                <div class="table-container">
+                    ${searchAndFilterControls}
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <h4>No Bill Data Available</h4>
+                        <p>Please check if bill_categories.csv file is accessible</p>
+                    </div>
                 </div>
             </div>
         `;
@@ -793,21 +882,7 @@ function renderTableSection(section) {
         <div class="section table-section" id="${section.id}">
             <h3 class="section-title">${section.title}</h3>
             <div class="table-container">
-                <div class="table-controls">
-                    <div class="view-toggle">
-                        <button class="view-btn active" data-view="table">
-                            <i class="fas fa-table"></i> Table
-                        </button>
-                        <button class="view-btn" data-view="cards">
-                            <i class="fas fa-th-large"></i> Cards
-                        </button>
-                    </div>
-                    <div class="table-actions">
-                        <button class="btn btn-primary btn-sm" data-action="refresh">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
-                    </div>
-                </div>
+                ${searchAndFilterControls}
                 
                 <div class="table-view active">
                     <table class="bill-table">
@@ -857,47 +932,6 @@ function renderStatsSection(section) {
             <h2 class="section-title">${section.title}</h2>
             <div class="stats-grid">
                 ${statsHTML}
-            </div>
-        </section>
-    `;
-}
-
-/**
- * Render table section
- */
-function renderTableSection(section) {
-    const headersHTML = section.data.headers.map(header => 
-        `<th>${header}</th>`
-    ).join('');
-    
-    const rowsHTML = section.data.rows.map(row => 
-        `<tr data-id="${row.id}">
-            ${row.cells.map(cell => renderTableCell(cell)).join('')}
-        </tr>`
-    ).join('');
-    
-    // Generate card layout for mobile
-    const cardsHTML = section.data.rows.map(row => renderBillCard(row)).join('');
-    
-    return `
-        <section class="section table-section" id="${section.id}">
-            <h2 class="section-title">${section.title}</h2>
-            
-            <!-- Desktop Table View -->
-            <div class="table-container desktop-only">
-                <table class="data-table">
-                    <thead>
-                        <tr>${headersHTML}</tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHTML}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Mobile Cards View -->
-            <div class="cards-container mobile-only">
-                ${cardsHTML}
             </div>
         </section>
     `;
@@ -1521,6 +1555,278 @@ function generateOverviewStats(bills) {
     };
 }
 
+// Search and Filter functionality
+let originalBillData = null;
+let currentFilters = {
+    search: '',
+    status: '',
+    category: '',
+    amount: ''
+};
+
+/**
+ * Initialize search and filter functionality
+ */
+function initializeSearchAndFilters() {
+    console.log('🔍 Initializing search and filters...');
+    
+    // Get all required elements
+    const searchInput = document.getElementById('billSearch');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const amountFilter = document.getElementById('amountFilter');
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    const viewBtns = document.querySelectorAll('.view-btn');
+
+    // Debug: Check what elements exist
+    console.log('Search elements found:', {
+        searchInput: !!searchInput,
+        clearSearchBtn: !!clearSearchBtn,
+        statusFilter: !!statusFilter,
+        categoryFilter: !!categoryFilter,
+        amountFilter: !!amountFilter,
+        clearFiltersBtn: !!clearFiltersBtn,
+        viewBtns: viewBtns.length
+    });
+
+    // Check if critical elements exist
+    if (!searchInput) {
+        console.error('❌ Search input (billSearch) not found - DOM not ready');
+        return false;
+    }
+    
+    if (!statusFilter || !categoryFilter) {
+        console.error('❌ Filter elements not found - DOM not ready');
+        return false;
+    }
+
+    console.log('✅ All search elements found, setting up event listeners...');
+
+    // Store original data
+    const config = window.BillModule.config;
+    const billsSection = config.content.sections.find(section => section.id === 'recent-bills');
+    if (billsSection && !originalBillData) {
+        originalBillData = [...billsSection.data.rows];
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+        currentFilters.search = e.target.value.toLowerCase().trim();
+        clearSearchBtn.style.display = currentFilters.search ? 'block' : 'none';
+        applyFilters();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentFilters.search = '';
+        clearSearchBtn.style.display = 'none';
+        applyFilters();
+    });
+
+    // Filter functionality
+    statusFilter.addEventListener('change', (e) => {
+        currentFilters.status = e.target.value;
+        applyFilters();
+    });
+
+    categoryFilter.addEventListener('change', (e) => {
+        currentFilters.category = e.target.value;
+        applyFilters();
+    });
+
+    amountFilter.addEventListener('change', (e) => {
+        currentFilters.amount = e.target.value;
+        applyFilters();
+    });
+
+    clearFiltersBtn.addEventListener('click', () => {
+        currentFilters = { search: '', status: '', category: '', amount: '' };
+        searchInput.value = '';
+        statusFilter.value = '';
+        categoryFilter.value = '';
+        amountFilter.value = '';
+        clearSearchBtn.style.display = 'none';
+        applyFilters();
+    });
+
+    // Initial count update
+    updateResultsCount(originalBillData ? originalBillData.length : 0);
+    
+    // Add view toggle functionality
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const tableView = document.querySelector('.table-view');
+    const cardsView = document.querySelector('.cards-view');
+    
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const view = btn.dataset.view;
+            
+            // Update active button
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show/hide views
+            if (view === 'table') {
+                tableView.classList.add('active');
+                cardsView.classList.remove('active');
+            } else {
+                tableView.classList.remove('active');
+                cardsView.classList.add('active');
+            }
+        });
+    });
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + F to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        
+        // Escape to clear search
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            currentFilters.search = '';
+            clearSearchBtn.style.display = 'none';
+            searchInput.blur();
+            applyFilters();
+        }
+    });
+    
+    console.log('✅ Search and filter functionality initialized successfully');
+    return true; // Success
+}
+
+/**
+ * Apply current filters to bill data
+ */
+function applyFilters() {
+    if (!originalBillData) return;
+
+    let filteredBills = [...originalBillData];
+
+    // Apply search filter
+    if (currentFilters.search) {
+        filteredBills = filteredBills.filter(bill => {
+            const billName = bill.cells.find(cell => cell.type === 'text')?.value?.toLowerCase() || '';
+            const provider = bill.metadata?.provider?.toLowerCase() || '';
+            const accountNumber = bill.metadata?.accountNumber?.toLowerCase() || '';
+            
+            return billName.includes(currentFilters.search) ||
+                   provider.includes(currentFilters.search) ||
+                   accountNumber.includes(currentFilters.search);
+        });
+    }
+
+    // Apply status filter
+    if (currentFilters.status) {
+        filteredBills = filteredBills.filter(bill => {
+            const status = bill.cells.find(cell => cell.type === 'status')?.value?.toLowerCase();
+            return status === currentFilters.status;
+        });
+    }
+
+    // Apply category filter
+    if (currentFilters.category) {
+        filteredBills = filteredBills.filter(bill => {
+            const category = bill.metadata?.category?.toLowerCase();
+            return category === currentFilters.category;
+        });
+    }
+
+    // Apply amount filter
+    if (currentFilters.amount) {
+        filteredBills = filteredBills.filter(bill => {
+            const amount = bill.cells.find(cell => cell.type === 'currency')?.value || 0;
+            
+            switch (currentFilters.amount) {
+                case '0-50':
+                    return amount >= 0 && amount <= 50;
+                case '50-100':
+                    return amount > 50 && amount <= 100;
+                case '100-500':
+                    return amount > 100 && amount <= 500;
+                case '500-1000':
+                    return amount > 500 && amount <= 1000;
+                case '1000+':
+                    return amount > 1000;
+                default:
+                    return true;
+            }
+        });
+    }
+
+    // Update the display
+    updateBillDisplay(filteredBills);
+    updateResultsCount(filteredBills.length);
+}
+
+/**
+ * Update bill display with filtered data
+ */
+function updateBillDisplay(filteredBills) {
+    const tableBody = document.querySelector('.bill-table tbody');
+    const cardsGrid = document.querySelector('.bill-cards-grid');
+
+    if (tableBody) {
+        if (filteredBills.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="no-results">
+                        <div class="no-results-content">
+                            <i class="fas fa-search"></i>
+                            <h4>No bills found</h4>
+                            <p>Try adjusting your search or filters</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tableBody.innerHTML = filteredBills.map(row => `
+                <tr data-id="${row.id}">
+                    ${row.cells.map(cell => renderTableCell(cell)).join('')}
+                </tr>
+            `).join('');
+        }
+    }
+
+    if (cardsGrid) {
+        if (filteredBills.length === 0) {
+            cardsGrid.innerHTML = `
+                <div class="no-results-card">
+                    <div class="no-results-content">
+                        <i class="fas fa-search"></i>
+                        <h4>No bills found</h4>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            cardsGrid.innerHTML = filteredBills.map(row => renderBillCard(row)).join('');
+        }
+    }
+}
+
+/**
+ * Update results count display
+ */
+function updateResultsCount(count) {
+    const resultsCount = document.getElementById('resultsCount');
+    if (resultsCount) {
+        const total = originalBillData ? originalBillData.length : 0;
+        if (count === total) {
+            resultsCount.textContent = `${count} bills`;
+        } else {
+            resultsCount.textContent = `${count} of ${total} bills`;
+        }
+        resultsCount.style.display = count > 0 ? 'block' : 'none';
+    }
+}
+
 // Export for global access
 window.BillModule.handleAction = handleBillAction;
 window.BillModule.showNotification = showBillNotification;
+window.BillModule.initializeSearchAndFilters = initializeSearchAndFilters;
+window.BillModule.applyFilters = applyFilters;

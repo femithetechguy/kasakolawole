@@ -181,8 +181,43 @@ function convertBillDataToJSON(csvData) {
     };
     
     // Add charts configuration for CSV loaded data
-    const config = {
-        ...baseConfig,
+    const finalConfig = {
+        meta: {
+            title: "Bills - Kasa Kolawole",
+            description: "Comprehensive bill management and tracking system",
+            keywords: ["bills", "payments", "financial management", "tracking"],
+            author: "Kasa Kolawole",
+            version: "1.0.0",
+            lastUpdated: new Date().toISOString().split('T')[0]
+        },
+        content: {
+            title: "Bill Management",
+            subtitle: "Track and manage your bills efficiently",
+            description: "Keep track of all your bills, payment schedules, and financial obligations in one place.",
+            sections: [
+                {
+                    id: "overview",
+                    title: "Overview",
+                    type: "stats",
+                    data: generateOverviewStats(bills)
+                },
+                {
+                    id: "recent-bills",
+                    title: "Recent Bills",
+                    type: "table",
+                    data: {
+                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+                        rows: bills
+                    }
+                },
+                {
+                    id: "charts",
+                    title: "Bill Analytics",
+                    type: "charts",
+                    data: {}
+                }
+            ]
+        },
         charts: {
             pieChart: {
                 data: {
@@ -223,7 +258,7 @@ function convertBillDataToJSON(csvData) {
         }
     };
     
-    return config;
+    return finalConfig;
 }
 
 // Helper functions

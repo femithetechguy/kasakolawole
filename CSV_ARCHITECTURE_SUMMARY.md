@@ -122,7 +122,7 @@ bill-34,034,New Bill,Category,Item,priority,amount.00,payment_method,true,Provid
 
 ### **To Modify Existing Bills**
 ```bash
-1. Open assets/bill_categories.csv
+1. Open assets/csv/bill_categories.csv
 2. Edit any field (amount, due date, status, etc.)
 3. Save file
 4. Refresh browser → Changes appear

@@ -43,13 +43,42 @@ function parseCSVLine(line) {
 // Convert CSV bill data to JSON structure compatible with existing app
 function convertBillDataToJSON(csvData) {
     const bills = csvData.filter(row => row.ID && row.ID.startsWith('bill-')).map(row => {
+        const monthlyAmount = parseFloat(row['Monthly Amount']) || 0;
+        
+        // Map CSV Item to chart-friendly subcategory
+        const itemToSubcategory = {
+            'Mortgage/Rent': 'mortgage',
+            'Internet': 'internet',
+            'Water': 'water',
+            'Gas': 'gas',
+            'Electricity': 'electricity',
+            'Property Taxes': 'other',
+            'Insurance': 'other',
+            'HOA/Fees': 'other',
+            'Trash': 'other'
+        };
+        const subcategory = itemToSubcategory[row.Item] || 'other';
+        
+        // Generate historical data for charts (last 6 months)
+        const historicalData = {};
+        const months = ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10"];
+        months.forEach(month => {
+            // Add some variation to historical data (±10% of monthly amount)
+            const variation = (Math.random() - 0.5) * 0.2; // -10% to +10%
+            const amount = monthlyAmount * (1 + variation);
+            historicalData[month] = {
+                amount: Math.round(amount * 100) / 100, // Round to 2 decimal places
+                status: Math.random() > 0.2 ? 'paid' : 'pending' // 80% paid, 20% pending
+            };
+        });
+        
         return {
             id: row.ID,
             metadata: {
                 category: row.Category.toLowerCase(),
-                subcategory: row.Item.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+                subcategory: subcategory,
                 priority: row.Priority,
-                monthlyAmount: parseFloat(row['Monthly Amount']) || 0,
+                monthlyAmount: monthlyAmount,
                 paymentMethod: row['Payment Method'],
                 autoPayEnabled: row['Auto Pay Enabled'].toLowerCase() === 'true',
                 lastPaidDate: row['Last Paid Date'] || null,
@@ -58,6 +87,7 @@ function convertBillDataToJSON(csvData) {
                 accountNumber: row['Account Number'],
                 billingCycle: row['Billing Cycle'],
                 averageAmount: parseFloat(row['Average Amount']) || 0,
+                historicalData: historicalData,
                 notifications: {
                     dueDateReminder: parseInt(row['Due Date Reminder']) || 10,
                     overdueAlert: parseInt(row['Overdue Alert']) || 3
@@ -110,7 +140,8 @@ function convertBillDataToJSON(csvData) {
         };
     });
 
-    return {
+    // Add charts configuration for CSV loaded data
+    const baseConfig = {
         meta: {
             title: "Bills - Kasa Kolawole",
             description: "Comprehensive bill management and tracking system",
@@ -138,10 +169,61 @@ function convertBillDataToJSON(csvData) {
                         headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
                         rows: bills
                     }
+                },
+                {
+                    id: "charts",
+                    title: "Bill Analytics",
+                    type: "charts",
+                    data: {}
                 }
             ]
         }
     };
+    
+    // Add charts configuration for CSV loaded data
+    const config = {
+        ...baseConfig,
+        charts: {
+            pieChart: {
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: []
+                    }]
+                }
+            },
+            barChart: {
+                data: {
+                    labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+                    datasets: [
+                        {
+                            label: "Mortgage",
+                            data: [],
+                            backgroundColor: "#3b82f6"
+                        },
+                        {
+                            label: "Internet",
+                            data: [],
+                            backgroundColor: "#10b981"
+                        },
+                        {
+                            label: "Water",
+                            data: [],
+                            backgroundColor: "#f59e0b"
+                        },
+                        {
+                            label: "Gas",
+                            data: [],
+                            backgroundColor: "#ef4444"
+                        }
+                    ]
+                }
+            }
+        }
+    };
+    
+    return config;
 }
 
 // Helper functions
@@ -198,7 +280,7 @@ function generateOverviewStats(bills) {
 async function loadBillDataFromCSV() {
     try {
         const timestamp = Date.now();
-        const response = await fetch(`../assets/bill_categories.csv?t=${timestamp}`, {
+        const response = await fetch(`../assets/csv/bill_categories.csv?t=${timestamp}`, {
             method: 'GET',
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',

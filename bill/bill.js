@@ -207,6 +207,7 @@ async function loadBillConfig() {
             
             // Calculate dynamic overview from bill objects
             updateOverviewFromBillData(config);
+            updateChartsFromBillData(config);
             
             // Cache the configuration for quick tab switching
             localStorage.setItem('billConfig', JSON.stringify(config));
@@ -220,7 +221,7 @@ async function loadBillConfig() {
             
             // Manually load CSV if loader not available
             try {
-                const csvResponse = await fetch(`../assets/bill_categories.csv?t=${Date.now()}`, {
+                const csvResponse = await fetch(`../assets/csv/bill_categories.csv?t=${Date.now()}`, {
                     cache: 'no-cache',
                     headers: {
                         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -246,27 +247,60 @@ async function loadBillConfig() {
                     }).filter(row => row.ID && row.ID.startsWith('bill-'));
                     
                     // Convert to bill structure
-                    const bills = billRows.map(row => ({
-                        id: row.ID,
-                        metadata: {
-                            category: row.Category.toLowerCase(),
-                            priority: row.Priority,
-                            monthlyAmount: parseFloat(row['Monthly Amount']) || 0,
-                            paymentMethod: row['Payment Method'],
-                            autoPayEnabled: row['Auto Pay Enabled'].toLowerCase() === 'true',
-                            provider: row.Provider,
-                            accountNumber: row['Account Number']
-                        },
-                        cells: [
-                            { type: "serial", value: row.Serial },
-                            { type: "text", value: row['Bill Name'], icon: row.Icon || "fas fa-file-invoice" },
-                            { type: "currency", value: parseFloat(row['Monthly Amount']) || 0, currency: "USD" },
-                            { type: "date", value: row['Due Date'] },
-                            { type: "status", value: row.Status, label: row.Status.charAt(0).toUpperCase() + row.Status.slice(1), color: getStatusColor(row.Status) },
-                            { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "fas fa-credit-card", target: "_blank" },
-                            { type: "actions", buttons: [{ text: "Edit", icon: "fas fa-edit", action: "edit", type: "outline" }] }
-                        ]
-                    }));
+                    const bills = billRows.map(row => {
+                        const monthlyAmount = parseFloat(row['Monthly Amount']) || 0;
+                        
+                        // Map CSV Item to chart-friendly subcategory
+                        const itemToSubcategory = {
+                            'Mortgage/Rent': 'mortgage',
+                            'Internet': 'internet',
+                            'Water': 'water',
+                            'Gas': 'gas',
+                            'Electricity': 'electricity',
+                            'Property Taxes': 'other',
+                            'Insurance': 'other',
+                            'HOA/Fees': 'other',
+                            'Trash': 'other'
+                        };
+                        const subcategory = itemToSubcategory[row.Item] || 'other';
+                        
+                        // Generate historical data for charts (last 6 months)
+                        const historicalData = {};
+                        const months = ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10"];
+                        months.forEach(month => {
+                            // Add some variation to historical data (±10% of monthly amount)
+                            const variation = (Math.random() - 0.5) * 0.2; // -10% to +10%
+                            const amount = monthlyAmount * (1 + variation);
+                            historicalData[month] = {
+                                amount: Math.round(amount * 100) / 100, // Round to 2 decimal places
+                                status: Math.random() > 0.2 ? 'paid' : 'pending' // 80% paid, 20% pending
+                            };
+                        });
+                        
+                        return {
+                            id: row.ID,
+                            metadata: {
+                                category: row.Category.toLowerCase(),
+                                subcategory: subcategory,
+                                priority: row.Priority,
+                                monthlyAmount: monthlyAmount,
+                                paymentMethod: row['Payment Method'],
+                                autoPayEnabled: row['Auto Pay Enabled'].toLowerCase() === 'true',
+                                provider: row.Provider,
+                                accountNumber: row['Account Number'],
+                                historicalData: historicalData
+                            },
+                            cells: [
+                                { type: "serial", value: row.Serial },
+                                { type: "text", value: row['Bill Name'], icon: row.Icon || "fas fa-file-invoice" },
+                                { type: "currency", value: parseFloat(row['Monthly Amount']) || 0, currency: "USD" },
+                                { type: "date", value: row['Due Date'] },
+                                { type: "status", value: row.Status, label: row.Status.charAt(0).toUpperCase() + row.Status.slice(1), color: getStatusColor(row.Status) },
+                                { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "fas fa-credit-card", target: "_blank" },
+                                { type: "actions", buttons: [{ text: "Edit", icon: "fas fa-edit", action: "edit", type: "outline" }] }
+                            ]
+                        };
+                    });
                     
                     const config = {
                         meta: {
@@ -292,12 +326,59 @@ async function loadBillConfig() {
                                         headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
                                         rows: bills
                                     }
+                                },
+                                {
+                                    id: "charts",
+                                    title: "Bill Analytics",
+                                    type: "charts",
+                                    data: {}
                                 }
                             ]
                         }
                     };
                     
+                    // Add charts configuration
+                    config.charts = {
+                        pieChart: {
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    data: [],
+                                    backgroundColor: []
+                                }]
+                            }
+                        },
+                        barChart: {
+                            data: {
+                                labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+                                datasets: [
+                                    {
+                                        label: "Mortgage",
+                                        data: [],
+                                        backgroundColor: "#3b82f6"
+                                    },
+                                    {
+                                        label: "Internet",
+                                        data: [],
+                                        backgroundColor: "#10b981"
+                                    },
+                                    {
+                                        label: "Water",
+                                        data: [],
+                                        backgroundColor: "#f59e0b"
+                                    },
+                                    {
+                                        label: "Gas",
+                                        data: [],
+                                        backgroundColor: "#ef4444"
+                                    }
+                                ]
+                            }
+                        }
+                    };
+                    
                     updateOverviewFromBillData(config);
+                    updateChartsFromBillData(config);
                     
                     // Cache the configuration for quick tab switching
                     localStorage.setItem('billConfig', JSON.stringify(config));
@@ -518,6 +599,8 @@ function updateChartsFromBillData(config) {
         const subcategory = bill.metadata?.subcategory || 'other';
         const amount = bill.metadata?.monthlyAmount || 0;
         
+        console.log('Chart data - Bill:', bill.id, 'Subcategory:', subcategory, 'Amount:', amount);
+        
         if (!categoryData[subcategory]) {
             categoryData[subcategory] = 0;
         }
@@ -534,6 +617,8 @@ function updateChartsFromBillData(config) {
     config.charts.pieChart.data.labels = pieLabels;
     config.charts.pieChart.data.datasets[0].data = pieData;
     config.charts.pieChart.data.datasets[0].backgroundColor = pieColors;
+    
+    console.log('📊 Pie chart data updated:', { pieLabels, pieData, pieColors });
     
     // Calculate bar chart data from historical data
     const months = ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10"];
@@ -588,6 +673,8 @@ function updateChartsFromBillData(config) {
     config.charts.barChart.data.datasets[1].data = internetTotals;
     config.charts.barChart.data.datasets[2].data = waterTotals;
     config.charts.barChart.data.datasets[3].data = gasTotals;
+    
+    console.log('📊 Bar chart data updated:', { mortgageTotals, internetTotals, waterTotals, gasTotals });
     
     console.log('📈 Charts updated from bill data:', {
         pieChart: {

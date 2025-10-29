@@ -6,7 +6,7 @@ Your Kasa Kolawole app now supports multiple approaches for managing bill data b
 ## ✅ **Recommended Approach: CSV-First (Implemented)**
 
 ### How It Works:
-1. **Primary Data Source**: `assets/bill_categories.csv` 
+1. **Primary Data Source**: `assets/csv/bill_categories.csv` 
 2. **Dynamic Loading**: `bill/csv-loader.js` converts CSV to JSON in real-time
 3. **Automatic Sync**: Changes to CSV are immediately reflected in the app
 4. **Fallback Support**: JSON file still works if CSV loading fails
@@ -20,7 +20,9 @@ Your Kasa Kolawole app now supports multiple approaches for managing bill data b
 ### Usage:
 ```bash
 # To update bills:
-1. Edit `/assets/bill_categories.csv` in Excel or text editor
+## Quick Update Process
+
+1. Edit `/assets/csv/bill_categories.csv` in Excel or text editor
 2. Save the file
 3. Refresh the app - changes appear immediately
 ```
@@ -78,7 +80,7 @@ Excel       to JSON      with app      updates
 ## Quick Start
 
 ### To Add New Bills:
-1. Open `assets/bill_categories.csv`
+1. Open `assets/csv/bill_categories.csv`
 2. Add new row with bill-## ID format
 3. Fill in all required columns
 4. Save file
@@ -121,7 +123,7 @@ await window.CSVSyncUtility.syncCSVToJSON();
 ## Troubleshooting
 
 ### CSV Not Loading?
-1. Check file path: `/assets/bill_categories.csv`
+1. Check file path: `/assets/csv/bill_categories.csv`
 2. Verify CSV format (comma-separated)
 3. Check browser console for errors
 4. App will fallback to JSON automatically

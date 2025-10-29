@@ -38,7 +38,7 @@ function watchCSVChanges() {
     
     setInterval(async () => {
         try {
-            const response = await fetch('../assets/bill_categories.csv', { method: 'HEAD' });
+            const response = await fetch('../assets/csv/bill_categories.csv', { method: 'HEAD' });
             const currentModified = response.headers.get('Last-Modified');
             
             if (lastModified && currentModified !== lastModified) {

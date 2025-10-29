@@ -1,0 +1,146 @@
+/* Bill Tab Specific Styles */
+/* Note: Global styles are loaded by the main dashboard */
+
+/* Bill tab uses global theme utilities */
+.tab-content#bill-content {
+    /* Apply bill theme to this tab */
+    --module-primary: #3b82f6;
+    --module-accent: #10b981;
+    --module-bg: rgba(59, 130, 246, 0.05);
+}
+
+/* Apply bill theme class to content */
+#bill-content .tab-header {
+    background: linear-gradient(135deg, var(--module-primary), var(--module-accent));
+}
+
+#bill-content .btn-primary {
+    background: var(--module-primary);
+    border-color: var(--module-primary);
+}
+
+#bill-content .btn-primary:hover {
+    background: color-mix(in srgb, var(--module-primary) 85%, black);
+    border-color: color-mix(in srgb, var(--module-primary) 85%, black);
+}
+
+#bill-content .stat-card[data-color="primary"]::before { 
+    background: var(--module-primary); 
+}
+
+#bill-content .stat-card[data-color="primary"] .stat-icon { 
+    background: var(--module-primary); 
+}
+
+/* Bill-specific animations and micro-interactions */
+#bill-content .stat-card:hover {
+    border-color: var(--module-primary);
+}
+
+#bill-content .table-row:hover {
+    background: var(--module-bg);
+}
+
+/* Bill-specific table styling */
+#bill-content .table th {
+    background: var(--module-bg);
+    color: var(--module-primary);
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-danger {
+    background: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+/* Bill table enhancements */
+.data-table tr:hover {
+    background: var(--bill-bg);
+}
+
+/* Bill action cards */
+.action-button:hover {
+    background: var(--bill-bg);
+}
+
+.btn-primary .action-icon {
+    background: var(--bill-primary);
+}
+
+.btn-secondary .action-icon {
+    background: var(--bill-accent);
+}
+
+/* Bill-specific animations */
+@keyframes billPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+}
+
+.stat-card[data-color="danger"]:hover {
+    animation: billPulse 2s infinite;
+}
+
+/* Bill loading state */
+.loading-state {
+    background: var(--bill-bg);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+/* Bill responsive adjustments */
+@media (max-width: 768px) {
+    .tab-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-base);
+    }
+    
+    .tab-icon {
+        margin: 0 auto;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .btn-sm .btn-text {
+        display: inline;
+    }
+}
+
+/* Bill print styles */
+@media print {
+    .tab-header {
+        background: none !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+    
+    .action-buttons {
+        display: none !important;
+    }
+    
+    .stat-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+}

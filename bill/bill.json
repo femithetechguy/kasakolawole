@@ -1,0 +1,224 @@
+{
+  "meta": {
+    "title": "Bills - Kasa Kolawole",
+    "description": "Comprehensive bill management and tracking system",
+    "keywords": ["bills", "payments", "financial management", "tracking"],
+    "author": "Kasa Kolawole",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-29"
+  },
+  "content": {
+    "title": "Bill Management",
+    "subtitle": "Track and manage your bills efficiently",
+    "description": "Keep track of all your bills, payment schedules, and financial obligations in one place.",
+    "sections": [
+      {
+        "id": "overview",
+        "title": "Overview",
+        "type": "stats",
+        "data": [
+          {
+            "label": "Total Bills",
+            "value": "12",
+            "icon": "fas fa-file-invoice",
+            "color": "primary"
+          },
+          {
+            "label": "Pending",
+            "value": "3",
+            "icon": "fas fa-clock",
+            "color": "warning"
+          },
+          {
+            "label": "Overdue",
+            "value": "1",
+            "icon": "fas fa-exclamation-triangle",
+            "color": "danger"
+          },
+          {
+            "label": "Paid This Month",
+            "value": "8",
+            "icon": "fas fa-check-circle",
+            "color": "success"
+          }
+        ]
+      },
+      {
+        "id": "recent-bills",
+        "title": "Recent Bills",
+        "type": "table",
+        "data": {
+          "headers": ["Bill Name", "Amount", "Due Date", "Status", "Actions"],
+          "rows": [
+            {
+              "id": "bill-1",
+              "cells": [
+                {
+                  "type": "text",
+                  "value": "Electricity Bill",
+                  "icon": "fas fa-bolt"
+                },
+                {
+                  "type": "currency",
+                  "value": 125.50,
+                  "currency": "USD"
+                },
+                {
+                  "type": "date",
+                  "value": "2025-11-15"
+                },
+                {
+                  "type": "status",
+                  "value": "pending",
+                  "label": "Pending",
+                  "color": "warning"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Pay",
+                      "icon": "fas fa-credit-card",
+                      "action": "pay",
+                      "type": "primary"
+                    },
+                    {
+                      "text": "Edit",
+                      "icon": "fas fa-edit",
+                      "action": "edit",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "bill-2",
+              "cells": [
+                {
+                  "type": "text",
+                  "value": "Internet Service",
+                  "icon": "fas fa-wifi"
+                },
+                {
+                  "type": "currency",
+                  "value": 79.99,
+                  "currency": "USD"
+                },
+                {
+                  "type": "date",
+                  "value": "2025-11-10"
+                },
+                {
+                  "type": "status",
+                  "value": "overdue",
+                  "label": "Overdue",
+                  "color": "danger"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Pay Now",
+                      "icon": "fas fa-exclamation-triangle",
+                      "action": "pay",
+                      "type": "danger"
+                    },
+                    {
+                      "text": "Edit",
+                      "icon": "fas fa-edit",
+                      "action": "edit",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "bill-3",
+              "cells": [
+                {
+                  "type": "text",
+                  "value": "Water Bill",
+                  "icon": "fas fa-tint"
+                },
+                {
+                  "type": "currency",
+                  "value": 45.30,
+                  "currency": "USD"
+                },
+                {
+                  "type": "date",
+                  "value": "2025-11-20"
+                },
+                {
+                  "type": "status",
+                  "value": "upcoming",
+                  "label": "Upcoming",
+                  "color": "info"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Schedule",
+                      "icon": "fas fa-calendar-plus",
+                      "action": "schedule",
+                      "type": "secondary"
+                    },
+                    {
+                      "text": "Edit",
+                      "icon": "fas fa-edit",
+                      "action": "edit",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "quick-actions",
+        "title": "Quick Actions",
+        "type": "actions",
+        "data": [
+          {
+            "text": "Add New Bill",
+            "icon": "fas fa-plus",
+            "action": "add-bill",
+            "type": "primary",
+            "description": "Create a new bill entry"
+          },
+          {
+            "text": "View All Bills",
+            "icon": "fas fa-list",
+            "action": "view-all",
+            "type": "outline",
+            "description": "See complete bill history"
+          },
+          {
+            "text": "Payment Settings",
+            "icon": "fas fa-cog",
+            "action": "settings",
+            "type": "outline",
+            "description": "Configure payment methods"
+          },
+          {
+            "text": "Export Data",
+            "icon": "fas fa-download",
+            "action": "export",
+            "type": "outline",
+            "description": "Export bill data to CSV"
+          }
+        ]
+      }
+    ]
+  },
+  "theme": {
+    "primaryColor": "#3b82f6",
+    "accentColor": "#10b981",
+    "iconClass": "fas fa-file-invoice-dollar"
+  }
+}

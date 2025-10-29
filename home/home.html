@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasa Kolawole - Dashboard</title>
+    <meta name="description" content="Kasa Kolawole professional portfolio and business platform">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    
+    <!-- Home CSS -->
+    <link rel="stylesheet" href="./home.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="app-header" id="appHeader">
+        <div class="header-container">
+            <!-- Logo/Brand -->
+            <div class="brand-section">
+                <div class="logo-container">
+                    <i class="fas fa-crown logo-icon"></i>
+                    <h1 class="brand-name">Kasa Kolawole</h1>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="main-navigation" id="mainNav">
+                <ul class="nav-list" id="navList">
+                    <!-- Navigation items will be populated dynamically -->
+                </ul>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </nav>
+            
+            <!-- User Actions -->
+            <div class="user-actions">
+                <div class="user-info" id="userInfo">
+                    <span class="user-name" id="userName">Welcome</span>
+                    <div class="user-menu-container">
+                        <button class="user-menu-toggle" id="userMenuToggle" aria-label="User menu">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="#profile" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                Profile
+                            </a>
+                            <a href="#settings" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#logout" class="dropdown-item" data-action="logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main" id="appMain">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation" id="tabNavigation">
+            <div class="container">
+                <div class="tab-nav-list" id="tabNavList">
+                    <!-- Tabs will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Tab Content Container -->
+        <div class="tab-content-container" id="tabContentContainer">
+            <!-- Content will be loaded dynamically based on active tab -->
+            <div class="loading-state" id="loadingState">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <p>Loading content...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer" id="appFooter">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <div class="logo-container">
+                            <i class="fas fa-crown logo-icon"></i>
+                            <span class="brand-name">Kasa Kolawole</span>
+                        </div>
+                        <p>Loading description...</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Dashboard</h4>
+                    <div class="footer-links" id="footerLinks">
+                        <!-- Footer links will be populated dynamically -->
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="contact-info" id="contactInfo">
+                        <!-- Contact info will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kasa Kolawole. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Global JavaScript -->
+    <script src="/assets/js/global.js"></script>
+
+    <!-- Home Page JavaScript -->
+    <script src="home.js"></script>
+</body>
+</html>

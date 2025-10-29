@@ -1,0 +1,246 @@
+/* Debt Tab Specific Styles */
+/* Note: Global styles are loaded by the main dashboard */
+
+/* Debt tab uses global theme utilities */
+.tab-content#debt-content {
+    /* Apply debt theme to this tab */
+    --module-primary: #dc2626;
+    --module-accent: #f59e0b;
+    --module-bg: rgba(220, 38, 38, 0.05);
+}
+
+/* Apply debt theme class to content */
+#debt-content .tab-header {
+    background: linear-gradient(135deg, var(--module-primary), var(--module-accent));
+}
+
+#debt-content .btn-primary {
+    background: var(--module-primary);
+    border-color: var(--module-primary);
+}
+
+#debt-content .btn-primary:hover {
+    background: color-mix(in srgb, var(--module-primary) 85%, black);
+    border-color: color-mix(in srgb, var(--module-primary) 85%, black);
+}
+
+#debt-content .btn-secondary {
+    background: var(--module-accent);
+    border-color: var(--module-accent);
+}
+
+#debt-content .btn-secondary:hover {
+    background: color-mix(in srgb, var(--module-accent) 85%, black);
+    border-color: color-mix(in srgb, var(--module-accent) 85%, black);
+}
+
+#debt-content .stat-card[data-color="danger"]::before { 
+    background: var(--module-primary); 
+}
+
+#debt-content .stat-card[data-color="danger"] .stat-icon { 
+    background: var(--module-primary); 
+}
+
+#debt-content .stat-card[data-color="warning"]::before { 
+    background: var(--module-accent); 
+}
+
+#debt-content .stat-card[data-color="warning"] .stat-icon { 
+    background: var(--module-accent); 
+}
+
+/* Debt-specific animations and micro-interactions */
+#debt-content .stat-card:hover {
+    border-color: var(--module-primary);
+}
+
+#debt-content .table-row:hover {
+    background: var(--module-bg);
+}
+
+/* Debt-specific styling for high amounts */
+#debt-content .currency-large {
+    color: var(--module-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Progress indicators for debt payoff */
+#debt-content .progress-bar {
+    background: var(--module-bg);
+    border-radius: var(--border-radius);
+}
+
+#debt-content .progress-fill {
+    background: linear-gradient(90deg, var(--module-primary), var(--module-accent));
+    border-radius: var(--border-radius);
+}
+    background: #d97706;
+    border-color: #d97706;
+}
+
+/* Debt table enhancements */
+.data-table tr:hover {
+    background: var(--debt-bg);
+}
+
+/* High debt amount highlighting */
+.cell-currency {
+    position: relative;
+}
+
+.cell-currency::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--debt-primary), var(--debt-accent));
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.data-table tr:hover .cell-currency::after {
+    opacity: 0.3;
+}
+
+/* Debt action cards */
+.action-button:hover {
+    background: var(--debt-bg);
+}
+
+.btn-primary .action-icon {
+    background: var(--debt-primary);
+}
+
+.btn-secondary .action-icon {
+    background: var(--debt-accent);
+}
+
+/* Interest rate highlighting */
+.data-table td:has-text("18.9%"),
+.data-table td:contains("18.9%") {
+    color: var(--debt-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Debt progress indicators */
+.debt-progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(220, 38, 38, 0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.debt-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--debt-primary), var(--debt-accent));
+    transition: width var(--transition-base);
+}
+
+/* Debt-specific animations */
+@keyframes debtAlert {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(220, 38, 38, 0);
+    }
+}
+
+.stat-card[data-color="danger"]:hover {
+    animation: debtAlert 2s infinite;
+}
+
+@keyframes payoffCelebration {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.stat-card[data-color="success"]:hover {
+    animation: payoffCelebration 1s ease-in-out;
+}
+
+/* Debt loading state */
+.loading-state {
+    background: var(--debt-bg);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+    border-left: 4px solid var(--debt-primary);
+}
+
+/* Debt calculator styles */
+.debt-calculator {
+    background: var(--surface-color);
+    border: 2px solid var(--debt-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.debt-calculator-title {
+    color: var(--debt-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-base);
+}
+
+/* Debt responsive adjustments */
+@media (max-width: 768px) {
+    .tab-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-base);
+    }
+    
+    .tab-icon {
+        margin: 0 auto;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .btn-sm .btn-text {
+        display: inline;
+    }
+    
+    .debt-calculator {
+        margin: var(--spacing-base) 0;
+        padding: var(--spacing-base);
+    }
+}
+
+/* Debt print styles */
+@media print {
+    .tab-header {
+        background: none !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+    
+    .action-buttons {
+        display: none !important;
+    }
+    
+    .stat-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+    
+    .debt-calculator {
+        border: 1px solid #ccc !important;
+    }
+}

@@ -1,6 +1,12 @@
 /* Bill Tab Specific Styles */
 /* Note: Global styles are loaded by the main dashboard */
 
+/* Ensure bill content uses full width */
+#bill-content {
+    width: 100%;
+    max-width: none;
+}
+
 /* Bill tab uses global theme utilities */
 .tab-content#bill-content {
     /* Apply bill theme to this tab */
@@ -837,5 +843,342 @@
     
     .btn-compact i {
         font-size: 1.2rem;
+    }
+}
+
+/* Search and Filter Controls */
+.table-controls {
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.search-filters-container {
+    width: 100%;
+}
+
+/* Search and Filter Styles */
+.search-filter-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 40px 12px 45px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    font-size: 1rem;
+    background: var(--bg-white);
+    transition: all var(--transition-base);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--module-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.clear-search:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.filter-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-white);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    min-width: 120px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--module-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.filter-select:hover {
+    border-color: var(--module-primary);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-outline:hover {
+    background: var(--module-primary);
+    border-color: var(--module-primary);
+    color: white;
+}
+
+.view-and-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.results-count {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 8px 12px;
+    background: var(--bg-subtle);
+    border-radius: var(--border-radius);
+}
+
+.view-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-subtle);
+    padding: 4px;
+    border-radius: var(--border-radius);
+}
+
+.view-btn {
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.view-btn.active {
+    background: var(--module-primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.view-btn:hover:not(.active) {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.table-view {
+    display: none;
+}
+
+.table-view.active {
+    display: block;
+}
+
+/* Table Container and Bill Table Styling */
+.section.table-section {
+    width: 100%;
+    max-width: none; /* Remove any width restrictions */
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 800px; /* Ensure minimum width for proper display */
+}
+
+.bill-table th {
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--color-border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.bill-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border-light);
+    vertical-align: middle;
+}
+
+.bill-table tr:hover {
+    background: var(--bg-hover);
+}
+
+.bill-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive table handling */
+@media (max-width: 1200px) {
+    .bill-table {
+        min-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        margin: 0 -16px; /* Extend to screen edges on mobile */
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .bill-table {
+        min-width: 600px;
+        font-size: 0.8rem;
+    }
+    
+    .bill-table th,
+    .bill-table td {
+        padding: 8px 12px;
+    }
+}
+
+.cards-view {
+    display: none;
+}
+
+.cards-view.active {
+    display: block;
+}
+
+.no-results {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.no-results-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    color: var(--text-muted);
+}
+
+.no-results-content i {
+    font-size: 3rem;
+    opacity: 0.5;
+}
+
+.no-results-content h4 {
+    margin: 0;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.no-results-content p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.no-results-card {
+    grid-column: 1 / -1;
+    padding: var(--spacing-xl);
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    border: 2px dashed var(--border-color);
+}
+
+/* Responsive design for search and filters */
+@media (max-width: 768px) {
+    .search-filter-controls {
+        gap: var(--spacing-sm);
+    }
+    
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-select {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .view-and-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .search-box {
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-input {
+        padding: 10px 35px 10px 40px;
+        font-size: 0.9rem;
+    }
+    
+    .filter-controls {
+        gap: var(--spacing-xs);
+    }
+    
+    .filter-select {
+        padding: 6px 10px;
+        font-size: 0.85rem;
     }
 }

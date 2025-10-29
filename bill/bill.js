@@ -20,16 +20,12 @@ window.BillModule = {
     init: async function() {
         console.log('🚀 Initializing Bill Module...');
         
-        // Check if already initialized
-        if (this.initialized) {
-            console.log('ℹ️ Bill module already initialized, refreshing content...');
-            if (this.config) {
-                renderBillContent(); // Just re-render with existing config
-                return;
-            }
-        }
-        
+        // Always force fresh initialization to avoid cached data
         try {
+            // Clear any existing config to force fresh load
+            this.config = null;
+            this.initialized = false;
+            
             await initializeBillModule();
             console.log('✅ Bill module initialized successfully');
             
@@ -189,20 +185,251 @@ async function initializeBillModule() {
     window.BillModule.initialized = true;
 }
 
-/**
- * Load bill configuration from JSON
- */
 async function loadBillConfig() {
+    // Check if we have cached data from recent load
+    const cachedConfig = localStorage.getItem('billConfig');
+    const cacheTimestamp = localStorage.getItem('billConfigTimestamp');
+    const currentTime = Date.now();
+    
+    // Use cache if it's less than 30 seconds old (to handle tab switching)
+    if (cachedConfig && cacheTimestamp && (currentTime - parseInt(cacheTimestamp)) < 30000) {
+        console.log('📦 Using cached bill config for quick loading');
+        const config = JSON.parse(cachedConfig);
+        window.BillModule.config = config;
+        return config;
+    }
+    
     try {
-        const response = await fetch('../bill/bill.json', {
-            cache: 'no-cache' // Always get fresh data
+        // Try to load from CSV first
+        if (window.BillCSVLoader && typeof window.BillCSVLoader.loadBillDataFromCSV === 'function') {
+            console.log('📊 Loading bill data from CSV...');
+            const config = await window.BillCSVLoader.loadBillDataFromCSV();
+            
+            // Calculate dynamic overview from bill objects
+            updateOverviewFromBillData(config);
+            updateChartsFromBillData(config);
+            
+            // Cache the configuration for quick tab switching
+            localStorage.setItem('billConfig', JSON.stringify(config));
+            localStorage.setItem('billConfigTimestamp', Date.now().toString());
+            
+            window.BillModule.config = config;
+            console.log('✅ Bill config loaded from CSV:', config);
+            return config;
+        } else {
+            console.warn('⚠️ CSV Loader not available, loading CSV manually...');
+            
+            // Manually load CSV if loader not available
+            try {
+                const csvResponse = await fetch(`../assets/csv/bill_categories.csv?t=${Date.now()}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
+                if (csvResponse.ok) {
+                    const csvText = await csvResponse.text();
+                    console.log('📊 Manually parsing CSV data...');
+                    
+                    // Simple CSV to bill data conversion
+                    const lines = csvText.trim().split('\n');
+                    const headers = lines[0].split(',');
+                    const billRows = lines.slice(1).map(line => {
+                        const values = line.split(',');
+                        const row = {};
+                        headers.forEach((header, index) => {
+                            row[header.trim()] = values[index]?.trim() || '';
+                        });
+                        return row;
+                    }).filter(row => row.ID && row.ID.startsWith('bill-'));
+                    
+                    // Convert to bill structure
+                    const bills = billRows.map(row => {
+                        const monthlyAmount = parseFloat(row['Monthly Amount']) || 0;
+                        
+                        // Map CSV Item to chart-friendly subcategory
+                        const itemToSubcategory = {
+                            'Mortgage/Rent': 'mortgage',
+                            'Internet': 'internet',
+                            'Water': 'water',
+                            'Gas': 'gas',
+                            'Electricity': 'electricity',
+                            'Property Taxes': 'other',
+                            'Insurance': 'other',
+                            'HOA/Fees': 'other',
+                            'Trash': 'other'
+                        };
+                        const subcategory = itemToSubcategory[row.Item] || 'other';
+                        
+                        // Generate historical data for charts (last 6 months)
+                        const historicalData = {};
+                        const months = ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10"];
+                        months.forEach(month => {
+                            // Add some variation to historical data (±10% of monthly amount)
+                            const variation = (Math.random() - 0.5) * 0.2; // -10% to +10%
+                            const amount = monthlyAmount * (1 + variation);
+                            historicalData[month] = {
+                                amount: Math.round(amount * 100) / 100, // Round to 2 decimal places
+                                status: Math.random() > 0.2 ? 'paid' : 'pending' // 80% paid, 20% pending
+                            };
+                        });
+                        
+                        return {
+                            id: row.ID,
+                            metadata: {
+                                category: row.Category.toLowerCase(),
+                                subcategory: subcategory,
+                                priority: row.Priority,
+                                monthlyAmount: monthlyAmount,
+                                paymentMethod: row['Payment Method'],
+                                autoPayEnabled: row['Auto Pay Enabled'].toLowerCase() === 'true',
+                                provider: row.Provider,
+                                accountNumber: row['Account Number'],
+                                historicalData: historicalData
+                            },
+                            cells: [
+                                { type: "serial", value: row.Serial },
+                                { type: "text", value: row['Bill Name'], icon: row.Icon || "fas fa-file-invoice" },
+                                { type: "currency", value: parseFloat(row['Monthly Amount']) || 0, currency: "USD" },
+                                { type: "date", value: row['Due Date'] },
+                                { type: "status", value: row.Status, label: row.Status.charAt(0).toUpperCase() + row.Status.slice(1), color: getStatusColor(row.Status) },
+                                { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "fas fa-credit-card", target: "_blank" },
+                                { type: "actions", buttons: [{ text: "Edit", icon: "fas fa-edit", action: "edit", type: "outline" }] }
+                            ]
+                        };
+                    });
+                    
+                    const config = {
+                        meta: {
+                            title: "Bills - Kasa Kolawole",
+                            description: "Comprehensive bill management and tracking system",
+                            dataSource: "CSV manually loaded"
+                        },
+                        content: {
+                            title: "Bill Management",
+                            subtitle: "Track and manage your bills efficiently",
+                            sections: [
+                                {
+                                    id: "overview",
+                                    title: "Overview",
+                                    type: "stats",
+                                    data: generateOverviewStats(bills)
+                                },
+                                {
+                                    id: "recent-bills",
+                                    title: "Recent Bills",
+                                    type: "table",
+                                    data: {
+                                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+                                        rows: bills
+                                    }
+                                },
+                                {
+                                    id: "charts",
+                                    title: "Bill Analytics",
+                                    type: "charts",
+                                    data: {}
+                                }
+                            ]
+                        }
+                    };
+                    
+                    // Add charts configuration
+                    config.charts = {
+                        pieChart: {
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    data: [],
+                                    backgroundColor: []
+                                }]
+                            }
+                        },
+                        barChart: {
+                            data: {
+                                labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+                                datasets: [
+                                    {
+                                        label: "Mortgage",
+                                        data: [],
+                                        backgroundColor: "#3b82f6"
+                                    },
+                                    {
+                                        label: "Internet",
+                                        data: [],
+                                        backgroundColor: "#10b981"
+                                    },
+                                    {
+                                        label: "Water",
+                                        data: [],
+                                        backgroundColor: "#f59e0b"
+                                    },
+                                    {
+                                        label: "Gas",
+                                        data: [],
+                                        backgroundColor: "#ef4444"
+                                    }
+                                ]
+                            }
+                        }
+                    };
+                    
+                    updateOverviewFromBillData(config);
+                    updateChartsFromBillData(config);
+                    
+                    // Cache the configuration for quick tab switching
+                    localStorage.setItem('billConfig', JSON.stringify(config));
+                    localStorage.setItem('billConfigTimestamp', Date.now().toString());
+                    
+                    window.BillModule.config = config;
+                    console.log('✅ Bill config loaded manually from CSV:', config);
+                    return config;
+                }
+            } catch (csvError) {
+                console.error('❌ Manual CSV loading failed:', csvError);
+            }
+        }
+        
+        // Fallback to JSON if CSV loading fails
+        console.log('📄 Falling back to JSON data...');
+        const timestamp = new Date().getTime();
+        const response = await fetch(`../bill/bill.json?t=${timestamp}`, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const config = await response.json();
         
+        // Add fallback message if no bill data
+        if (!config.content.sections.find(s => s.id === 'recent-bills')?.data?.rows?.length) {
+            config.content.sections.find(s => s.id === 'recent-bills').data.rows = [{
+                id: "no-data",
+                cells: [
+                    { type: "text", value: "No bill data available - CSV file may not be accessible" },
+                    { type: "text", value: "Please check bill_categories.csv file" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" },
+                    { type: "text", value: "" }
+                ]
+            }];
+        }
+        
         // Calculate dynamic overview from bill objects
         updateOverviewFromBillData(config);
+        
+        // Cache the configuration for quick tab switching (even if it's empty)
+        localStorage.setItem('billConfig', JSON.stringify(config));
+        localStorage.setItem('billConfigTimestamp', Date.now().toString());
         
         window.BillModule.config = config;
         
@@ -212,7 +439,7 @@ async function loadBillConfig() {
             window.BillModule.configLastModified = lastModified;
         }
         
-        console.log('✅ Bill config loaded:', config);
+        console.log('✅ Bill config loaded from JSON:', config);
         return config;
         
     } catch (error) {
@@ -357,24 +584,42 @@ function updateChartsFromBillData(config) {
     
     const bills = billsSection.data.rows;
     
-    // Calculate pie chart data (bills by subcategory)
+    // Get unique categories from the bill data
+    const allCategories = [...new Set(
+        bills
+            .map(bill => bill.metadata?.category?.toLowerCase())
+            .filter(category => category && category.trim())
+    )].sort();
+    
+    console.log('📊 Dynamic categories for charts:', allCategories);
+    
+    // Calculate pie chart data (bills by category)
     const categoryData = {};
+    
+    // Generate colors for categories dynamically
     const categoryColors = {
-        'electricity': '#3b82f6',
-        'internet': '#10b981', 
-        'water': '#f59e0b',
-        'gas': '#ef4444',
-        'other': '#8b5cf6'
+        'housing': '#3b82f6',
+        'utilities': '#6366f1',
+        'communication': '#10b981', 
+        'transportation': '#f59e0b',
+        'healthcare': '#ef4444',
+        'subscriptions': '#8b5cf6',
+        'debt': '#ec4899',
+        'food': '#f97316',
+        'financial': '#06b6d4',
+        'personal': '#84cc16'
     };
     
     bills.forEach(bill => {
-        const subcategory = bill.metadata?.subcategory || 'other';
+        const category = bill.metadata?.category?.toLowerCase() || 'other';
         const amount = bill.metadata?.monthlyAmount || 0;
         
-        if (!categoryData[subcategory]) {
-            categoryData[subcategory] = 0;
+        console.log('Chart data - Bill:', bill.id, 'Category:', category, 'Amount:', amount);
+        
+        if (!categoryData[category]) {
+            categoryData[category] = 0;
         }
-        categoryData[subcategory] += amount;
+        categoryData[category] += amount;
     });
     
     // Update pie chart
@@ -388,6 +633,8 @@ function updateChartsFromBillData(config) {
     config.charts.pieChart.data.datasets[0].data = pieData;
     config.charts.pieChart.data.datasets[0].backgroundColor = pieColors;
     
+    console.log('📊 Pie chart data updated:', { pieLabels, pieData, pieColors });
+    
     // Calculate bar chart data from historical data
     const months = ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10"];
     
@@ -399,59 +646,45 @@ function updateChartsFromBillData(config) {
         }, 0);
     });
     
-    // Calculate individual bill category totals for all 4 categories
-    const electricityTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'electricity')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
+    // Calculate individual category totals dynamically for top categories
+    const topCategories = allCategories.slice(0, 4); // Get top 4 categories
+    const categoryTotalsData = {};
+    
+    topCategories.forEach(category => {
+        categoryTotalsData[category] = months.map(month => {
+            return bills
+                .filter(bill => bill.metadata?.category?.toLowerCase() === category)
+                .reduce((sum, bill) => {
+                    const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+                    return sum + historicalAmount;
+                }, 0);
+        });
     });
     
-    const internetTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'internet')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
+    // Update bar chart datasets dynamically
+    const barChartDatasets = config.charts.barChart.data.datasets;
+    
+    // Update existing datasets or create new ones
+    topCategories.forEach((category, index) => {
+        if (barChartDatasets[index]) {
+            barChartDatasets[index].label = category.charAt(0).toUpperCase() + category.slice(1);
+            barChartDatasets[index].data = categoryTotalsData[category];
+            barChartDatasets[index].backgroundColor = categoryColors[category] || '#8b5cf6';
+            barChartDatasets[index].borderColor = categoryColors[category] || '#8b5cf6';
+        }
     });
     
-    const waterTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'water')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
-    });
-    
-    const gasTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'gas')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
-    });
-    
-    // Update bar chart with all 4 individual bill categories
-    config.charts.barChart.data.datasets[0].data = electricityTotals;
-    config.charts.barChart.data.datasets[1].data = internetTotals;
-    config.charts.barChart.data.datasets[2].data = waterTotals;
-    config.charts.barChart.data.datasets[3].data = gasTotals;
+    console.log('📊 Bar chart data updated with dynamic categories:', categoryTotalsData);
     
     console.log('📈 Charts updated from bill data:', {
         pieChart: {
             labels: pieLabels,
-            data: pieData
+            data: pieData,
+            categories: allCategories
         },
         barChart: {
-            electricityTotals,
-            internetTotals,
-            waterTotals,
-            gasTotals
+            topCategories,
+            categoryTotalsData
         }
     });
 }
@@ -487,6 +720,32 @@ function renderBillContent() {
         sectionsContainer.innerHTML = renderBillSections(content.sections);
     }
     
+    // Initialize search and filter functionality with improved retry
+    let initRetryCount = 0;
+    const maxInitRetries = 8;
+    
+    function tryInitializeSearch() {
+        console.log(`🔄 Search initialization attempt ${initRetryCount + 1}/${maxInitRetries}`);
+        
+        // Check if the search container and its content exist
+        const searchContainer = document.querySelector('.search-filter-controls');
+        const searchInput = document.getElementById('billSearch');
+        
+        if (searchContainer && searchInput) {
+            console.log('✅ Search elements found, initializing...');
+            initializeSearchAndFilters();
+        } else if (initRetryCount < maxInitRetries) {
+            console.log(`❌ Search elements not ready, retrying in ${500 * (initRetryCount + 1)}ms...`);
+            initRetryCount++;
+            setTimeout(tryInitializeSearch, 500 * initRetryCount); // Exponential backoff
+        } else {
+            console.error('❌ Failed to initialize search after maximum retries');
+        }
+    }
+    
+    // Start initialization after a short delay
+    setTimeout(tryInitializeSearch, 300);
+    
     // Show and render charts
     renderBillCharts();
 }
@@ -507,6 +766,167 @@ function renderBillSections(sections) {
                 return `<div class="section-unknown">Unknown section type: ${section.type}</div>`;
         }
     }).join('');
+}
+
+/**
+ * Render statistics section
+ */
+function renderStatsSection(section) {
+    const stats = section.data;
+    return `
+        <div class="section stats-section" id="${section.id}">
+            <h3 class="section-title">${section.title}</h3>
+            <div class="stats-grid">
+                ${stats.map(stat => `
+                    <div class="stat-card stat-${stat.color}">
+                        <div class="stat-icon">
+                            <i class="${stat.icon}"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">${stat.label}</div>
+                            <div class="stat-value">${stat.value}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render table section with proper cell validation
+ */
+function renderTableSection(section) {
+    const { headers, rows } = section.data;
+    const validatedRows = validateAndFixCellStructure(rows);
+    
+    // Extract unique categories from the bill rows for dynamic filter options
+    const categories = [...new Set(
+        validatedRows
+            .map(row => row.metadata?.category)
+            .filter(category => category && category.trim())
+            .map(category => category.toLowerCase())
+    )].sort();
+    
+    console.log('Extracted categories for filter:', categories); // Debug log
+    
+    // Fallback categories if none found in data
+    if (categories.length === 0) {
+        categories.push('housing', 'utilities', 'communication', 'debt', 'financial');
+        console.log('Using fallback categories:', categories);
+    }
+    
+    // Generate category options
+    const categoryOptions = categories.map(category => 
+        `<option value="${category}">${category.charAt(0).toUpperCase() + category.slice(1)}</option>`
+    ).join('');
+    
+    // Always render the search and filter controls, even if no data
+    const searchAndFilterControls = `
+        <div class="table-controls">
+            <div class="search-filter-controls">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           id="billSearch" 
+                           placeholder="Search bills by name, provider..." 
+                           class="search-input">
+                    <button class="clear-search" id="clearSearch" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="filter-controls">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="upcoming">Upcoming</option>
+                    </select>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        ${categoryOptions}
+                    </select>
+                    <select id="amountFilter" class="filter-select">
+                        <option value="">All Amounts</option>
+                        <option value="0-50">$0 - $50</option>
+                        <option value="50-100">$50 - $100</option>
+                        <option value="100-500">$100 - $500</option>
+                        <option value="500-1000">$500 - $1000</option>
+                        <option value="1000+">$1000+</option>
+                    </select>
+                    <button class="btn btn-outline btn-sm" id="clearFilters">
+                        <i class="fas fa-filter-circle-xmark"></i> Clear Filters
+                    </button>
+                </div>
+            </div>
+            <div class="view-and-actions">
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="table">
+                        <i class="fas fa-table"></i> Table
+                    </button>
+                    <button class="view-btn" data-view="cards">
+                        <i class="fas fa-th-large"></i> Cards
+                    </button>
+                </div>
+                <div class="table-actions">
+                    <span class="results-count" id="resultsCount"></span>
+                    <button class="btn btn-primary btn-sm" data-action="refresh">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Check if we have valid bill data
+    if (!validatedRows.length || validatedRows[0].id === 'no-data') {
+        return `
+            <div class="section table-section" id="${section.id}">
+                <h3 class="section-title">${section.title}</h3>
+                <div class="table-container">
+                    ${searchAndFilterControls}
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <h4>No Bill Data Available</h4>
+                        <p>Please check if bill_categories.csv file is accessible</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="section table-section" id="${section.id}">
+            <h3 class="section-title">${section.title}</h3>
+            <div class="table-container">
+                ${searchAndFilterControls}
+                
+                <div class="table-view active">
+                    <table class="bill-table">
+                        <thead>
+                            <tr>
+                                ${headers.map(header => `<th>${header}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${validatedRows.map(row => `
+                                <tr data-id="${row.id}">
+                                    ${row.cells.map(cell => renderTableCell(cell)).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="cards-view">
+                    <div class="bill-cards-grid">
+                        ${validatedRows.map(row => renderBillCard(row)).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -536,50 +956,14 @@ function renderStatsSection(section) {
 }
 
 /**
- * Render table section
- */
-function renderTableSection(section) {
-    const headersHTML = section.data.headers.map(header => 
-        `<th>${header}</th>`
-    ).join('');
-    
-    const rowsHTML = section.data.rows.map(row => 
-        `<tr data-id="${row.id}">
-            ${row.cells.map(cell => renderTableCell(cell)).join('')}
-        </tr>`
-    ).join('');
-    
-    // Generate card layout for mobile
-    const cardsHTML = section.data.rows.map(row => renderBillCard(row)).join('');
-    
-    return `
-        <section class="section table-section" id="${section.id}">
-            <h2 class="section-title">${section.title}</h2>
-            
-            <!-- Desktop Table View -->
-            <div class="table-container desktop-only">
-                <table class="data-table">
-                    <thead>
-                        <tr>${headersHTML}</tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHTML}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Mobile Cards View -->
-            <div class="cards-container mobile-only">
-                ${cardsHTML}
-            </div>
-        </section>
-    `;
-}
-
-/**
  * Render table cell based on type
  */
 function renderTableCell(cell) {
+    // Debug logging for link cells
+    if (cell.type === 'link') {
+        console.log('Rendering link cell:', cell);
+    }
+    
     switch (cell.type) {
         case 'serial':
             return `<td class="cell-serial">
@@ -612,7 +996,7 @@ function renderTableCell(cell) {
             
         case 'link':
             const urgentClass = cell.urgent ? ' urgent-payment' : '';
-            return `<td class="cell-link">
+            const linkHtml = `<td class="cell-link">
                 <a href="${cell.value}" 
                    target="${cell.target || '_self'}" 
                    class="payment-link${urgentClass}"
@@ -621,6 +1005,8 @@ function renderTableCell(cell) {
                     <span>${cell.text}</span>
                 </a>
             </td>`;
+            console.log('Generated link HTML:', linkHtml);
+            return linkHtml;
         
         case 'actions':
             const buttonsHTML = cell.buttons.map(btn => 
@@ -638,7 +1024,8 @@ function renderTableCell(cell) {
             </td>`;
         
         default:
-            return `<td>${cell.value}</td>`;
+            console.warn('Unknown cell type:', cell.type, cell);
+            return `<td class="cell-unknown">${cell.value || ''}</td>`;
     }
 }
 
@@ -656,6 +1043,11 @@ function renderBillCard(row) {
     const statusCell = cells.find(cell => cell.type === 'status');
     const linkCell = cells.find(cell => cell.type === 'link');
     const actionsCell = cells.find(cell => cell.type === 'actions');
+    
+    // Debug logging for link cell
+    if (linkCell) {
+        console.log('Rendering card link cell:', linkCell);
+    }
     
     const date = new Date(dateCell.value);
     const urgentClass = linkCell?.urgent ? ' urgent-card' : '';
@@ -1086,6 +1478,373 @@ function renderBarChart(chartData) {
     console.log('📊 Bar chart created and stored');
 }
 
+// Helper function to validate and fix cell structure
+function validateAndFixCellStructure(rows) {
+    if (!Array.isArray(rows)) return [];
+    
+    return rows.map(row => {
+        if (!row.cells || !Array.isArray(row.cells)) {
+            console.warn('Row missing cells array:', row);
+            return row;
+        }
+        
+        // Validate each cell and fix if needed
+        row.cells = row.cells.map((cell, index) => {
+            if (!cell || typeof cell !== 'object') {
+                console.warn('Invalid cell structure:', cell, 'at index', index);
+                return { type: 'text', value: cell || '' };
+            }
+            
+            // Ensure link cells have proper structure
+            if (cell.type === 'link') {
+                return {
+                    type: 'link',
+                    value: cell.value || '#',
+                    text: cell.text || 'Pay Now',
+                    icon: cell.icon || 'fas fa-credit-card',
+                    target: cell.target || '_blank',
+                    urgent: cell.urgent || false
+                };
+            }
+            
+            // Ensure other cell types have proper structure
+            if (!cell.type) {
+                cell.type = 'text';
+            }
+            
+            return cell;
+        });
+        
+        return row;
+    });
+}
+
+// Helper function to get status color
+function getStatusColor(status) {
+    const colors = {
+        'UNPAID': '#dc3545',
+        'PAID': '#28a745',
+        'OVERDUE': '#fd7e14',
+        'PENDING': '#ffc107'
+    };
+    return colors[status] || '#6c757d';
+}
+
+// Helper function to generate overview stats
+function generateOverviewStats(bills) {
+    if (!bills || bills.length === 0) {
+        return {
+            totalBills: 0,
+            totalAmount: 0,
+            paidAmount: 0,
+            unpaidAmount: 0,
+            overdueAmount: 0
+        };
+    }
+
+    let totalAmount = 0;
+    let paidAmount = 0;
+    let unpaidAmount = 0;
+    let overdueAmount = 0;
+
+    bills.forEach(bill => {
+        const amount = parseFloat(bill.amount) || 0;
+        totalAmount += amount;
+
+        switch(bill.status) {
+            case 'PAID':
+                paidAmount += amount;
+                break;
+            case 'UNPAID':
+                unpaidAmount += amount;
+                break;
+            case 'OVERDUE':
+                overdueAmount += amount;
+                break;
+        }
+    });
+
+    return {
+        totalBills: bills.length,
+        totalAmount: totalAmount,
+        paidAmount: paidAmount,
+        unpaidAmount: unpaidAmount,
+        overdueAmount: overdueAmount
+    };
+}
+
+// Search and Filter functionality
+let originalBillData = null;
+let currentFilters = {
+    search: '',
+    status: '',
+    category: '',
+    amount: ''
+};
+
+/**
+ * Initialize search and filter functionality
+ */
+function initializeSearchAndFilters() {
+    console.log('🔍 Initializing search and filters...');
+    
+    // Get all required elements
+    const searchInput = document.getElementById('billSearch');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const amountFilter = document.getElementById('amountFilter');
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    const viewBtns = document.querySelectorAll('.view-btn');
+
+    // Debug: Check what elements exist
+    console.log('Search elements found:', {
+        searchInput: !!searchInput,
+        clearSearchBtn: !!clearSearchBtn,
+        statusFilter: !!statusFilter,
+        categoryFilter: !!categoryFilter,
+        amountFilter: !!amountFilter,
+        clearFiltersBtn: !!clearFiltersBtn,
+        viewBtns: viewBtns.length
+    });
+
+    // Check if critical elements exist
+    if (!searchInput) {
+        console.error('❌ Search input (billSearch) not found - DOM not ready');
+        return false;
+    }
+    
+    if (!statusFilter || !categoryFilter) {
+        console.error('❌ Filter elements not found - DOM not ready');
+        return false;
+    }
+
+    console.log('✅ All search elements found, setting up event listeners...');
+
+    // Store original data
+    const config = window.BillModule.config;
+    const billsSection = config.content.sections.find(section => section.id === 'recent-bills');
+    if (billsSection && !originalBillData) {
+        originalBillData = [...billsSection.data.rows];
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+        currentFilters.search = e.target.value.toLowerCase().trim();
+        clearSearchBtn.style.display = currentFilters.search ? 'block' : 'none';
+        applyFilters();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentFilters.search = '';
+        clearSearchBtn.style.display = 'none';
+        applyFilters();
+    });
+
+    // Filter functionality
+    statusFilter.addEventListener('change', (e) => {
+        currentFilters.status = e.target.value;
+        applyFilters();
+    });
+
+    categoryFilter.addEventListener('change', (e) => {
+        currentFilters.category = e.target.value;
+        applyFilters();
+    });
+
+    amountFilter.addEventListener('change', (e) => {
+        currentFilters.amount = e.target.value;
+        applyFilters();
+    });
+
+    clearFiltersBtn.addEventListener('click', () => {
+        currentFilters = { search: '', status: '', category: '', amount: '' };
+        searchInput.value = '';
+        statusFilter.value = '';
+        categoryFilter.value = '';
+        amountFilter.value = '';
+        clearSearchBtn.style.display = 'none';
+        applyFilters();
+    });
+
+    // Initial count update
+    updateResultsCount(originalBillData ? originalBillData.length : 0);
+    
+    // Add view toggle functionality
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const tableView = document.querySelector('.table-view');
+    const cardsView = document.querySelector('.cards-view');
+    
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const view = btn.dataset.view;
+            
+            // Update active button
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show/hide views
+            if (view === 'table') {
+                tableView.classList.add('active');
+                cardsView.classList.remove('active');
+            } else {
+                tableView.classList.remove('active');
+                cardsView.classList.add('active');
+            }
+        });
+    });
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + F to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        
+        // Escape to clear search
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            currentFilters.search = '';
+            clearSearchBtn.style.display = 'none';
+            searchInput.blur();
+            applyFilters();
+        }
+    });
+    
+    console.log('✅ Search and filter functionality initialized successfully');
+    return true; // Success
+}
+
+/**
+ * Apply current filters to bill data
+ */
+function applyFilters() {
+    if (!originalBillData) return;
+
+    let filteredBills = [...originalBillData];
+
+    // Apply search filter
+    if (currentFilters.search) {
+        filteredBills = filteredBills.filter(bill => {
+            const billName = bill.cells.find(cell => cell.type === 'text')?.value?.toLowerCase() || '';
+            const provider = bill.metadata?.provider?.toLowerCase() || '';
+            const accountNumber = bill.metadata?.accountNumber?.toLowerCase() || '';
+            
+            return billName.includes(currentFilters.search) ||
+                   provider.includes(currentFilters.search) ||
+                   accountNumber.includes(currentFilters.search);
+        });
+    }
+
+    // Apply status filter
+    if (currentFilters.status) {
+        filteredBills = filteredBills.filter(bill => {
+            const status = bill.cells.find(cell => cell.type === 'status')?.value?.toLowerCase();
+            return status === currentFilters.status;
+        });
+    }
+
+    // Apply category filter
+    if (currentFilters.category) {
+        filteredBills = filteredBills.filter(bill => {
+            const category = bill.metadata?.category?.toLowerCase();
+            return category === currentFilters.category;
+        });
+    }
+
+    // Apply amount filter
+    if (currentFilters.amount) {
+        filteredBills = filteredBills.filter(bill => {
+            const amount = bill.cells.find(cell => cell.type === 'currency')?.value || 0;
+            
+            switch (currentFilters.amount) {
+                case '0-50':
+                    return amount >= 0 && amount <= 50;
+                case '50-100':
+                    return amount > 50 && amount <= 100;
+                case '100-500':
+                    return amount > 100 && amount <= 500;
+                case '500-1000':
+                    return amount > 500 && amount <= 1000;
+                case '1000+':
+                    return amount > 1000;
+                default:
+                    return true;
+            }
+        });
+    }
+
+    // Update the display
+    updateBillDisplay(filteredBills);
+    updateResultsCount(filteredBills.length);
+}
+
+/**
+ * Update bill display with filtered data
+ */
+function updateBillDisplay(filteredBills) {
+    const tableBody = document.querySelector('.bill-table tbody');
+    const cardsGrid = document.querySelector('.bill-cards-grid');
+
+    if (tableBody) {
+        if (filteredBills.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="no-results">
+                        <div class="no-results-content">
+                            <i class="fas fa-search"></i>
+                            <h4>No bills found</h4>
+                            <p>Try adjusting your search or filters</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tableBody.innerHTML = filteredBills.map(row => `
+                <tr data-id="${row.id}">
+                    ${row.cells.map(cell => renderTableCell(cell)).join('')}
+                </tr>
+            `).join('');
+        }
+    }
+
+    if (cardsGrid) {
+        if (filteredBills.length === 0) {
+            cardsGrid.innerHTML = `
+                <div class="no-results-card">
+                    <div class="no-results-content">
+                        <i class="fas fa-search"></i>
+                        <h4>No bills found</h4>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            cardsGrid.innerHTML = filteredBills.map(row => renderBillCard(row)).join('');
+        }
+    }
+}
+
+/**
+ * Update results count display
+ */
+function updateResultsCount(count) {
+    const resultsCount = document.getElementById('resultsCount');
+    if (resultsCount) {
+        const total = originalBillData ? originalBillData.length : 0;
+        if (count === total) {
+            resultsCount.textContent = `${count} bills`;
+        } else {
+            resultsCount.textContent = `${count} of ${total} bills`;
+        }
+        resultsCount.style.display = count > 0 ? 'block' : 'none';
+    }
+}
+
 // Export for global access
 window.BillModule.handleAction = handleBillAction;
 window.BillModule.showNotification = showBillNotification;
+window.BillModule.initializeSearchAndFilters = initializeSearchAndFilters;
+window.BillModule.applyFilters = applyFilters;

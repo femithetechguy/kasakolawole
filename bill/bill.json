@@ -1,11 +1,12 @@
 {
   "meta": {
     "title": "Bills - Kasa Kolawole",
-    "description": "Comprehensive bill management and tracking system",
+    "description": "Comprehensive bill management and tracking system - Template structure (bill data loaded from CSV)",
     "keywords": ["bills", "payments", "financial management", "tracking"],
     "author": "Kasa Kolawole",
     "version": "1.0.0",
-    "lastUpdated": "2025-10-29"
+    "lastUpdated": "2025-10-29",
+    "dataSource": "CSV-first architecture - bill_categories.csv is primary data source"
   },
   "content": {
     "title": "Bill Management",
@@ -19,25 +20,25 @@
         "data": [
           {
             "label": "Total Bills",
-            "value": "12",
+            "value": "0",
             "icon": "fas fa-file-invoice",
             "color": "primary"
           },
           {
             "label": "Pending",
-            "value": "3",
+            "value": "0",
             "icon": "fas fa-clock",
             "color": "warning"
           },
           {
             "label": "Overdue",
-            "value": "1",
+            "value": "0",
             "icon": "fas fa-exclamation-triangle",
             "color": "danger"
           },
           {
             "label": "Paid This Month",
-            "value": "8",
+            "value": "0",
             "icon": "fas fa-check-circle",
             "color": "success"
           }
@@ -49,301 +50,7 @@
         "type": "table",
         "data": {
           "headers": ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
-          "rows": [
-            {
-              "id": "bill-1",
-              "metadata": {
-                "category": "utilities",
-                "subcategory": "electricity",
-                "priority": "high",
-                "monthlyAmount": 125.50,
-                "paymentMethod": "credit_card",
-                "autoPayEnabled": false,
-                "lastPaidDate": "2025-09-15",
-                "createdDate": "2025-01-15",
-                "provider": "Metropolitan Electric Company",
-                "accountNumber": "ME-12345",
-                "billingCycle": "monthly",
-                "averageAmount": 120.75,
-                "historicalData": {
-                  "2025-05": { "amount": 118.25, "dueDate": "2025-05-15", "paidDate": "2025-05-12", "status": "paid" },
-                  "2025-06": { "amount": 132.80, "dueDate": "2025-06-15", "paidDate": "2025-06-14", "status": "paid" },
-                  "2025-07": { "amount": 115.60, "dueDate": "2025-07-15", "paidDate": "2025-07-16", "status": "paid" },
-                  "2025-08": { "amount": 128.90, "dueDate": "2025-08-15", "paidDate": "2025-08-13", "status": "paid" },
-                  "2025-09": { "amount": 122.45, "dueDate": "2025-09-15", "paidDate": "2025-09-15", "status": "paid" },
-                  "2025-10": { "amount": 125.50, "dueDate": "2025-10-15", "paidDate": null, "status": "pending" }
-                },
-                "notifications": {
-                  "dueDateReminder": 7,
-                  "overdueAlert": 1
-                }
-              },
-              "cells": [
-                {
-                  "type": "serial",
-                  "value": "001"
-                },
-                {
-                  "type": "text",
-                  "value": "Electricity Bill",
-                  "icon": "fas fa-bolt"
-                },
-                {
-                  "type": "currency",
-                  "value": 125.50,
-                  "currency": "USD"
-                },
-                {
-                  "type": "date",
-                  "value": "2025-11-15"
-                },
-                {
-                  "type": "status",
-                  "value": "pending",
-                  "label": "Pending",
-                  "color": "warning"
-                },
-                {
-                  "type": "link",
-                  "value": "https://pay.electricity.com/bill/12345",
-                  "text": "Pay Now",
-                  "icon": "fas fa-credit-card",
-                  "target": "_blank"
-                },
-                {
-                  "type": "actions",
-                  "buttons": [
-                    {
-                      "text": "Edit",
-                      "icon": "fas fa-edit",
-                      "action": "edit",
-                      "type": "outline"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "id": "bill-2",
-              "metadata": {
-                "category": "utilities",
-                "subcategory": "internet",
-                "priority": "high",
-                "monthlyAmount": 79.99,
-                "paymentMethod": "bank_transfer",
-                "autoPayEnabled": true,
-                "lastPaidDate": "2025-09-10",
-                "createdDate": "2025-01-10",
-                "provider": "TechConnect Internet Services",
-                "accountNumber": "TC-98765",
-                "billingCycle": "monthly",
-                "averageAmount": 79.99,
-                "historicalData": {
-                  "2025-05": { "amount": 79.99, "dueDate": "2025-05-10", "paidDate": "2025-05-08", "status": "paid" },
-                  "2025-06": { "amount": 79.99, "dueDate": "2025-06-10", "paidDate": "2025-06-09", "status": "paid" },
-                  "2025-07": { "amount": 79.99, "dueDate": "2025-07-10", "paidDate": "2025-07-08", "status": "paid" },
-                  "2025-08": { "amount": 79.99, "dueDate": "2025-08-10", "paidDate": "2025-08-09", "status": "paid" },
-                  "2025-09": { "amount": 79.99, "dueDate": "2025-09-10", "paidDate": "2025-09-10", "status": "paid" },
-                  "2025-10": { "amount": 79.99, "dueDate": "2025-10-10", "paidDate": null, "status": "overdue" }
-                },
-                "notifications": {
-                  "dueDateReminder": 5,
-                  "overdueAlert": 0
-                }
-              },
-              "cells": [
-                {
-                  "type": "serial",
-                  "value": "002"
-                },
-                {
-                  "type": "text",
-                  "value": "Internet Service",
-                  "icon": "fas fa-wifi"
-                },
-                {
-                  "type": "currency",
-                  "value": 79.99,
-                  "currency": "USD"
-                },
-                {
-                  "type": "date",
-                  "value": "2025-11-10"
-                },
-                {
-                  "type": "status",
-                  "value": "overdue",
-                  "label": "Overdue",
-                  "color": "danger"
-                },
-                {
-                  "type": "link",
-                  "value": "https://pay.internetprovider.com/urgent/98765",
-                  "text": "Pay Now",
-                  "icon": "fas fa-credit-card",
-                  "target": "_blank",
-                  "urgent": true
-                },
-                {
-                  "type": "actions",
-                  "buttons": [
-                    {
-                      "text": "Edit",
-                      "icon": "fas fa-edit",
-                      "action": "edit",
-                      "type": "outline"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "id": "bill-3",
-              "metadata": {
-                "category": "utilities",
-                "subcategory": "water",
-                "priority": "medium",
-                "monthlyAmount": 45.30,
-                "paymentMethod": "debit_card",
-                "autoPayEnabled": true,
-                "lastPaidDate": "2025-09-20",
-                "createdDate": "2025-01-20",
-                "provider": "City Water Department",
-                "accountNumber": "CW-54321",
-                "billingCycle": "monthly",
-                "averageAmount": 42.50,
-                "historicalData": {
-                  "2025-05": { "amount": 41.20, "dueDate": "2025-05-20", "paidDate": "2025-05-19", "status": "paid" },
-                  "2025-06": { "amount": 44.85, "dueDate": "2025-06-20", "paidDate": "2025-06-18", "status": "paid" },
-                  "2025-07": { "amount": 39.75, "dueDate": "2025-07-20", "paidDate": "2025-07-19", "status": "paid" },
-                  "2025-08": { "amount": 47.60, "dueDate": "2025-08-20", "paidDate": "2025-08-20", "status": "paid" },
-                  "2025-09": { "amount": 43.10, "dueDate": "2025-09-20", "paidDate": "2025-09-20", "status": "paid" },
-                  "2025-10": { "amount": 45.30, "dueDate": "2025-10-20", "paidDate": null, "status": "upcoming" }
-                },
-                "notifications": {
-                  "dueDateReminder": 10,
-                  "overdueAlert": 3
-                }
-              },
-              "cells": [
-                {
-                  "type": "serial",
-                  "value": "003"
-                },
-                {
-                  "type": "text",
-                  "value": "Water Bill",
-                  "icon": "fas fa-tint"
-                },
-                {
-                  "type": "currency",
-                  "value": 45.30,
-                  "currency": "USD"
-                },
-                {
-                  "type": "date",
-                  "value": "2025-11-20"
-                },
-                {
-                  "type": "status",
-                  "value": "upcoming",
-                  "label": "Upcoming",
-                  "color": "info"
-                },
-                {
-                  "type": "link",
-                  "value": "https://pay.waterutility.com/account/54321",
-                  "text": "Pay Now",
-                  "icon": "fas fa-credit-card",
-                  "target": "_blank"
-                },
-                {
-                  "type": "actions",
-                  "buttons": [
-                    {
-                      "text": "Edit",
-                      "icon": "fas fa-edit",
-                      "action": "edit",
-                      "type": "outline"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "id": "bill-4",
-              "metadata": {
-                "category": "utilities",
-                "subcategory": "gas",
-                "priority": "low",
-                "monthlyAmount": 62.75,
-                "paymentMethod": "credit_card",
-                "autoPayEnabled": false,
-                "lastPaidDate": "2025-10-25",
-                "createdDate": "2025-01-25",
-                "provider": "National Gas Company",
-                "accountNumber": "NG-67890",
-                "billingCycle": "monthly",
-                "averageAmount": 58.90,
-                "historicalData": {
-                  "2025-05": { "amount": 55.80, "dueDate": "2025-05-25", "paidDate": "2025-05-24", "status": "paid" },
-                  "2025-06": { "amount": 68.45, "dueDate": "2025-06-25", "paidDate": "2025-06-26", "status": "paid" },
-                  "2025-07": { "amount": 52.30, "dueDate": "2025-07-25", "paidDate": "2025-07-23", "status": "paid" },
-                  "2025-08": { "amount": 71.90, "dueDate": "2025-08-25", "paidDate": "2025-08-25", "status": "paid" },
-                  "2025-09": { "amount": 59.20, "dueDate": "2025-09-25", "paidDate": "2025-09-24", "status": "paid" },
-                  "2025-10": { "amount": 62.75, "dueDate": "2025-10-25", "paidDate": "2025-10-25", "status": "paid" }
-                },
-                "notifications": {
-                  "dueDateReminder": 14,
-                  "overdueAlert": 5
-                }
-              },
-              "cells": [
-                {
-                  "type": "serial",
-                  "value": "004"
-                },
-                {
-                  "type": "text",
-                  "value": "Gas Bill",
-                  "icon": "fas fa-fire"
-                },
-                {
-                  "type": "currency",
-                  "value": 62.75,
-                  "currency": "USD"
-                },
-                {
-                  "type": "date",
-                  "value": "2025-11-25"
-                },
-                {
-                  "type": "status",
-                  "value": "paid",
-                  "label": "Paid",
-                  "color": "success"
-                },
-                {
-                  "type": "link",
-                  "value": "https://pay.gascompany.com/account/67890",
-                  "text": "Pay Now",
-                  "icon": "fas fa-credit-card",
-                  "target": "_blank"
-                },
-                {
-                  "type": "actions",
-                  "buttons": [
-                    {
-                      "text": "Edit",
-                      "icon": "fas fa-edit",
-                      "action": "edit",
-                      "type": "outline"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          "rows": []
         }
       },
       {
@@ -388,9 +95,9 @@
       "title": "Bills by Category",
       "description": "Distribution of bills by type",
       "data": {
-        "labels": ["Electricity", "Internet", "Water", "Gas", "Other"],
+        "labels": ["Mortgage", "Internet", "Water", "Gas", "Other"],
         "datasets": [{
-          "data": [125.50, 79.99, 45.30, 62.75, 0],
+          "data": [2450.00, 79.99, 45.30, 62.75, 0],
           "backgroundColor": [
             "#3b82f6",
             "#10b981", 
@@ -409,8 +116,8 @@
       "data": {
         "labels": ["May 2025", "Jun 2025", "Jul 2025", "Aug 2025", "Sep 2025", "Oct 2025"],
         "datasets": [{
-          "label": "Electricity",
-          "data": [118.25, 132.80, 115.60, 128.90, 122.45, 125.50],
+          "label": "Mortgage",
+          "data": [2450.00, 2450.00, 2450.00, 2450.00, 2450.00, 2450.00],
           "backgroundColor": "rgba(59, 130, 246, 0.8)",
           "borderColor": "#3b82f6",
           "borderWidth": 2,

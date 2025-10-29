@@ -370,6 +370,29 @@ async function loadModuleAssets(moduleName) {
         // Load JS
         const jsId = `${moduleName}-module-js`;
         if (!document.getElementById(jsId)) {
+            // For bill module, load CSV loader first
+            if (moduleName === 'bill') {
+                const csvLoaderId = 'bill-csv-loader-js';
+                if (!document.getElementById(csvLoaderId)) {
+                    const csvScript = document.createElement('script');
+                    csvScript.id = csvLoaderId;
+                    csvScript.src = `../${moduleName}/csv-loader.js`;
+                    csvScript.defer = true;
+                    
+                    await new Promise((resolve, reject) => {
+                        csvScript.onload = () => {
+                            console.log(`✅ CSV Loader loaded: ${csvScript.src}`);
+                            resolve();
+                        };
+                        csvScript.onerror = (error) => {
+                            console.error(`❌ Failed to load CSV Loader: ${csvScript.src}`, error);
+                            reject(error);
+                        };
+                        document.head.appendChild(csvScript);
+                    });
+                }
+            }
+            
             const script = document.createElement('script');
             script.id = jsId;
             script.src = `../${moduleName}/${moduleName}.js`;

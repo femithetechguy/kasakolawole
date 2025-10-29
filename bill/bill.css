@@ -273,6 +273,17 @@
     transform: translateX(0);
 }
 
+/* Error notification styling */
+.refresh-notification.notification-error {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-left-color: #7f1d1d;
+}
+
+.refresh-notification.notification-error .notification-content i {
+    animation: none;
+    color: #fecaca;
+}
+
 .notification-content {
     display: flex;
     align-items: center;
@@ -550,5 +561,227 @@
     #bill-content .section-title {
         margin-bottom: var(--spacing-sm);
         font-size: 1.1rem;
+    }
+}
+
+/* Responsive Table/Card Layout */
+.desktop-only {
+    display: block;
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none;
+    }
+    
+    .mobile-only {
+        display: block;
+    }
+}
+
+/* Bill Cards Styling */
+.cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-base);
+}
+
+.bill-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-base);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-base);
+}
+
+.bill-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bill-card.urgent-card {
+    border-left: 4px solid #dc2626;
+    background: linear-gradient(to right, rgba(220, 38, 38, 0.05), transparent);
+}
+
+/* Bill Card Header */
+.bill-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+}
+
+.bill-info {
+    flex: 1;
+}
+
+.bill-serial {
+    font-size: var(--font-size-xs);
+    color: var(--module-primary);
+    font-weight: var(--font-weight-semibold);
+    font-family: 'Courier New', monospace;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.bill-name {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.bill-name i {
+    color: var(--module-primary);
+    font-size: 1.1rem;
+}
+
+.bill-amount {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    text-align: right;
+}
+
+/* Bill Card Body */
+.bill-card-body {
+    margin-bottom: var(--spacing-sm);
+}
+
+.bill-details {
+    display: flex;
+    gap: var(--spacing-base);
+}
+
+.bill-detail {
+    flex: 1;
+}
+
+.detail-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Bill Card Footer */
+.bill-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
+}
+
+.bill-payment {
+    flex: 1;
+}
+
+.payment-link-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--module-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-base);
+    border: 1px solid transparent;
+}
+
+.payment-link-card:hover {
+    background: var(--module-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: white;
+    text-decoration: none;
+}
+
+.payment-link-card.urgent-payment {
+    background: #dc2626;
+    animation: pulseUrgent 2s infinite;
+}
+
+.payment-link-card.urgent-payment:hover {
+    background: #b91c1c;
+}
+
+.bill-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.bill-actions .btn {
+    padding: 6px 8px;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bill-actions .btn i {
+    font-size: 0.9rem;
+}
+
+/* Small mobile optimizations */
+@media (max-width: 480px) {
+    .bill-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .bill-card-header {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .bill-amount {
+        font-size: 1.1rem;
+        text-align: left;
+    }
+    
+    .bill-details {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .bill-card-footer {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        align-items: stretch;
+    }
+    
+    .bill-actions {
+        justify-content: center;
+    }
+    
+    .payment-link-card {
+        justify-content: center;
+        width: 100%;
     }
 }

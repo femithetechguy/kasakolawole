@@ -11,6 +11,10 @@ window.BillModule = {
     initialized: false,
     configLastModified: null,
     autoRefreshInterval: null,
+    chartInstances: {
+        pieChart: null,
+        barChart: null
+    },
     
     // Public init function for dynamic loading
     init: async function() {
@@ -92,26 +96,49 @@ window.BillModule = {
     // Refresh data and re-render
     refreshData: async function() {
         try {
+            console.log('🔄 Starting complete bill data refresh...');
+            
+            // Load fresh configuration
             await loadBillConfig();
+            
+            // Force complete re-render of all sections
             renderBillContent();
+            
             console.log('✅ Bill data refreshed successfully');
             
             // Show notification to user
             this.showRefreshNotification();
         } catch (error) {
             console.error('❌ Failed to refresh bill data:', error);
+            this.showRefreshNotification('Error refreshing data. Please try again.', 'error');
         }
     },
     
+    // Public method to manually trigger complete update
+    forceUpdate: async function() {
+        console.log('🔄 Force updating bill module...');
+        await this.refreshData();
+    },
+    
+    // Developer method to test complete re-rendering
+    testUpdate: function() {
+        console.log('🧪 Testing complete re-render...');
+        console.log('Current chart instances:', this.chartInstances);
+        this.forceUpdate();
+    },
+    
     // Show refresh notification
-    showRefreshNotification: function() {
+    showRefreshNotification: function(message = 'Bill data updated automatically', type = 'success') {
         // Create temporary notification
         const notification = document.createElement('div');
-        notification.className = 'refresh-notification';
+        notification.className = `refresh-notification notification-${type}`;
+        
+        const icon = type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-sync-alt';
+        
         notification.innerHTML = `
             <div class="notification-content">
-                <i class="fas fa-sync-alt"></i>
-                <span>Bill data updated automatically</span>
+                <i class="${icon}"></i>
+                <span>${message}</span>
             </div>
         `;
         
@@ -283,10 +310,15 @@ function renderTableSection(section) {
         </tr>`
     ).join('');
     
+    // Generate card layout for mobile
+    const cardsHTML = section.data.rows.map(row => renderBillCard(row)).join('');
+    
     return `
         <section class="section table-section" id="${section.id}">
             <h2 class="section-title">${section.title}</h2>
-            <div class="table-container">
+            
+            <!-- Desktop Table View -->
+            <div class="table-container desktop-only">
                 <table class="data-table">
                     <thead>
                         <tr>${headersHTML}</tr>
@@ -295,6 +327,11 @@ function renderTableSection(section) {
                         ${rowsHTML}
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Mobile Cards View -->
+            <div class="cards-container mobile-only">
+                ${cardsHTML}
             </div>
         </section>
     `;
@@ -364,6 +401,75 @@ function renderTableCell(cell) {
         default:
             return `<td>${cell.value}</td>`;
     }
+}
+
+/**
+ * Render bill card for mobile view
+ */
+function renderBillCard(row) {
+    const cells = row.cells;
+    
+    // Extract data from cells by type
+    const serialCell = cells.find(cell => cell.type === 'serial');
+    const textCell = cells.find(cell => cell.type === 'text');
+    const currencyCell = cells.find(cell => cell.type === 'currency');
+    const dateCell = cells.find(cell => cell.type === 'date');
+    const statusCell = cells.find(cell => cell.type === 'status');
+    const linkCell = cells.find(cell => cell.type === 'link');
+    const actionsCell = cells.find(cell => cell.type === 'actions');
+    
+    const date = new Date(dateCell.value);
+    const urgentClass = linkCell?.urgent ? ' urgent-card' : '';
+    
+    return `
+        <div class="bill-card${urgentClass}" data-id="${row.id}">
+            <div class="bill-card-header">
+                <div class="bill-info">
+                    <div class="bill-serial">#${serialCell.value}</div>
+                    <div class="bill-name">
+                        ${textCell.icon ? `<i class="${textCell.icon}"></i>` : ''}
+                        <span>${textCell.value}</span>
+                    </div>
+                </div>
+                <div class="bill-amount">$${currencyCell.value.toFixed(2)}</div>
+            </div>
+            
+            <div class="bill-card-body">
+                <div class="bill-details">
+                    <div class="bill-detail">
+                        <span class="detail-label">Due Date</span>
+                        <span class="detail-value">${date.toLocaleDateString()}</span>
+                    </div>
+                    <div class="bill-detail">
+                        <span class="detail-label">Status</span>
+                        <span class="status-badge status-${statusCell.color}">${statusCell.label}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bill-card-footer">
+                <div class="bill-payment">
+                    ${linkCell ? `
+                        <a href="${linkCell.value}" 
+                           target="${linkCell.target || '_self'}" 
+                           class="payment-link-card${linkCell.urgent ? ' urgent-payment' : ''}">
+                            ${linkCell.icon ? `<i class="${linkCell.icon}"></i>` : ''}
+                            <span>${linkCell.text}</span>
+                        </a>
+                    ` : ''}
+                </div>
+                <div class="bill-actions">
+                    ${actionsCell.buttons.map(btn => 
+                        `<button class="btn btn-${btn.type} btn-sm" 
+                                data-action="${btn.action}" 
+                                title="${btn.text}">
+                            <i class="${btn.icon}"></i>
+                        </button>`
+                    ).join('')}
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -548,6 +654,9 @@ function renderBillCharts() {
  */
 function initializeCharts(chartsConfig) {
     try {
+        // Destroy existing charts first
+        destroyExistingCharts();
+        
         // Render pie chart
         renderPieChart(chartsConfig.pieChart);
         
@@ -558,6 +667,23 @@ function initializeCharts(chartsConfig) {
     } catch (error) {
         console.error('❌ Error rendering charts:', error);
         showChartsError();
+    }
+}
+
+/**
+ * Destroy existing chart instances
+ */
+function destroyExistingCharts() {
+    if (window.BillModule.chartInstances.pieChart) {
+        window.BillModule.chartInstances.pieChart.destroy();
+        window.BillModule.chartInstances.pieChart = null;
+        console.log('🗑️ Destroyed existing pie chart');
+    }
+    
+    if (window.BillModule.chartInstances.barChart) {
+        window.BillModule.chartInstances.barChart.destroy();
+        window.BillModule.chartInstances.barChart = null;
+        console.log('🗑️ Destroyed existing bar chart');
     }
 }
 
@@ -592,7 +718,8 @@ function renderPieChart(chartData) {
     
     const ctx = canvas.getContext('2d');
     
-    new Chart(ctx, {
+    // Create new chart instance and store reference
+    const chartInstance = new Chart(ctx, {
         type: 'pie',
         data: chartData.data,
         options: {
@@ -633,6 +760,10 @@ function renderPieChart(chartData) {
             }
         }
     });
+    
+    // Store chart instance for future cleanup
+    window.BillModule.chartInstances.pieChart = chartInstance;
+    console.log('📊 Pie chart created and stored');
 }
 
 /**
@@ -644,7 +775,8 @@ function renderBarChart(chartData) {
     
     const ctx = canvas.getContext('2d');
     
-    new Chart(ctx, {
+    // Create new chart instance and store reference
+    const chartInstance = new Chart(ctx, {
         type: 'bar',
         data: chartData.data,
         options: {
@@ -707,6 +839,10 @@ function renderBarChart(chartData) {
             }
         }
     });
+    
+    // Store chart instance for future cleanup
+    window.BillModule.chartInstances.barChart = chartInstance;
+    console.log('📊 Bar chart created and stored');
 }
 
 // Export for global access

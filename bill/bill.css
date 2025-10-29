@@ -1,6 +1,12 @@
 /* Bill Tab Specific Styles */
 /* Note: Global styles are loaded by the main dashboard */
 
+/* Ensure bill content uses full width */
+#bill-content {
+    width: 100%;
+    max-width: none;
+}
+
 /* Bill tab uses global theme utilities */
 .tab-content#bill-content {
     /* Apply bill theme to this tab */
@@ -840,6 +846,20 @@
     }
 }
 
+/* Search and Filter Controls */
+.table-controls {
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.search-filters-container {
+    width: 100%;
+}
+
 /* Search and Filter Styles */
 .search-filter-controls {
     display: flex;
@@ -999,6 +1019,81 @@
 
 .table-view.active {
     display: block;
+}
+
+/* Table Container and Bill Table Styling */
+.section.table-section {
+    width: 100%;
+    max-width: none; /* Remove any width restrictions */
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 800px; /* Ensure minimum width for proper display */
+}
+
+.bill-table th {
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--color-border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.bill-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border-light);
+    vertical-align: middle;
+}
+
+.bill-table tr:hover {
+    background: var(--bg-hover);
+}
+
+.bill-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive table handling */
+@media (max-width: 1200px) {
+    .bill-table {
+        min-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        margin: 0 -16px; /* Extend to screen edges on mobile */
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .bill-table {
+        min-width: 600px;
+        font-size: 0.8rem;
+    }
+    
+    .bill-table th,
+    .bill-table td {
+        padding: 8px 12px;
+    }
 }
 
 .cards-view {

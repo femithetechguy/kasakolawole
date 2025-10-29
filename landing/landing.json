@@ -1,0 +1,198 @@
+{
+  "page": {
+    "id": "landing",
+    "title": "Kasa Kolawole - Secure Access Portal",
+    "description": "Professional authentication portal for Kasa Kolawole platform",
+    "type": "authentication",
+    "theme": "professional"
+  },
+  "auth": {
+    "type": "credentials",
+    "provider": "firebase",
+    "fallback": {
+      "enabled": true,
+      "credentials": {
+        "username": "admin",
+        "password": "admin"
+      }
+    },
+    "config": {
+      "maxAttempts": 3,
+      "sessionTimeout": 3600000,
+      "rememberMeDuration": 2592000000,
+      "redirectUrl": "home/index.html",
+      "lockoutDuration": 900000
+    },
+    "security": {
+      "enableCaptcha": false,
+      "enableTwoFactor": false,
+      "passwordMinLength": 4,
+      "requireSpecialChars": false
+    }
+  },
+  "branding": {
+    "logo": {
+      "type": "icon",
+      "icon": "fas fa-crown",
+      "color": "#F39C12"
+    },
+    "title": "Kasa Kolawole",
+    "tagline": "Professional Portfolio & Business Platform",
+    "colors": {
+      "primary": "#667eea",
+      "secondary": "#764ba2",
+      "accent": "#F39C12",
+      "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+    }
+  },
+  "form": {
+    "fields": [
+      {
+        "id": "username",
+        "type": "text",
+        "label": "Username",
+        "icon": "fas fa-user",
+        "placeholder": "Enter your username",
+        "required": true,
+        "autocomplete": "username",
+        "validation": {
+          "minLength": 3,
+          "maxLength": 50,
+          "pattern": "^[a-zA-Z0-9_]+$"
+        }
+      },
+      {
+        "id": "password",
+        "type": "password",
+        "label": "Password",
+        "icon": "fas fa-key",
+        "placeholder": "Enter your password",
+        "required": true,
+        "autocomplete": "current-password",
+        "showToggle": true,
+        "validation": {
+          "minLength": 4,
+          "maxLength": 100
+        }
+      }
+    ],
+    "options": [
+      {
+        "id": "rememberMe",
+        "type": "checkbox",
+        "label": "Remember me",
+        "default": false
+      },
+      {
+        "id": "forgotPassword",
+        "type": "link",
+        "label": "Forgot password?",
+        "url": "#",
+        "enabled": false
+      }
+    ],
+    "submitButton": {
+      "text": "Sign In",
+      "loadingText": "Signing in...",
+      "icon": "fas fa-sign-in-alt"
+    }
+  },
+  "messages": {
+    "success": {
+      "login": "Login successful! Redirecting...",
+      "sessionRestored": "Welcome back! Redirecting..."
+    },
+    "errors": {
+      "invalidCredentials": "Invalid username or password. Please try again.",
+      "emptyFields": "Please enter both username and password",
+      "networkError": "Network error. Please check your connection and try again.",
+      "serverError": "Server error. Please try again later.",
+      "sessionExpired": "Your session has expired. Please log in again.",
+      "tooManyAttempts": "Too many failed attempts. Please try again later."
+    },
+    "validation": {
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required",
+      "usernameMinLength": "Username must be at least 3 characters",
+      "passwordMinLength": "Password must be at least 4 characters"
+    }
+  },
+  "demo": {
+    "enabled": true,
+    "title": "Demo Access",
+    "description": "Use these credentials for demo access:",
+    "credentials": {
+      "username": "admin",
+      "password": "admin"
+    },
+    "autoFill": true,
+    "clickToFill": true
+  },
+  "features": {
+    "animations": {
+      "enabled": true,
+      "library": "animate.css",
+      "effects": {
+        "pageLoad": "fadeInUp",
+        "branding": "fadeInDown",
+        "form": "fadeInUp",
+        "error": "slideInDown",
+        "success": "slideInDown"
+      }
+    },
+    "accessibility": {
+      "enabled": true,
+      "features": [
+        "keyboard-navigation",
+        "screen-reader-support",
+        "high-contrast-mode",
+        "focus-indicators"
+      ]
+    },
+    "responsive": {
+      "enabled": true,
+      "breakpoints": {
+        "mobile": "768px",
+        "tablet": "1024px",
+        "desktop": "1200px"
+      }
+    }
+  },
+  "analytics": {
+    "enabled": false,
+    "events": [
+      "page_view",
+      "login_attempt",
+      "login_success",
+      "login_failure",
+      "session_timeout"
+    ]
+  },
+  "footer": {
+    "enabled": true,
+    "copyright": "© 2025 Kasa Kolawole. All rights reserved.",
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "url": "#privacy",
+        "enabled": false
+      },
+      {
+        "text": "Terms of Service", 
+        "url": "#terms",
+        "enabled": false
+      },
+      {
+        "text": "Support",
+        "url": "#support",
+        "enabled": false
+      }
+    ]
+  },
+  "metadata": {
+    "created": "2025-10-29",
+    "lastModified": "2025-10-29",
+    "version": "1.0.0",
+    "author": "Kasa Kolawole Development Team"
+  }
+}

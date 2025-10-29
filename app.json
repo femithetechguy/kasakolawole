@@ -1,0 +1,377 @@
+{
+  "app": {
+    "name": "Kasa Kolawole",
+    "title": "Kasa Kolawole - Dynamic Portfolio & Business Platform",
+    "description": "A dynamic, responsive application showcasing Kasa Kolawole's work and services",
+    "version": "1.0.0",
+    "author": "Kasa Kolawole",
+    "responsive": true,
+    "theme": {
+      "primaryColor": "#2C3E50",
+      "secondaryColor": "#E74C3C",
+      "accentColor": "#F39C12",
+      "backgroundColor": "#FFFFFF",
+      "textColor": "#2C3E50",
+      "fontFamily": "Inter, Arial, sans-serif"
+    },
+    "layout": {
+      "headerHeight": "80px",
+      "footerHeight": "60px",
+      "sidebarWidth": "250px",
+      "maxContentWidth": "1200px",
+      "breakpoints": {
+        "mobile": "768px",
+        "tablet": "1024px",
+        "desktop": "1200px"
+      }
+    }
+  },
+  "navigation": {
+    "type": "horizontal",
+    "position": "top",
+    "sticky": true,
+    "logo": {
+      "text": "Kasa Kolawole",
+      "image": "/assets/images/logo.png",
+      "alt": "Kasa Kolawole Logo"
+    },
+    "menu": {
+      "hamburger": true,
+      "mobileBreakpoint": "768px"
+    }
+  },
+  "auth": {
+    "enabled": true,
+    "type": "firebase",
+    "fallback": {
+      "username": "admin",
+      "password": "admin"
+    },
+    "redirectAfterLogin": "/home",
+    "sessionTimeout": 3600000,
+    "rememberMe": true
+  },
+  "tabs": [
+    {
+      "id": "landing",
+      "name": "Landing",
+      "title": "Kasa Kolawole - Access Portal",
+      "description": "Secure access portal for Kasa Kolawole platform",
+      "path": "/landing",
+      "directory": "landing",
+      "icon": "lock",
+      "order": 0,
+      "visible": false,
+      "active": false,
+      "isAuth": true,
+      "files": {
+        "html": "landing/index.html",
+        "css": "landing/landing.css",
+        "js": "landing/landing.js",
+        "json": "landing/landing.json"
+      },
+      "components": [
+        "login-form",
+        "branding",
+        "footer"
+      ],
+      "seo": {
+        "metaTitle": "Kasa Kolawole - Secure Access",
+        "metaDescription": "Secure access portal for Kasa Kolawole platform",
+        "keywords": ["login", "access", "portal", "secure"]
+      }
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "title": "Welcome to Kasa Kolawole",
+      "description": "Home page showcasing introduction and key highlights",
+      "path": "/",
+      "directory": "home",
+      "icon": "home",
+      "order": 1,
+      "visible": true,
+      "active": true,
+      "files": {
+        "html": "home/index.html",
+        "css": "home/home.css",
+        "js": "home/home.js",
+        "json": "home/home.json"
+      },
+      "components": [
+        "hero-section",
+        "introduction",
+        "featured-work",
+        "call-to-action"
+      ],
+      "seo": {
+        "metaTitle": "Kasa Kolawole - Home",
+        "metaDescription": "Welcome to Kasa Kolawole's professional platform",
+        "keywords": ["Kasa Kolawole", "professional", "portfolio"]
+      }
+    },
+    {
+      "id": "about",
+      "name": "About",
+      "title": "About Kasa Kolawole",
+      "description": "Professional background, skills, and experience",
+      "path": "/about",
+      "directory": "about",
+      "icon": "user",
+      "order": 2,
+      "visible": true,
+      "active": false,
+      "files": {
+        "html": "about/index.html",
+        "css": "about/about.css",
+        "js": "about/about.js",
+        "json": "about/about.json"
+      },
+      "components": [
+        "biography",
+        "skills-grid",
+        "timeline",
+        "achievements"
+      ],
+      "seo": {
+        "metaTitle": "About Kasa Kolawole",
+        "metaDescription": "Learn about Kasa Kolawole's background and expertise",
+        "keywords": ["about", "biography", "skills", "experience"]
+      }
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio",
+      "title": "My Work & Projects",
+      "description": "Showcase of projects, work samples, and case studies",
+      "path": "/portfolio",
+      "directory": "portfolio",
+      "icon": "briefcase",
+      "order": 3,
+      "visible": true,
+      "active": false,
+      "files": {
+        "html": "portfolio/index.html",
+        "css": "portfolio/portfolio.css",
+        "js": "portfolio/portfolio.js",
+        "json": "portfolio/portfolio.json"
+      },
+      "components": [
+        "project-grid",
+        "project-filters",
+        "project-modal",
+        "testimonials"
+      ],
+      "seo": {
+        "metaTitle": "Kasa Kolawole Portfolio",
+        "metaDescription": "Explore Kasa Kolawole's portfolio of projects and work",
+        "keywords": ["portfolio", "projects", "work", "case studies"]
+      }
+    },
+    {
+      "id": "services",
+      "name": "Services",
+      "title": "Professional Services",
+      "description": "Services offered and expertise areas",
+      "path": "/services",
+      "directory": "services",
+      "icon": "settings",
+      "order": 4,
+      "visible": true,
+      "active": false,
+      "files": {
+        "html": "services/index.html",
+        "css": "services/services.css",
+        "js": "services/services.js",
+        "json": "services/services.json"
+      },
+      "components": [
+        "services-grid",
+        "pricing-table",
+        "process-timeline",
+        "faq-section"
+      ],
+      "seo": {
+        "metaTitle": "Kasa Kolawole Services",
+        "metaDescription": "Professional services offered by Kasa Kolawole",
+        "keywords": ["services", "consulting", "professional", "expertise"]
+      }
+    },
+    {
+      "id": "blog",
+      "name": "Blog",
+      "title": "Insights & Articles",
+      "description": "Blog posts, articles, and thought leadership content",
+      "path": "/blog",
+      "directory": "blog",
+      "icon": "edit",
+      "order": 5,
+      "visible": true,
+      "active": false,
+      "files": {
+        "html": "blog/index.html",
+        "css": "blog/blog.css",
+        "js": "blog/blog.js",
+        "json": "blog/blog.json"
+      },
+      "components": [
+        "blog-grid",
+        "blog-filters",
+        "blog-search",
+        "blog-categories"
+      ],
+      "seo": {
+        "metaTitle": "Kasa Kolawole Blog",
+        "metaDescription": "Read insights and articles by Kasa Kolawole",
+        "keywords": ["blog", "articles", "insights", "thoughts"]
+      }
+    },
+    {
+      "id": "contact",
+      "name": "Contact",
+      "title": "Get In Touch",
+      "description": "Contact information and inquiry form",
+      "path": "/contact",
+      "directory": "contact",
+      "icon": "mail",
+      "order": 6,
+      "visible": true,
+      "active": false,
+      "files": {
+        "html": "contact/index.html",
+        "css": "contact/contact.css",
+        "js": "contact/contact.js",
+        "json": "contact/contact.json"
+      },
+      "components": [
+        "contact-form",
+        "contact-info",
+        "location-map",
+        "social-links"
+      ],
+      "seo": {
+        "metaTitle": "Contact Kasa Kolawole",
+        "metaDescription": "Get in touch with Kasa Kolawole for inquiries and collaborations",
+        "keywords": ["contact", "inquiry", "collaboration", "get in touch"]
+      }
+    }
+  ],
+  "global": {
+    "assets": {
+      "css": [
+        "assets/css/reset.css",
+        "assets/css/global.css",
+        "assets/css/responsive.css",
+        "assets/css/animations.css"
+      ],
+      "js": [
+        "assets/js/app.js",
+        "assets/js/navigation.js",
+        "assets/js/utils.js",
+        "assets/js/animations.js"
+      ],
+      "images": "assets/images/",
+      "fonts": "assets/fonts/"
+    },
+    "dependencies": {
+      "libraries": [
+        {
+          "name": "animate.css",
+          "version": "4.1.1",
+          "type": "css",
+          "cdn": "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+        },
+        {
+          "name": "aos",
+          "version": "2.3.4",
+          "type": "js",
+          "cdn": "https://unpkg.com/aos@2.3.4/dist/aos.js"
+        }
+      ]
+    },
+    "features": {
+      "lazyLoading": true,
+      "animations": true,
+      "darkMode": false,
+      "multiLanguage": false,
+      "analytics": true,
+      "seo": true,
+      "pwa": false
+    }
+  },
+  "build": {
+    "environment": "development",
+    "autoGenerate": {
+      "enabled": true,
+      "onTabUpdate": true,
+      "createDirectories": true,
+      "generateFiles": true
+    },
+    "structure": {
+      "baseDirectory": "/",
+      "tabDirectoryPattern": "{tabId}/",
+      "fileNaming": {
+        "html": "index.html",
+        "css": "{tabId}.css",
+        "js": "{tabId}.js",
+        "json": "{tabId}.json"
+      }
+    },
+    "templates": {
+      "html": "templates/page-template.html",
+      "css": "templates/style-template.css",
+      "js": "templates/script-template.js",
+      "json": "templates/data-template.json"
+    }
+  },
+  "api": {
+    "baseUrl": "/api",
+    "endpoints": {
+      "tabs": "/tabs",
+      "content": "/content/{tabId}",
+      "navigation": "/navigation",
+      "global": "/global-config"
+    },
+    "methods": {
+      "get": ["tabs", "content", "navigation", "global"],
+      "post": ["content"],
+      "put": ["content", "tabs"],
+      "delete": ["content"]
+    }
+  },
+  "social": {
+    "links": [
+      {
+        "platform": "LinkedIn",
+        "url": "https://linkedin.com/in/kasakolawole",
+        "icon": "linkedin",
+        "visible": true
+      },
+      {
+        "platform": "Twitter",
+        "url": "https://twitter.com/kasakolawole",
+        "icon": "twitter",
+        "visible": true
+      },
+      {
+        "platform": "GitHub",
+        "url": "https://github.com/kasakolawole",
+        "icon": "github",
+        "visible": true
+      },
+      {
+        "platform": "Email",
+        "url": "mailto:contact@kasakolawole.com",
+        "icon": "mail",
+        "visible": true
+      }
+    ]
+  },
+  "metadata": {
+    "created": "2025-10-29",
+    "lastModified": "2025-10-29",
+    "version": "1.0.0",
+    "generator": "Kasa Kolawole Dynamic App Builder",
+    "license": "MIT"
+  }
+}

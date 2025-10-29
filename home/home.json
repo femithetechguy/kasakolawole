@@ -1,0 +1,323 @@
+{
+  "meta": {
+    "title": "Home - Kasa Kolawole",
+    "description": "Welcome to Kasa Kolawole's digital showcase. Explore my portfolio, services, and professional journey.",
+    "keywords": ["Kasa Kolawole", "portfolio", "professional", "services", "creative"],
+    "author": "Kasa Kolawole",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-29"
+  },
+  "hero": {
+    "title": "Welcome to Kasa Kolawole",
+    "subtitle": "Digital Innovation & Creative Excellence",
+    "description": "Crafting exceptional digital experiences through innovative design, strategic thinking, and cutting-edge technology solutions.",
+    "buttons": [
+      {
+        "text": "Explore Portfolio",
+        "action": "navigate",
+        "target": "portfolio",
+        "type": "primary",
+        "icon": "fas fa-folder-open"
+      },
+      {
+        "text": "Get In Touch",
+        "action": "navigate",
+        "target": "contact",
+        "type": "outline",
+        "icon": "fas fa-envelope"
+      }
+    ],
+    "backgroundType": "gradient",
+    "animation": "fadeInUp"
+  },
+  "introduction": {
+    "title": "About Me",
+    "content": [
+      {
+        "type": "paragraph",
+        "text": "Welcome to my digital space! I'm Kasa Kolawole, a passionate professional dedicated to creating innovative solutions and meaningful digital experiences. With a blend of creativity, technical expertise, and strategic thinking, I help bring ideas to life."
+      },
+      {
+        "type": "paragraph",
+        "text": "My journey spans across multiple disciplines, allowing me to approach challenges from unique perspectives and deliver comprehensive solutions that make a real impact."
+      }
+    ],
+    "image": {
+      "src": "",
+      "alt": "Kasa Kolawole Professional Photo",
+      "placeholder": true,
+      "caption": "Professional headshot coming soon"
+    },
+    "skills": [
+      "Strategic Planning",
+      "Creative Design",
+      "Technical Implementation",
+      "Project Management",
+      "Client Relations",
+      "Innovation Leadership"
+    ]
+  },
+  "featured": {
+    "title": "What I Offer",
+    "subtitle": "Comprehensive solutions tailored to your needs",
+    "items": [
+      {
+        "id": "creative-design",
+        "title": "Creative Design",
+        "description": "Innovative design solutions that capture attention and communicate your message effectively through visual storytelling.",
+        "icon": "fas fa-palette",
+        "color": "primary",
+        "link": {
+          "text": "View Design Work",
+          "target": "portfolio"
+        }
+      },
+      {
+        "id": "strategic-consulting",
+        "title": "Strategic Consulting",
+        "description": "Expert guidance and strategic planning to help you navigate challenges and achieve your business objectives.",
+        "icon": "fas fa-chart-line",
+        "color": "accent",
+        "link": {
+          "text": "Learn More",
+          "target": "services"
+        }
+      },
+      {
+        "id": "digital-solutions",
+        "title": "Digital Solutions",
+        "description": "Custom digital solutions that streamline processes, enhance user experience, and drive measurable results.",
+        "icon": "fas fa-laptop-code",
+        "color": "secondary",
+        "link": {
+          "text": "Explore Solutions",
+          "target": "portfolio"
+        }
+      }
+    ]
+  },
+  "callToAction": {
+    "title": "Ready to Get Started?",
+    "description": "Let's collaborate to bring your vision to life. Whether you need creative design, strategic guidance, or technical solutions, I'm here to help.",
+    "buttons": [
+      {
+        "text": "Start a Project",
+        "action": "navigate",
+        "target": "contact",
+        "type": "secondary",
+        "icon": "fas fa-rocket"
+      },
+      {
+        "text": "View My Work",
+        "action": "navigate",
+        "target": "portfolio",
+        "type": "outline",
+        "icon": "fas fa-eye"
+      }
+    ]
+  },
+  "socialLinks": [
+    {
+      "name": "LinkedIn",
+      "url": "#",
+      "icon": "fab fa-linkedin-in",
+      "color": "#0077b5"
+    },
+    {
+      "name": "Twitter",
+      "url": "#",
+      "icon": "fab fa-twitter",
+      "color": "#1da1f2"
+    },
+    {
+      "name": "Instagram",
+      "url": "#",
+      "icon": "fab fa-instagram",
+      "color": "#e4405f"
+    },
+    {
+      "name": "GitHub",
+      "url": "#",
+      "icon": "fab fa-github",
+      "color": "#333"
+    },
+    {
+      "name": "Behance",
+      "url": "#",
+      "icon": "fab fa-behance",
+      "color": "#1769ff"
+    }
+  ],
+  "contact": {
+    "email": "hello@kasakolawole.com",
+    "phone": "+1 (555) 123-4567",
+    "location": "Available Worldwide",
+    "timezone": "EST (UTC-5)"
+  },
+  "testimonials": [
+    {
+      "id": "testimonial-1",
+      "name": "Client Name",
+      "role": "CEO, Company Name",
+      "content": "Working with Kasa was an exceptional experience. Their attention to detail and innovative approach delivered results beyond our expectations.",
+      "rating": 5,
+      "avatar": "",
+      "company": "Company Name"
+    },
+    {
+      "id": "testimonial-2",
+      "name": "Another Client",
+      "role": "Marketing Director",
+      "content": "Professional, creative, and results-driven. Kasa brings a unique perspective that truly makes a difference.",
+      "rating": 5,
+      "avatar": "",
+      "company": "Another Company"
+    }
+  ],
+  "stats": [
+    {
+      "label": "Projects Completed",
+      "value": "50+",
+      "icon": "fas fa-check-circle"
+    },
+    {
+      "label": "Happy Clients",
+      "value": "25+",
+      "icon": "fas fa-smile"
+    },
+    {
+      "label": "Years Experience",
+      "value": "5+",
+      "icon": "fas fa-calendar-alt"
+    },
+    {
+      "label": "Countries Served",
+      "value": "10+",
+      "icon": "fas fa-globe"
+    }
+  ],
+  "recentWork": [
+    {
+      "id": "project-1",
+      "title": "Brand Identity Design",
+      "category": "Design",
+      "description": "Complete brand identity design for a tech startup",
+      "image": "",
+      "tags": ["Branding", "Design", "Identity"],
+      "link": "portfolio"
+    },
+    {
+      "id": "project-2",
+      "title": "Digital Strategy",
+      "category": "Consulting",
+      "description": "Digital transformation strategy for a medium enterprise",
+      "image": "",
+      "tags": ["Strategy", "Digital", "Consulting"],
+      "link": "portfolio"
+    },
+    {
+      "id": "project-3",
+      "title": "Web Application",
+      "category": "Development",
+      "description": "Custom web application for workflow management",
+      "image": "",
+      "tags": ["Development", "Web", "Application"],
+      "link": "portfolio"
+    }
+  ],
+    "footer": {
+    "company": {
+      "name": "Kasa Kolawole",
+      "description": "Creating exceptional digital experiences through innovation, creativity, and strategic excellence.",
+      "logo": "fas fa-crown"
+    },
+    "quickLinks": [
+      {
+        "text": "About",
+        "target": "about"
+      },
+      {
+        "text": "Portfolio",
+        "target": "portfolio"
+      },
+      {
+        "text": "Services",
+        "target": "services"
+      },
+      {
+        "text": "Blog",
+        "target": "blog"
+      },
+      {
+        "text": "Contact",
+        "target": "contact"
+      }
+    ],
+    "services": [
+      {
+        "text": "Creative Design",
+        "target": "services"
+      },
+      {
+        "text": "Strategic Consulting",
+        "target": "services"
+      },
+      {
+        "text": "Digital Solutions",
+        "target": "services"
+      },
+      {
+        "text": "Project Management",
+        "target": "services"
+      }
+    ],
+    "legal": [
+      {
+        "text": "Privacy Policy",
+        "url": "#privacy"
+      },
+      {
+        "text": "Terms of Service",
+        "url": "#terms"
+      },
+      {
+        "text": "Cookie Policy",
+        "url": "#cookies"
+      }
+    ],
+    "copyright": "© 2025 Kasa Kolawole. All rights reserved."
+  },
+  "seo": {
+    "structuredData": {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Kasa Kolawole",
+      "jobTitle": "Digital Innovation Specialist",
+      "description": "Professional specializing in creative design, strategic consulting, and digital solutions.",
+      "url": "https://kasakolawole.com",
+      "sameAs": [
+        "https://linkedin.com/in/kasakolawole",
+        "https://twitter.com/kasakolawole",
+        "https://instagram.com/kasakolawole"
+      ]
+    }
+  },
+  "analytics": {
+    "googleAnalytics": "",
+    "facebookPixel": "",
+    "customEvents": [
+      "navigation_click",
+      "cta_interaction",
+      "contact_form_submit",
+      "portfolio_view"
+    ]
+  },
+  "performance": {
+    "lazyLoading": true,
+    "imageOptimization": true,
+    "caching": {
+      "enabled": true,
+      "duration": "1h"
+    }
+  }
+}

@@ -584,27 +584,42 @@ function updateChartsFromBillData(config) {
     
     const bills = billsSection.data.rows;
     
-    // Calculate pie chart data (bills by subcategory)
+    // Get unique categories from the bill data
+    const allCategories = [...new Set(
+        bills
+            .map(bill => bill.metadata?.category?.toLowerCase())
+            .filter(category => category && category.trim())
+    )].sort();
+    
+    console.log('📊 Dynamic categories for charts:', allCategories);
+    
+    // Calculate pie chart data (bills by category)
     const categoryData = {};
+    
+    // Generate colors for categories dynamically
     const categoryColors = {
-        'mortgage': '#3b82f6',
-        'electricity': '#6366f1',
-        'internet': '#10b981', 
-        'water': '#f59e0b',
-        'gas': '#ef4444',
-        'other': '#8b5cf6'
+        'housing': '#3b82f6',
+        'utilities': '#6366f1',
+        'communication': '#10b981', 
+        'transportation': '#f59e0b',
+        'healthcare': '#ef4444',
+        'subscriptions': '#8b5cf6',
+        'debt': '#ec4899',
+        'food': '#f97316',
+        'financial': '#06b6d4',
+        'personal': '#84cc16'
     };
     
     bills.forEach(bill => {
-        const subcategory = bill.metadata?.subcategory || 'other';
+        const category = bill.metadata?.category?.toLowerCase() || 'other';
         const amount = bill.metadata?.monthlyAmount || 0;
         
-        console.log('Chart data - Bill:', bill.id, 'Subcategory:', subcategory, 'Amount:', amount);
+        console.log('Chart data - Bill:', bill.id, 'Category:', category, 'Amount:', amount);
         
-        if (!categoryData[subcategory]) {
-            categoryData[subcategory] = 0;
+        if (!categoryData[category]) {
+            categoryData[category] = 0;
         }
-        categoryData[subcategory] += amount;
+        categoryData[category] += amount;
     });
     
     // Update pie chart
@@ -631,61 +646,45 @@ function updateChartsFromBillData(config) {
         }, 0);
     });
     
-    // Calculate individual bill category totals for all 4 categories
-    const mortgageTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'mortgage')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
+    // Calculate individual category totals dynamically for top categories
+    const topCategories = allCategories.slice(0, 4); // Get top 4 categories
+    const categoryTotalsData = {};
+    
+    topCategories.forEach(category => {
+        categoryTotalsData[category] = months.map(month => {
+            return bills
+                .filter(bill => bill.metadata?.category?.toLowerCase() === category)
+                .reduce((sum, bill) => {
+                    const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
+                    return sum + historicalAmount;
+                }, 0);
+        });
     });
     
-    const internetTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'internet')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
+    // Update bar chart datasets dynamically
+    const barChartDatasets = config.charts.barChart.data.datasets;
+    
+    // Update existing datasets or create new ones
+    topCategories.forEach((category, index) => {
+        if (barChartDatasets[index]) {
+            barChartDatasets[index].label = category.charAt(0).toUpperCase() + category.slice(1);
+            barChartDatasets[index].data = categoryTotalsData[category];
+            barChartDatasets[index].backgroundColor = categoryColors[category] || '#8b5cf6';
+            barChartDatasets[index].borderColor = categoryColors[category] || '#8b5cf6';
+        }
     });
     
-    const waterTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'water')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
-    });
-    
-    const gasTotals = months.map(month => {
-        return bills
-            .filter(bill => bill.metadata?.subcategory === 'gas')
-            .reduce((sum, bill) => {
-                const historicalAmount = bill.metadata?.historicalData?.[month]?.amount || 0;
-                return sum + historicalAmount;
-            }, 0);
-    });
-    
-    // Update bar chart with all 4 individual bill categories
-    config.charts.barChart.data.datasets[0].data = mortgageTotals;
-    config.charts.barChart.data.datasets[1].data = internetTotals;
-    config.charts.barChart.data.datasets[2].data = waterTotals;
-    config.charts.barChart.data.datasets[3].data = gasTotals;
-    
-    console.log('📊 Bar chart data updated:', { mortgageTotals, internetTotals, waterTotals, gasTotals });
+    console.log('📊 Bar chart data updated with dynamic categories:', categoryTotalsData);
     
     console.log('📈 Charts updated from bill data:', {
         pieChart: {
             labels: pieLabels,
-            data: pieData
+            data: pieData,
+            categories: allCategories
         },
         barChart: {
-            mortgageTotals,
-            internetTotals,
-            waterTotals,
-            gasTotals
+            topCategories,
+            categoryTotalsData
         }
     });
 }
@@ -801,6 +800,27 @@ function renderTableSection(section) {
     const { headers, rows } = section.data;
     const validatedRows = validateAndFixCellStructure(rows);
     
+    // Extract unique categories from the bill rows for dynamic filter options
+    const categories = [...new Set(
+        validatedRows
+            .map(row => row.metadata?.category)
+            .filter(category => category && category.trim())
+            .map(category => category.toLowerCase())
+    )].sort();
+    
+    console.log('Extracted categories for filter:', categories); // Debug log
+    
+    // Fallback categories if none found in data
+    if (categories.length === 0) {
+        categories.push('housing', 'utilities', 'communication', 'debt', 'financial');
+        console.log('Using fallback categories:', categories);
+    }
+    
+    // Generate category options
+    const categoryOptions = categories.map(category => 
+        `<option value="${category}">${category.charAt(0).toUpperCase() + category.slice(1)}</option>`
+    ).join('');
+    
     // Always render the search and filter controls, even if no data
     const searchAndFilterControls = `
         <div class="table-controls">
@@ -825,9 +845,7 @@ function renderTableSection(section) {
                     </select>
                     <select id="categoryFilter" class="filter-select">
                         <option value="">All Categories</option>
-                        <option value="housing">Housing</option>
-                        <option value="utilities">Utilities</option>
-                        <option value="communication">Communication</option>
+                        ${categoryOptions}
                     </select>
                     <select id="amountFilter" class="filter-select">
                         <option value="">All Amounts</option>

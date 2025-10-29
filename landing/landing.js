@@ -75,7 +75,7 @@ class LandingPageAuth {
                     },
                     config: {
                         sessionTimeout: 3600000, // 1 hour
-                        redirectUrl: 'home/index.html'
+                        redirectUrl: 'home/home.html'
                     }
                 }
             };
@@ -267,7 +267,7 @@ class LandingPageAuth {
 
         // Redirect after delay
         setTimeout(() => {
-            window.location.href = this.config?.auth?.config?.redirectUrl || 'home/index.html';
+            window.location.href = this.config?.auth?.config?.redirectUrl || 'home/home.html';
         }, 2000);
     }
 
@@ -310,7 +310,7 @@ class LandingPageAuth {
                 this.showSuccess('Welcome back! Redirecting...');
             }
             setTimeout(() => {
-                window.location.href = this.config.auth.redirectUrl || 'home/index.html';
+                window.location.href = this.config.auth.redirectUrl || 'home/home.html';
             }, 2000);
         }
     }

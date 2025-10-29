@@ -191,7 +191,7 @@
                         auth: {
                             username: 'admin',
                             password: 'admin',
-                            redirectUrl: 'home/index.html',
+                            redirectUrl: 'home/home.html',
                             sessionTimeout: 3600000
                         }
                     };
@@ -235,7 +235,7 @@
                                 alert('Login successful! Redirecting...');
                             }
                             setTimeout(() => {
-                                window.location.href = 'home/index.html';
+                                window.location.href = 'home/home.html';
                             }, 1500);
                         } else {
                             // Show error toast

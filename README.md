@@ -38,8 +38,9 @@ kasakolawole/
 │   ├── landing.js             # Authentication logic
 │   └── landing.json           # Landing page configuration
 └── home/
-    ├── index.html             # Home dashboard
+    ├── home.html              # Home dashboard
     ├── home.css               # Home page styles
+    ├── home.js                # Home page JavaScript
     └── home.json              # Home page content
 ```
 
@@ -97,7 +98,7 @@ python3 -m http.server 8080
 
 # Access application
 # Landing: http://localhost:8080
-# Home: http://localhost:8080/home/index.html
+# Home: http://localhost:8080/home/home.html
 ```
 
 ### Authentication (Development)
@@ -124,7 +125,7 @@ python3 -m http.server 8080
    }
    ```
 2. Create tab directory: `portfolio/`
-3. Add files: `index.html`, `portfolio.css`, `portfolio.js`, `portfolio.json`
+3. Add files: `portfolio.html`, `portfolio.css`, `portfolio.js`, `portfolio.json`
 
 ## 🔄 Dynamic Features
 

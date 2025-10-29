@@ -1,0 +1,221 @@
+{
+  "meta": {
+    "title": "Debts - Kasa Kolawole",
+    "description": "Strategic debt tracking and management system",
+    "keywords": ["debts", "loans", "financial management", "payoff"],
+    "author": "Kasa Kolawole",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-29"
+  },
+  "content": {
+    "title": "Debt Management",
+    "subtitle": "Track and manage your debts strategically",
+    "description": "Monitor all your debts, payment schedules, and work towards financial freedom with strategic debt management.",
+    "sections": [
+      {
+        "id": "debt-overview",
+        "title": "Debt Overview",
+        "type": "stats",
+        "data": [
+          {
+            "label": "Total Debt",
+            "value": "$24,850",
+            "icon": "fas fa-chart-line",
+            "color": "danger"
+          },
+          {
+            "label": "Monthly Payments",
+            "value": "$1,240",
+            "icon": "fas fa-calendar-check",
+            "color": "warning"
+          },
+          {
+            "label": "Active Debts",
+            "value": "5",
+            "icon": "fas fa-list",
+            "color": "primary"
+          },
+          {
+            "label": "Paid Off This Year",
+            "value": "2",
+            "icon": "fas fa-check-circle",
+            "color": "success"
+          }
+        ]
+      },
+      {
+        "id": "debt-list",
+        "title": "Current Debts",
+        "type": "table",
+        "data": {
+          "headers": ["Debt Type", "Balance", "Monthly Payment", "Interest Rate", "Actions"],
+          "rows": [
+            {
+              "id": "debt-1",
+              "cells": [
+                {
+                  "type": "text",
+                  "value": "Credit Card",
+                  "icon": "fas fa-credit-card"
+                },
+                {
+                  "type": "currency",
+                  "value": 8500.00,
+                  "currency": "USD"
+                },
+                {
+                  "type": "currency",
+                  "value": 285.00,
+                  "currency": "USD"
+                },
+                {
+                  "type": "text",
+                  "value": "18.9%"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Pay",
+                      "icon": "fas fa-dollar-sign",
+                      "action": "pay-debt",
+                      "type": "primary"
+                    },
+                    {
+                      "text": "Details",
+                      "icon": "fas fa-info-circle",
+                      "action": "debt-details",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "debt-2",
+              "cells": [
+                {
+                  "type": "text",
+                  "value": "Student Loan",
+                  "icon": "fas fa-graduation-cap"
+                },
+                {
+                  "type": "currency",
+                  "value": 12350.00,
+                  "currency": "USD"
+                },
+                {
+                  "type": "currency",
+                  "value": 189.00,
+                  "currency": "USD"
+                },
+                {
+                  "type": "text",
+                  "value": "4.5%"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Pay",
+                      "icon": "fas fa-dollar-sign",
+                      "action": "pay-debt",
+                      "type": "primary"
+                    },
+                    {
+                      "text": "Details",
+                      "icon": "fas fa-info-circle",
+                      "action": "debt-details",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "debt-3",
+              "cells": [
+                {
+                  "type": "text",
+                  "value": "Car Loan",
+                  "icon": "fas fa-car"
+                },
+                {
+                  "type": "currency",
+                  "value": 4000.00,
+                  "currency": "USD"
+                },
+                {
+                  "type": "currency",
+                  "value": 245.00,
+                  "currency": "USD"
+                },
+                {
+                  "type": "text",
+                  "value": "3.2%"
+                },
+                {
+                  "type": "actions",
+                  "buttons": [
+                    {
+                      "text": "Pay",
+                      "icon": "fas fa-dollar-sign",
+                      "action": "pay-debt",
+                      "type": "primary"
+                    },
+                    {
+                      "text": "Details",
+                      "icon": "fas fa-info-circle",
+                      "action": "debt-details",
+                      "type": "outline"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "debt-actions",
+        "title": "Debt Management Tools",
+        "type": "actions",
+        "data": [
+          {
+            "text": "Debt Payoff Calculator",
+            "icon": "fas fa-calculator",
+            "action": "debt-calculator",
+            "type": "primary",
+            "description": "Calculate optimal payoff strategies"
+          },
+          {
+            "text": "Add New Debt",
+            "icon": "fas fa-plus",
+            "action": "add-debt",
+            "type": "outline",
+            "description": "Record a new debt or loan"
+          },
+          {
+            "text": "Payment History",
+            "icon": "fas fa-history",
+            "action": "payment-history",
+            "type": "outline",
+            "description": "View all debt payment records"
+          },
+          {
+            "text": "Debt Consolidation",
+            "icon": "fas fa-compress-arrows-alt",
+            "action": "debt-consolidation",
+            "type": "secondary",
+            "description": "Explore consolidation options"
+          }
+        ]
+      }
+    ]
+  },
+  "theme": {
+    "primaryColor": "#dc2626",
+    "accentColor": "#f59e0b",
+    "iconClass": "fas fa-credit-card"
+  }
+}

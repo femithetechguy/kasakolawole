@@ -93,7 +93,7 @@
       "visible": true,
       "active": true,
       "files": {
-        "html": "home/index.html",
+        "html": "home/home.html",
         "css": "home/home.css",
         "js": "home/home.js",
         "json": "home/home.json"

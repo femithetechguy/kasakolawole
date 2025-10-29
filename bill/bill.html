@@ -1,0 +1,76 @@
+<!-- Bill Tab Content -->
+<div class="tab-content active" id="bill-content">
+    <!-- Tab Header -->
+    <div class="tab-header">
+        <div class="container">
+            <div class="tab-header-content">
+                <div class="tab-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="tab-info">
+                    <h1 class="tab-title">Loading...</h1>
+                    <p class="tab-subtitle">Loading...</p>
+                    <p class="tab-description">Loading content...</p>
+                </div>
+                <div class="tab-actions">
+                    <button class="btn btn-refresh" onclick="window.BillModule.refreshData()" title="Refresh bill data">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab Sections -->
+    <div class="tab-sections">
+        <div class="container">
+            <div id="tabSections">
+                <!-- Sections will be populated dynamically -->
+                <div class="loading-state">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <p>Loading bill data...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="charts-section" style="display: none;" id="chartsSection">
+                <div class="section-header">
+                    <h2 class="section-title">Bill Analytics</h2>
+                    <p class="section-subtitle">Visual insights into your billing patterns</p>
+                </div>
+                
+                <div class="charts-grid">
+                    <!-- Pie Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Bills by Category
+                            </h3>
+                            <p class="chart-description">Distribution of bills by type</p>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="billsPieChart" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Bar Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Monthly Bill Trends
+                            </h3>
+                            <p class="chart-description">Bill amounts over the last 6 months</p>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="billsBarChart" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

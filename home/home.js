@@ -644,31 +644,43 @@ function handleAction(action, element) {
 /**
  * Handle logout
  */
-function handleLogout() {
+async function handleLogout() {
     if (confirm('Are you sure you want to logout?')) {
-        // Clear session from both localStorage and sessionStorage
-        const sessionKey = window.KasaKolawole?.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session';
-        
-        if (window.KasaKolawole?.storage) {
-            // Remove from localStorage
-            window.KasaKolawole.storage.remove(sessionKey);
-            // Remove from sessionStorage
-            window.KasaKolawole.storage.session.remove(sessionKey);
-        } else {
-            // Fallback: remove from both storages directly
-            localStorage.removeItem(sessionKey);
-            sessionStorage.removeItem(sessionKey);
-        }
-        
-        // Show logout message
-        if (window.KasaKolawole?.notify) {
-            window.KasaKolawole.notify.success('Logged out successfully!', 1500);
-        }
-        
-        // Redirect to login after a short delay
-        setTimeout(() => {
+        try {
+            // Sign out from Firebase if available
+            if (window.FirebaseAuth && window.FirebaseAuth.isSignedIn()) {
+                console.log('🔥 Signing out from Firebase');
+                await window.FirebaseAuth.signOut();
+            }
+            
+            // Clear session from both localStorage and sessionStorage
+            const sessionKey = window.KasaKolawole?.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session';
+            
+            if (window.KasaKolawole?.storage) {
+                // Remove from localStorage
+                window.KasaKolawole.storage.remove(sessionKey);
+                // Remove from sessionStorage
+                window.KasaKolawole.storage.session.remove(sessionKey);
+            } else {
+                // Fallback: remove from both storages directly
+                localStorage.removeItem(sessionKey);
+                sessionStorage.removeItem(sessionKey);
+            }
+            
+            // Show logout message
+            if (window.KasaKolawole?.notify) {
+                window.KasaKolawole.notify.success('Logged out successfully!', 1500);
+            }
+            
+            // Redirect to login after a short delay
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1500);
+        } catch (error) {
+            console.error('❌ Logout error:', error);
+            // Still redirect even if Firebase logout fails
             window.location.href = '/';
-        }, 1500);
+        }
     }
 }
 

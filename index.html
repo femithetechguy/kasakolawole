@@ -15,6 +15,10 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
     <!-- Landing CSS (includes global styles via @import) -->
     <link rel="stylesheet" href="landing/landing.css">
 </head>
@@ -112,22 +116,6 @@
                         <span>Login successful! Redirecting...</span>
                     </div>
                 </div>
-
-                <!-- Demo Credentials Info -->
-                <div class="demo-info">
-                    <div class="demo-card">
-                        <h3><i class="fas fa-info-circle"></i> Demo Access</h3>
-                        <p>Use these credentials for demo access:</p>
-                        <div class="demo-credentials">
-                            <div class="credential-item">
-                                <strong>Username:</strong> <code>admin</code>
-                            </div>
-                            <div class="credential-item">
-                                <strong>Password:</strong> <code>admin</code>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -146,6 +134,9 @@
 
     <!-- Global JavaScript -->
     <script src="assets/js/global.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase/firebase-config.js"></script>
 
     <!-- Landing Page Authentication Script -->
     <script>

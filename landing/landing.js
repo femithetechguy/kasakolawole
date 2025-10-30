@@ -256,7 +256,7 @@ class LandingPageAuth {
 
         // Redirect after delay
         setTimeout(() => {
-            window.location.href = this.config?.auth?.config?.redirectUrl || '/home';
+            window.location.href = this.config?.auth?.config?.redirectUrl || 'home/home.html';
         }, 2000);
     }
 

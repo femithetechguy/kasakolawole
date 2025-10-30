@@ -646,13 +646,29 @@ function handleAction(action, element) {
  */
 function handleLogout() {
     if (confirm('Are you sure you want to logout?')) {
-        // Clear session
+        // Clear session from both localStorage and sessionStorage
+        const sessionKey = window.KasaKolawole?.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session';
+        
         if (window.KasaKolawole?.storage) {
-            window.KasaKolawole.storage.clear();
+            // Remove from localStorage
+            window.KasaKolawole.storage.remove(sessionKey);
+            // Remove from sessionStorage
+            window.KasaKolawole.storage.session.remove(sessionKey);
+        } else {
+            // Fallback: remove from both storages directly
+            localStorage.removeItem(sessionKey);
+            sessionStorage.removeItem(sessionKey);
         }
         
-        // Redirect to login
-        window.location.href = '/';
+        // Show logout message
+        if (window.KasaKolawole?.notify) {
+            window.KasaKolawole.notify.success('Logged out successfully!', 1500);
+        }
+        
+        // Redirect to login after a short delay
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1500);
     }
 }
 
@@ -737,6 +753,15 @@ function setupEventListeners() {
             if (!e.target.closest('.user-menu-container')) {
                 userDropdown.classList.remove('active');
             }
+        });
+    }
+    
+    // Logout button
+    const logoutBtn = document.querySelector('#logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleLogout();
         });
     }
 }

@@ -20,7 +20,7 @@
       "maxAttempts": 3,
       "sessionTimeout": 3600000,
       "rememberMeDuration": 2592000000,
-      "redirectUrl": "/home",
+      "redirectUrl": "home/home.html",
       "lockoutDuration": 900000
     },
     "security": {

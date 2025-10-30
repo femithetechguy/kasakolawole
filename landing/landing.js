@@ -95,9 +95,6 @@ class LandingPageAuth {
             togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
         }
 
-        // Auto-fill demo credentials (for development)
-        this.addDemoCredentialsFill();
-
         // Enter key support
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
@@ -105,25 +102,6 @@ class LandingPageAuth {
                 if (loginBtn) loginBtn.click();
             }
         });
-    }
-
-    addDemoCredentialsFill() {
-        const demoCard = document.querySelector('.demo-card');
-        if (demoCard) {
-            demoCard.addEventListener('click', () => {
-                document.getElementById('username').value = 'admin';
-                document.getElementById('password').value = 'admin';
-                
-                // Add visual feedback
-                const inputs = [document.getElementById('username'), document.getElementById('password')];
-                inputs.forEach(input => {
-                    input.style.background = '#e8f5e8';
-                    setTimeout(() => {
-                        input.style.background = '';
-                    }, 1000);
-                });
-            });
-        }
     }
 
     async handleLogin(e) {
@@ -190,28 +168,39 @@ class LandingPageAuth {
     }
 
     async authenticateUser(username, password) {
-        // For now, use simple credential check
-        // TODO: Integrate with Firebase Authentication
-        
         console.log('authenticateUser called with:', { username, password });
-        console.log('Config auth:', this.config?.auth);
         
-        const validUsername = this.config?.auth?.fallback?.credentials?.username || this.config?.auth?.username || 'admin';
-        const validPassword = this.config?.auth?.fallback?.credentials?.password || this.config?.auth?.password || 'admin';
-        
-        console.log('Valid credentials:', { validUsername, validPassword });
-
-        // Simulate Firebase authentication
-        if (username === validUsername && password === validPassword) {
-            console.log('Authentication successful!');
-            return true;
+        // Check if Firebase Auth is available
+        if (!window.FirebaseAuth || !window.FirebaseAuth.auth) {
+            console.error('❌ Firebase Authentication not available');
+            if (this.app.notify) {
+                this.app.notify.error('Authentication service not available. Please contact support.', 4000);
+            } else {
+                this.showToast('Authentication service not available. Please contact support.', 'error', 4000);
+            }
+            return false;
         }
-
-        // In future, this will call Firebase Auth
-        // return await this.firebaseAuth(username, password);
         
-        console.log('Authentication failed!');
-        return false;
+        console.log('🔥 Using Firebase Authentication');
+        
+        // Try Firebase authentication
+        const result = await window.FirebaseAuth.signInWithEmail(username, password);
+        
+        if (result.success) {
+            console.log('✅ Firebase authentication successful!');
+            return true;
+        } else {
+            console.log('❌ Firebase authentication failed:', result.message);
+            
+            // Show specific error message
+            if (this.app.notify) {
+                this.app.notify.error(result.message, 4000);
+            } else {
+                this.showToast(result.message, 'error', 4000);
+            }
+            
+            return false;
+        }
     }
 
     handleSuccessfulLogin(username, rememberMe) {

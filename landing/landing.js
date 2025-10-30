@@ -75,7 +75,7 @@ class LandingPageAuth {
                     },
                     config: {
                         sessionTimeout: 3600000, // 1 hour
-                        redirectUrl: 'home/home.html'
+                        redirectUrl: '/home'
                     }
                 }
             };
@@ -256,7 +256,7 @@ class LandingPageAuth {
 
         // Redirect after delay
         setTimeout(() => {
-            window.location.href = this.config?.auth?.config?.redirectUrl || 'home/home.html';
+            window.location.href = this.config?.auth?.config?.redirectUrl || '/home';
         }, 2000);
     }
 

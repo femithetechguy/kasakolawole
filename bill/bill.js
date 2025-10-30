@@ -871,8 +871,11 @@ function renderTableSection(section) {
                 </div>
                 <div class="table-actions">
                     <span class="results-count" id="resultsCount"></span>
-                    <button class="btn btn-primary btn-sm" data-action="refresh">
+                    <button class="btn btn-primary btn-sm" onclick="window.BillModule.refreshData()" title="Refresh bill data">
                         <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-warning btn-sm" data-action="export-csv" title="Export current bill data as CSV">
+                        <i class="fas fa-download"></i> Export CSV
                     </button>
                 </div>
             </div>
@@ -1187,6 +1190,10 @@ function handleBillAction(action, element) {
             showBillNotification('Export data functionality coming soon!', 'info');
             break;
         
+        case 'export-csv':
+            handleCSVExport();
+            break;
+        
         default:
             console.log(`Unknown bill action: ${action}`);
     }
@@ -1200,6 +1207,129 @@ function showBillNotification(message, type = 'info') {
         window.KasaKolawole.notify[type](message);
     } else {
         console.log(`Bill Notification [${type}]: ${message}`);
+    }
+}
+
+/**
+ * Handle CSV export - exports current bill data to CSV file
+ */
+function handleCSVExport() {
+    console.log('� Starting CSV export...');
+    
+    try {
+        // Get current bill data from BillModule
+        const billConfig = window.BillModule?.config;
+        
+        if (!billConfig) {
+            console.error('❌ billConfig is null or undefined');
+            showBillNotification('Bill data not loaded yet. Please wait and try again.', 'warning');
+            return;
+        }
+        
+        // The sections are in config.content.sections
+        const sections = billConfig.content?.sections;
+        
+        if (!sections) {
+            console.error('❌ billConfig.content.sections is missing');
+            showBillNotification('Bill data structure is invalid.', 'error');
+            return;
+        }
+        
+        const csvRows = [];
+        
+        // CSV Header
+        csvRows.push([
+            'Serial',
+            'ID',
+            'Bill Name',
+            'Category',
+            'Monthly Amount',
+            'Due Date',
+            'Status',
+            'Payment Link',
+            'Icon',
+            'Priority',
+            'Payment Method',
+            'Auto Pay Enabled',
+            'Provider',
+            'Account Number'
+        ].join(','));
+        
+        let exportCount = 0;
+        
+        // Loop through all sections and bills
+        sections.forEach(section => {
+            if (section.data && section.data.rows) {
+                section.data.rows.forEach(bill => {
+                    // Find cells
+                    const serialCell = bill.cells?.find(cell => cell.type === 'serial');
+                    const nameCell = bill.cells?.find(cell => cell.type === 'text');
+                    const amountCell = bill.cells?.find(cell => cell.type === 'currency');
+                    const dateCell = bill.cells?.find(cell => cell.type === 'date');
+                    const statusCell = bill.cells?.find(cell => cell.type === 'status');
+                    const linkCell = bill.cells?.find(cell => cell.type === 'link');
+                    
+                    // Build CSV row with current data (as-is, no modifications)
+                    const csvRow = [
+                        serialCell?.value || '',
+                        bill.id || '',
+                        `"${(nameCell?.value || '').replace(/"/g, '""')}"`, // Escape quotes
+                        bill.metadata?.category || '',
+                        amountCell?.value || 0,
+                        dateCell?.value || '',
+                        statusCell?.value || 'pending',
+                        linkCell?.value || '',
+                        nameCell?.icon || 'fas fa-file-invoice',
+                        bill.metadata?.priority || 'medium',
+                        bill.metadata?.paymentMethod || '',
+                        bill.metadata?.autoPayEnabled || false,
+                        `"${(bill.metadata?.provider || '').replace(/"/g, '""')}"`, // Escape quotes
+                        bill.metadata?.accountNumber || ''
+                    ];
+                    
+                    csvRows.push(csvRow.join(','));
+                    exportCount++;
+                });
+            }
+        });
+        
+        console.log(`✅ Prepared ${exportCount} bills for export`);
+        
+        // Create CSV content
+        const csvContent = csvRows.join('\n');
+        
+        // Create blob and download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        // Generate filename with current date and time
+        const date = new Date();
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        const timeStr = `${String(date.getHours()).padStart(2, '0')}${String(date.getMinutes()).padStart(2, '0')}`;
+        const filename = `bill_categories_${dateStr}_${timeStr}.csv`;
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log(`📥 Downloaded: ${filename}`);
+        
+        // Show success notification
+        showBillNotification(
+            `✅ Exported ${exportCount} bill${exportCount !== 1 ? 's' : ''} to ${filename}`,
+            'success'
+        );
+        
+    } catch (error) {
+        console.error('❌ Error during CSV export:', error);
+        showBillNotification(
+            'Error exporting CSV: ' + error.message,
+            'error'
+        );
     }
 }
 

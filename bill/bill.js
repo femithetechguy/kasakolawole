@@ -999,13 +999,18 @@ function renderTableCell(cell) {
             
         case 'link':
             const urgentClass = cell.urgent ? ' urgent-payment' : '';
+            const linkText = cell.text || 'Pay Now';
+            const linkIcon = cell.icon || '';
+            const linkTarget = cell.target || '_self';
+            const linkHref = cell.value || '#';
+            
             const linkHtml = `<td class="cell-link">
-                <a href="${cell.value}" 
-                   target="${cell.target || '_self'}" 
+                <a href="${linkHref}" 
+                   target="${linkTarget}" 
                    class="payment-link${urgentClass}"
-                   title="${cell.text}">
-                    ${cell.icon ? `<i class="${cell.icon}"></i>` : ''}
-                    <span>${cell.text}</span>
+                   title="${linkText}">
+                    ${linkIcon ? `<i class="${linkIcon}"></i>` : ''}
+                    <span>${linkText}</span>
                 </a>
             </td>`;
             console.log('Generated link HTML:', linkHtml);
@@ -1083,11 +1088,11 @@ function renderBillCard(row) {
                 <div class="bill-card-right">
                     ${linkCell ? `
                         <div class="bill-payment-compact">
-                            <a href="${linkCell.value}" 
+                            <a href="${linkCell.value || '#'}" 
                                target="${linkCell.target || '_self'}" 
                                class="payment-link-compact${linkCell.urgent ? ' urgent-payment' : ''}">
                                 ${linkCell.icon ? `<i class="${linkCell.icon}"></i>` : ''}
-                                <span>${linkCell.text}</span>
+                                <span>${linkCell.text || 'Pay Now'}</span>
                             </a>
                         </div>
                     ` : ''}

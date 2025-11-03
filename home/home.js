@@ -340,7 +340,7 @@ async function renderTabContent(tab) {
             <div class="tab-content active">
                 <div class="container">
                     <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="bi bi-exclamation-triangle-fill"></i>
                         <strong>Error loading content:</strong> ${error.message}
                     </div>
                 </div>
@@ -797,11 +797,11 @@ function showErrorState() {
         container.innerHTML = `
             <div class="error-state">
                 <div class="error-content">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="bi bi-exclamation-triangle-fill"></i>
                     <h2>Error Loading Dashboard</h2>
                     <p>Unable to load dashboard configuration. Please refresh the page.</p>
                     <button class="btn btn-primary" onclick="location.reload()">
-                        <i class="fas fa-refresh"></i> Refresh Page
+                        <i class="bi bi-arrow-repeat"></i> Refresh Page
                     </button>
                 </div>
             </div>

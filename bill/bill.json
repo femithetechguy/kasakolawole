@@ -21,25 +21,25 @@
           {
             "label": "Total Bills",
             "value": "0",
-            "icon": "fas fa-file-invoice",
+            "icon": "bi bi-file-earmark-text",
             "color": "primary"
           },
           {
             "label": "Pending",
             "value": "0",
-            "icon": "fas fa-clock",
+            "icon": "bi bi-clock",
             "color": "warning"
           },
           {
             "label": "Overdue",
             "value": "0",
-            "icon": "fas fa-exclamation-triangle",
+            "icon": "bi bi-exclamation-triangle-fill",
             "color": "danger"
           },
           {
             "label": "Paid This Month",
             "value": "0",
-            "icon": "fas fa-check-circle",
+            "icon": "bi bi-check-circle-fill",
             "color": "success"
           }
         ]
@@ -60,28 +60,28 @@
         "data": [
           {
             "text": "Add New Bill",
-            "icon": "fas fa-plus",
+            "icon": "bi bi-plus-lg",
             "action": "add-bill",
             "type": "primary",
             "description": "Create a new bill entry"
           },
           {
             "text": "View All Bills",
-            "icon": "fas fa-list",
+            "icon": "bi bi-list",
             "action": "view-all",
             "type": "outline",
             "description": "See complete bill history"
           },
           {
             "text": "Payment Settings",
-            "icon": "fas fa-cog",
+            "icon": "bi bi-gear",
             "action": "settings",
             "type": "outline",
             "description": "Configure payment methods"
           },
           {
             "text": "Export Data",
-            "icon": "fas fa-download",
+            "icon": "bi bi-download",
             "action": "export",
             "type": "outline",
             "description": "Export bill data to CSV"
@@ -150,6 +150,6 @@
   "theme": {
     "primaryColor": "#3b82f6",
     "accentColor": "#10b981",
-    "iconClass": "fas fa-file-invoice-dollar"
+    "iconClass": "bi bi-file-earmark-text-fill"
   }
 }

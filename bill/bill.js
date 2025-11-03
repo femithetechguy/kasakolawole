@@ -129,7 +129,7 @@ window.BillModule = {
         const notification = document.createElement('div');
         notification.className = `refresh-notification notification-${type}`;
         
-        const icon = type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-sync-alt';
+        const icon = type === 'error' ? 'bi bi-exclamation-triangle-fill' : 'bi bi-arrow-repeat';
         
         notification.innerHTML = `
             <div class="notification-content">
@@ -293,12 +293,12 @@ async function loadBillConfig() {
                             },
                             cells: [
                                 { type: "serial", value: row.Serial },
-                                { type: "text", value: row['Bill Name'], icon: row.Icon || "fas fa-file-invoice" },
+                                { type: "text", value: row['Bill Name'], icon: row.Icon || "bi bi-file-earmark-text" },
                                 { type: "currency", value: parseFloat(row['Monthly Amount']) || 0, currency: "USD" },
                                 { type: "date", value: row['Due Date'] },
                                 { type: "status", value: row.Status, label: row.Status.charAt(0).toUpperCase() + row.Status.slice(1), color: getStatusColor(row.Status) },
-                                { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "fas fa-credit-card", target: "_blank" },
-                                { type: "actions", buttons: [{ text: "Details", icon: "fas fa-info-circle", action: "details", type: "primary" }] }
+                                { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "bi bi-credit-card-fill", target: "_blank" },
+                                { type: "actions", buttons: [{ text: "Details", icon: "bi bi-info-circle-fill", action: "details", type: "primary" }] }
                             ]
                         };
                     });
@@ -526,7 +526,7 @@ function updateOverviewFromBillData(config) {
         {
             "label": "Total Bills",
             "value": totalBills.toString(),
-            "icon": "fas fa-file-invoice",
+            "icon": "bi bi-file-earmark-text",
             "color": "primary",
             "metadata": {
                 "monthlyAmount": `$${totalMonthlyAmount.toFixed(2)}`,
@@ -536,7 +536,7 @@ function updateOverviewFromBillData(config) {
         {
             "label": "Pending",
             "value": pendingCount.toString(),
-            "icon": "fas fa-clock",
+            "icon": "bi bi-clock",
             "color": "warning",
             "metadata": {
                 "upcoming": bills.filter(bill => bill.cells.find(cell => cell.type === 'status')?.value === 'upcoming').length
@@ -545,7 +545,7 @@ function updateOverviewFromBillData(config) {
         {
             "label": "Overdue",
             "value": overdueCount.toString(),
-            "icon": "fas fa-exclamation-triangle",
+            "icon": "bi bi-exclamation-triangle-fill",
             "color": "danger",
             "metadata": {
                 "urgentCount": bills.filter(bill => bill.cells.find(cell => cell.type === 'link')?.urgent).length
@@ -554,7 +554,7 @@ function updateOverviewFromBillData(config) {
         {
             "label": "Paid This Month",
             "value": paidThisMonthCount.toString(),
-            "icon": "fas fa-check-circle",
+            "icon": "bi bi-check-circle-fill",
             "color": "success",
             "metadata": {
                 "autoPayEnabled": bills.filter(bill => bill.metadata?.autoPayEnabled).length
@@ -829,13 +829,13 @@ function renderTableSection(section) {
         <div class="table-controls">
             <div class="search-filter-controls">
                 <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
+                    <i class="bi bi-search search-icon"></i>
                     <input type="text" 
                            id="billSearch" 
                            placeholder="Search bills by name, provider..." 
                            class="search-input">
                     <button class="clear-search" id="clearSearch" style="display: none;">
-                        <i class="fas fa-times"></i>
+                        <i class="bi bi-x"></i>
                     </button>
                 </div>
                 <div class="filter-controls">
@@ -859,26 +859,26 @@ function renderTableSection(section) {
                         <option value="1000+">$1000+</option>
                     </select>
                     <button class="btn btn-outline btn-sm" id="clearFilters">
-                        <i class="fas fa-filter-circle-xmark"></i> Clear Filters
+                        <i class="bi bi-funnel-fill"></i> Clear Filters
                     </button>
                 </div>
             </div>
             <div class="view-and-actions">
                 <div class="view-toggle">
                     <button class="view-btn active" data-view="table">
-                        <i class="fas fa-table"></i> Table
+                        <i class="bi bi-table"></i> Table
                     </button>
                     <button class="view-btn" data-view="cards">
-                        <i class="fas fa-th-large"></i> Cards
+                        <i class="bi bi-grid-3x3-gap-fill"></i> Cards
                     </button>
                 </div>
                 <div class="table-actions">
                     <span class="results-count" id="resultsCount"></span>
                     <button class="btn btn-primary btn-sm" onclick="window.BillModule.refreshData()" title="Refresh bill data">
-                        <i class="fas fa-sync-alt"></i> Refresh
+                        <i class="bi bi-arrow-repeat"></i> Refresh
                     </button>
                     <button class="btn btn-warning btn-sm" data-action="export-csv" title="Export current bill data as CSV">
-                        <i class="fas fa-download"></i> Export CSV
+                        <i class="bi bi-download"></i> Export CSV
                     </button>
                 </div>
             </div>
@@ -893,7 +893,7 @@ function renderTableSection(section) {
                 <div class="table-container">
                     ${searchAndFilterControls}
                     <div class="empty-state">
-                        <i class="fas fa-file-invoice-dollar"></i>
+                        <i class="bi bi-file-earmark-text-fill"></i>
                         <h4>No Bill Data Available</h4>
                         <p>Please check if bill_categories.csv file is accessible</p>
                     </div>
@@ -1248,9 +1248,9 @@ function showBillDetails(element) {
     popup.innerHTML = `
         <div class="bill-details-content">
             <div class="bill-details-header">
-                <h3><i class="fas fa-info-circle"></i> Bill Details</h3>
+                <h3><i class="bi bi-info-circle-fill"></i> Bill Details</h3>
                 <button class="close-details" onclick="this.closest('.bill-details-popup').remove()">
-                    <i class="fas fa-times"></i>
+                    <i class="bi bi-x"></i>
                 </button>
             </div>
             <div class="bill-details-body">
@@ -1351,7 +1351,7 @@ function handleCSVExport() {
                         dateCell?.value || '',
                         statusCell?.value || 'pending',
                         linkCell?.value || '',
-                        nameCell?.icon || 'fas fa-file-invoice',
+                        nameCell?.icon || 'bi bi-file-earmark-text',
                         bill.metadata?.priority || 'medium',
                         bill.metadata?.paymentMethod || '',
                         bill.metadata?.autoPayEnabled || false,
@@ -1414,11 +1414,11 @@ function showBillError(error) {
         sectionsContainer.innerHTML = `
             <div class="error-state">
                 <div class="error-content">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="bi bi-exclamation-triangle-fill"></i>
                     <h2>Error Loading Bills</h2>
                     <p>Unable to load bill data. Please refresh the page.</p>
                     <button class="btn btn-primary" onclick="location.reload()">
-                        <i class="fas fa-refresh"></i> Refresh Page
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Page
                     </button>
                 </div>
             </div>
@@ -1531,11 +1531,11 @@ function showChartsError() {
         chartsSection.innerHTML = `
             <div class="error-state">
                 <div class="error-content">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="bi bi-exclamation-triangle-fill"></i>
                     <h3>Charts Unavailable</h3>
                     <p>Unable to load chart visualization. Please refresh the page.</p>
                     <button class="btn btn-primary" onclick="location.reload()">
-                        <i class="fas fa-refresh"></i>
+                        <i class="bi bi-arrow-clockwise"></i>
                         Refresh Page
                     </button>
                 </div>
@@ -1703,7 +1703,7 @@ function validateAndFixCellStructure(rows) {
                     type: 'link',
                     value: cell.value || '#',
                     text: cell.text || 'Pay Now',
-                    icon: cell.icon || 'fas fa-credit-card',
+                    icon: cell.icon || 'bi bi-credit-card-fill',
                     target: cell.target || '_blank',
                     urgent: cell.urgent || false
                 };
@@ -1996,7 +1996,7 @@ function updateBillDisplay(filteredBills) {
                 <tr>
                     <td colspan="7" class="no-results">
                         <div class="no-results-content">
-                            <i class="fas fa-search"></i>
+                            <i class="bi bi-search"></i>
                             <h4>No bills found</h4>
                             <p>Try adjusting your search or filters</p>
                         </div>
@@ -2017,7 +2017,7 @@ function updateBillDisplay(filteredBills) {
             cardsGrid.innerHTML = `
                 <div class="no-results-card">
                     <div class="no-results-content">
-                        <i class="fas fa-search"></i>
+                        <i class="bi bi-search"></i>
                         <h4>No bills found</h4>
                         <p>Try adjusting your search or filters</p>
                     </div>

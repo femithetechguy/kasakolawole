@@ -33,7 +33,7 @@
   "branding": {
     "logo": {
       "type": "icon",
-      "icon": "fas fa-crown",
+      "icon": "bi bi-award-fill",
       "color": "#F39C12"
     },
     "title": "Kasa Kolawole",
@@ -50,7 +50,7 @@
         "id": "username",
         "type": "text",
         "label": "Username",
-        "icon": "fas fa-user",
+        "icon": "bi bi-person-fill",
         "placeholder": "Enter your username",
         "required": true,
         "autocomplete": "username",
@@ -64,7 +64,7 @@
         "id": "password",
         "type": "password",
         "label": "Password",
-        "icon": "fas fa-key",
+        "icon": "bi bi-key-fill",
         "placeholder": "Enter your password",
         "required": true,
         "autocomplete": "current-password",
@@ -93,7 +93,7 @@
     "submitButton": {
       "text": "Sign In",
       "loadingText": "Signing in...",
-      "icon": "fas fa-sign-in-alt"
+      "icon": "bi bi-box-arrow-in-right"
     }
   },
   "messages": {

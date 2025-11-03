@@ -332,7 +332,7 @@ function showDebtCalculator() {
     const calculatorHTML = `
         <div class="debt-calculator">
             <h3 class="debt-calculator-title">
-                <i class="fas fa-calculator"></i>
+                <i class="bi bi-calculator"></i>
                 Debt Payoff Calculator
             </h3>
             <p>Advanced debt calculation tools coming soon!</p>
@@ -383,11 +383,11 @@ function showDebtError(error) {
         sectionsContainer.innerHTML = `
             <div class="error-state">
                 <div class="error-content">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="bi bi-exclamation-triangle-fill"></i>
                     <h2>Error Loading Debts</h2>
                     <p>Unable to load debt data. Please refresh the page.</p>
                     <button class="btn btn-primary" onclick="location.reload()">
-                        <i class="fas fa-refresh"></i> Refresh Page
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Page
                     </button>
                 </div>
             </div>

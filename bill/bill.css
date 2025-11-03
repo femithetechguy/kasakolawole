@@ -594,7 +594,8 @@
 }
 
 /* Bill Cards Styling */
-.cards-container {
+.cards-container,
+.bill-cards-grid {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
@@ -794,6 +795,7 @@
 @media (max-width: 480px) {
     .bill-card {
         padding: var(--spacing-base);
+        margin: 0 var(--spacing-xs);
     }
     
     .bill-card-content {
@@ -843,6 +845,17 @@
     
     .btn-compact i {
         font-size: 1.2rem;
+    }
+}
+
+/* Mobile card spacing */
+@media (max-width: 768px) {
+    .bill-cards-grid {
+        padding: var(--spacing-sm) 0;
+    }
+    
+    .bill-card {
+        margin: 0 var(--spacing-sm);
     }
 }
 
@@ -1077,22 +1090,32 @@
     }
 }
 
+/* Force card view on mobile - better UX */
 @media (max-width: 768px) {
+    /* Hide table view completely on mobile */
+    .table-view {
+        display: none !important;
+    }
+    
+    .table-view.active {
+        display: none !important;
+    }
+    
+    /* Show card view on mobile */
+    .cards-view {
+        display: block !important;
+    }
+    
+    /* Hide view toggle buttons on mobile since only cards are shown */
+    .view-toggle {
+        display: none !important;
+    }
+    
     .table-container {
         margin: 0 -16px; /* Extend to screen edges on mobile */
         border-radius: 0;
         border-left: none;
         border-right: none;
-    }
-    
-    .bill-table {
-        min-width: 600px;
-        font-size: 0.8rem;
-    }
-    
-    .bill-table th,
-    .bill-table td {
-        padding: 8px 12px;
     }
 }
 

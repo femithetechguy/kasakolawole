@@ -6,7 +6,7 @@
 console.log('🏠 Starting Home Dashboard...');
 
 // Global dashboard state
-window.KasaDashboard = {
+window.CasaDashboard = {
     config: null,
     activeTab: null,
     tabs: {},
@@ -42,7 +42,7 @@ async function loadDashboardConfig() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const config = await response.json();
-        window.KasaDashboard.config = config;
+        window.CasaDashboard.config = config;
         
         console.log('✅ Dashboard config loaded:', config);
         return config;
@@ -57,7 +57,7 @@ async function loadDashboardConfig() {
  * Initialize the dashboard
  */
 async function initializeDashboard() {
-    const config = window.KasaDashboard.config;
+    const config = window.CasaDashboard.config;
     
     // Update page title
     if (config.meta?.title) {
@@ -85,7 +85,7 @@ async function initializeDashboard() {
  * Setup navigation header
  */
 function setupNavigation() {
-    const config = window.KasaDashboard.config;
+    const config = window.CasaDashboard.config;
     
     // Update brand
     if (config.navigation?.brand) {
@@ -134,7 +134,7 @@ function setupNavigation() {
  * Setup tab navigation
  */
 function setupTabs() {
-    const config = window.KasaDashboard.config;
+    const config = window.CasaDashboard.config;
     const tabNavList = document.querySelector('#tabNavList');
     
     if (!tabNavList || !config.tabs) return;
@@ -152,14 +152,14 @@ function setupTabs() {
     tabNavList.innerHTML = tabsHTML;
     
     // Store tabs in global state
-    window.KasaDashboard.tabs = config.tabs;
+    window.CasaDashboard.tabs = config.tabs;
 }
 
 /**
  * Load and display a specific tab
  */
 async function loadTab(tabId) {
-    const config = window.KasaDashboard.config;
+    const config = window.CasaDashboard.config;
     const tab = config.tabs?.[tabId];
     
     if (!tab) {
@@ -179,14 +179,14 @@ async function loadTab(tabId) {
     await renderTabContent(tab);
     
     // Update global state
-    window.KasaDashboard.activeTab = tabId;
+    window.CasaDashboard.activeTab = tabId;
 }
 
 /**
  * Stop auto-refresh for the previously active tab
  */
 function stopAutoRefreshForPreviousTab() {
-    const previousTab = window.KasaDashboard.activeTab;
+    const previousTab = window.CasaDashboard.activeTab;
     
     if (previousTab) {
         const moduleInitName = `${previousTab.charAt(0).toUpperCase() + previousTab.slice(1)}Module`;
@@ -234,12 +234,12 @@ async function renderTabContent(tab) {
             console.log(`📦 Loading standalone module: ${tab.id}`);
             
             // Check if module content is already cached
-            if (window.KasaDashboard.moduleContent[tab.id]) {
+            if (window.CasaDashboard.moduleContent[tab.id]) {
                 console.log(`🚀 Using cached content for module: ${tab.id}`);
-                container.innerHTML = window.KasaDashboard.moduleContent[tab.id];
+                container.innerHTML = window.CasaDashboard.moduleContent[tab.id];
                 
                 // Re-initialize the module if it's already loaded
-                if (window.KasaDashboard.loadedModules.has(tab.id)) {
+                if (window.CasaDashboard.loadedModules.has(tab.id)) {
                     const moduleInitName = `${tab.id.charAt(0).toUpperCase() + tab.id.slice(1)}Module`;
                     if (window[moduleInitName] && typeof window[moduleInitName].init === 'function') {
                         console.log(`🔄 Re-initializing cached module: ${moduleInitName}`);
@@ -266,15 +266,15 @@ async function renderTabContent(tab) {
             container.innerHTML = html;
             
             // Cache the content
-            window.KasaDashboard.moduleContent[tab.id] = html;
+            window.CasaDashboard.moduleContent[tab.id] = html;
             
             // Wait for next tick to ensure DOM is updated
             await new Promise(resolve => setTimeout(resolve, 0));
             
             // Load the corresponding module CSS and JS (only if not already loaded)
-            if (!window.KasaDashboard.loadedModules.has(tab.id)) {
+            if (!window.CasaDashboard.loadedModules.has(tab.id)) {
                 await loadModuleAssets(tab.id);
-                window.KasaDashboard.loadedModules.add(tab.id);
+                window.CasaDashboard.loadedModules.add(tab.id);
             } else {
                 // Module already loaded, just re-initialize
                 const moduleInitName = `${tab.id.charAt(0).toUpperCase() + tab.id.slice(1)}Module`;
@@ -654,13 +654,13 @@ async function handleLogout() {
             }
             
             // Clear session from both localStorage and sessionStorage
-            const sessionKey = window.KasaKolawole?.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session';
+            const sessionKey = window.CasaKolawole?.config?.STORAGE_KEYS?.SESSION || 'Casakolawole_session';
             
-            if (window.KasaKolawole?.storage) {
+            if (window.CasaKolawole?.storage) {
                 // Remove from localStorage
-                window.KasaKolawole.storage.remove(sessionKey);
+                window.CasaKolawole.storage.remove(sessionKey);
                 // Remove from sessionStorage
-                window.KasaKolawole.storage.session.remove(sessionKey);
+                window.CasaKolawole.storage.session.remove(sessionKey);
             } else {
                 // Fallback: remove from both storages directly
                 localStorage.removeItem(sessionKey);
@@ -668,8 +668,8 @@ async function handleLogout() {
             }
             
             // Show logout message
-            if (window.KasaKolawole?.notify) {
-                window.KasaKolawole.notify.success('Logged out successfully!', 1500);
+            if (window.CasaKolawole?.notify) {
+                window.CasaKolawole.notify.success('Logged out successfully!', 1500);
             }
             
             // Redirect to login after a short delay
@@ -688,7 +688,7 @@ async function handleLogout() {
  * Setup footer
  */
 function setupFooter() {
-    const config = window.KasaDashboard.config;
+    const config = window.CasaDashboard.config;
     
     if (config.footer?.company) {
         updateElement('.footer-brand .brand-name', config.footer.company.name);
@@ -813,13 +813,13 @@ function showErrorState() {
  * Show toast notification
  */
 function showToast(message, type = 'info') {
-    if (window.KasaKolawole?.notify) {
-        window.KasaKolawole.notify[type](message);
+    if (window.CasaKolawole?.notify) {
+        window.CasaKolawole.notify[type](message);
     } else {
         console.log(`Toast: ${message}`);
     }
 }
 
 // Export for global access
-window.KasaDashboard.loadTab = loadTab;
-window.KasaDashboard.handleAction = handleAction;
+window.CasaDashboard.loadTab = loadTab;
+window.CasaDashboard.handleAction = handleAction;

@@ -1,6 +1,6 @@
 # Firebase Authentication Setup Guide
 
-This guide will help you set up Firebase Authentication for the Kasa Kolawole application.
+This guide will help you set up Firebase Authentication for the Casa Kolawole application.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ This guide will help you set up Firebase Authentication for the Kasa Kolawole ap
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Click **"Add project"** or **"Create a project"**
-3. Enter your project name (e.g., "kasa-kolawole")
+3. Enter your project name (e.g., "Casa-kolawole")
 4. Click **Continue**
 5. (Optional) Enable Google Analytics
 6. Click **Create project**
@@ -21,7 +21,7 @@ This guide will help you set up Firebase Authentication for the Kasa Kolawole ap
 
 1. In the Firebase Console, click the **Web icon** (</>) to add Firebase to your web app
 2. Register app:
-   - **App nickname**: "Kasa Kolawole Web" (or any name you prefer)
+   - **App nickname**: "Casa Kolawole Web" (or any name you prefer)
    - **Firebase Hosting**: Check this box if you plan to use Firebase Hosting
 3. Click **Register app**
 4. You'll see your Firebase configuration object - **SAVE THIS**
@@ -66,9 +66,9 @@ const firebaseConfig = {
 ```javascript
 const firebaseConfig = {
     apiKey: "AIzaSyC8x9F_abc123xyz789...",
-    authDomain: "kasa-kolawole.firebaseapp.com",
-    projectId: "kasa-kolawole",
-    storageBucket: "kasa-kolawole.appspot.com",
+    authDomain: "Casa-kolawole.firebaseapp.com",
+    projectId: "Casa-kolawole",
+    storageBucket: "Casa-kolawole.appspot.com",
     messagingSenderId: "123456789012",
     appId: "1:123456789012:web:abc123xyz789..."
 };

@@ -1,12 +1,12 @@
 /**
  * ============================================
- * KASA KOLAWOLE - GLOBAL JAVASCRIPT
+ * Casa KOLAWOLE - GLOBAL JAVASCRIPT
  * ============================================
  * Common utilities and functions used across the application
  */
 
 // Global app namespace
-window.KasaKolawole = window.KasaKolawole || {};
+window.CasaKolawole = window.CasaKolawole || {};
 
 (function(app) {
     'use strict';
@@ -16,7 +16,7 @@ window.KasaKolawole = window.KasaKolawole || {};
     // ============================================
     
     app.config = {
-        APP_NAME: 'Kasa Kolawole',
+        APP_NAME: 'Casa Kolawole',
         VERSION: '1.0.0',
         DEBUG: true,
         ANIMATION_DURATION: 300,
@@ -32,9 +32,9 @@ window.KasaKolawole = window.KasaKolawole || {};
         
         // Local storage keys
         STORAGE_KEYS: {
-            SESSION: 'kasakolawole_session',
-            THEME: 'kasakolawole_theme',
-            PREFERENCES: 'kasakolawole_preferences'
+            SESSION: 'Casakolawole_session',
+            THEME: 'Casakolawole_theme',
+            PREFERENCES: 'Casakolawole_preferences'
         }
     };
 
@@ -665,7 +665,7 @@ window.KasaKolawole = window.KasaKolawole || {};
     // ============================================
     
     app.init = function() {
-        app.logger.info('Initializing Kasa Kolawole Global Scripts');
+        app.logger.info('Initializing Casa Kolawole Global Scripts');
         
         // Set up global error handling
         window.addEventListener('error', function(event) {
@@ -701,9 +701,9 @@ window.KasaKolawole = window.KasaKolawole || {};
         app.init();
     }
 
-})(window.KasaKolawole);
+})(window.CasaKolawole);
 
 // Export for module environments
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = window.KasaKolawole;
+    module.exports = window.CasaKolawole;
 }

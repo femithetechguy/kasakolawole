@@ -102,7 +102,7 @@ function convertBillDataToJSON(csvData) {
                 {
                     type: "text",
                     value: row['Bill Name'],
-                    icon: row.Icon || "fas fa-file-invoice"
+                    icon: row.Icon || "bi bi-file-earmark-text"
                 },
                 {
                     type: "currency",
@@ -123,7 +123,7 @@ function convertBillDataToJSON(csvData) {
                     type: "link",
                     value: row['Payment Link'] || "#",
                     text: "Pay Now",
-                    icon: "fas fa-credit-card",
+                    icon: "bi bi-credit-card-fill",
                     target: "_blank"
                 },
                 {
@@ -131,7 +131,7 @@ function convertBillDataToJSON(csvData) {
                     buttons: [
                         {
                             text: "Details",
-                            icon: "fas fa-info-circle",
+                            icon: "bi bi-info-circle-fill",
                             action: "details",
                             type: "primary"
                         }
@@ -144,10 +144,10 @@ function convertBillDataToJSON(csvData) {
     // Add charts configuration for CSV loaded data
     const baseConfig = {
         meta: {
-            title: "Bills - Kasa Kolawole",
+            title: "Bills - Casa Kolawole",
             description: "Comprehensive bill management and tracking system",
             keywords: ["bills", "payments", "financial management", "tracking"],
-            author: "Kasa Kolawole",
+            author: "Casa Kolawole",
             version: "1.0.0",
             lastUpdated: new Date().toISOString().split('T')[0]
         },
@@ -184,10 +184,10 @@ function convertBillDataToJSON(csvData) {
     // Add charts configuration for CSV loaded data
     const finalConfig = {
         meta: {
-            title: "Bills - Kasa Kolawole",
+            title: "Bills - Casa Kolawole",
             description: "Comprehensive bill management and tracking system",
             keywords: ["bills", "payments", "financial management", "tracking"],
-            author: "Kasa Kolawole",
+            author: "Casa Kolawole",
             version: "1.0.0",
             lastUpdated: new Date().toISOString().split('T')[0]
         },
@@ -222,7 +222,7 @@ function convertBillDataToJSON(csvData) {
         theme: {
             primaryColor: "#3b82f6",
             accentColor: "#10b981",
-            iconClass: "fas fa-file-invoice-dollar"
+            iconClass: "bi bi-file-earmark-text-fill"
         },
         charts: {
             pieChart: {
@@ -293,25 +293,25 @@ function generateOverviewStats(bills) {
         {
             label: "Total Bills",
             value: total.toString(),
-            icon: "fas fa-file-invoice",
+            icon: "bi bi-file-earmark-text",
             color: "primary"
         },
         {
             label: "Pending",
             value: pending.toString(),
-            icon: "fas fa-clock",
+            icon: "bi bi-clock",
             color: "warning"
         },
         {
             label: "Overdue", 
             value: overdue.toString(),
-            icon: "fas fa-exclamation-triangle",
+            icon: "bi bi-exclamation-triangle-fill",
             color: "danger"
         },
         {
             label: "Paid This Month",
             value: paid.toString(),
-            icon: "fas fa-check-circle",
+            icon: "bi bi-check-circle-fill",
             color: "success"
         }
     ];

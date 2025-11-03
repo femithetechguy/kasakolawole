@@ -7,7 +7,7 @@ class LandingPageAuth {
     constructor() {
         console.log('LandingPageAuth constructor called');
         this.config = null;
-        this.app = window.KasaKolawole || {};
+        this.app = window.CasaKolawole || {};
         
         // Add a small delay to ensure global scripts are fully loaded
         setTimeout(() => {
@@ -24,7 +24,7 @@ class LandingPageAuth {
             // Check if global utilities are available
             console.log('Global app available:', !!this.app);
             console.log('Global notify available:', !!this.app.notify);
-            console.log('Window.KasaKolawole:', window.KasaKolawole);
+            console.log('Window.CasaKolawole:', window.CasaKolawole);
             
             // Test toast notification
             console.log('Testing toast notification...');
@@ -230,16 +230,16 @@ class LandingPageAuth {
         // Store session
         if (this.app.storage) {
             if (rememberMe) {
-                this.app.storage.set(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session', sessionData);
+                this.app.storage.set(this.app.config?.STORAGE_KEYS?.SESSION || 'Casakolawole_session', sessionData);
             } else {
-                this.app.storage.session.set(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session', sessionData);
+                this.app.storage.session.set(this.app.config?.STORAGE_KEYS?.SESSION || 'Casakolawole_session', sessionData);
             }
         } else {
             // Fallback to direct storage
             if (rememberMe) {
-                localStorage.setItem('kasakolawole_session', JSON.stringify(sessionData));
+                localStorage.setItem('Casakolawole_session', JSON.stringify(sessionData));
             } else {
-                sessionStorage.setItem('kasakolawole_session', JSON.stringify(sessionData));
+                sessionStorage.setItem('Casakolawole_session', JSON.stringify(sessionData));
             }
         }
 
@@ -307,13 +307,13 @@ class LandingPageAuth {
     getSessionData() {
         // Use global storage utility if available
         if (this.app.storage) {
-            const localSession = this.app.storage.get(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session');
-            const sessionSession = this.app.storage.session.get(this.app.config?.STORAGE_KEYS?.SESSION || 'kasakolawole_session');
+            const localSession = this.app.storage.get(this.app.config?.STORAGE_KEYS?.SESSION || 'Casakolawole_session');
+            const sessionSession = this.app.storage.session.get(this.app.config?.STORAGE_KEYS?.SESSION || 'Casakolawole_session');
             return localSession || sessionSession || null;
         } else {
             // Fallback to direct storage
-            const localSession = localStorage.getItem('kasakolawole_session');
-            const sessionSession = sessionStorage.getItem('kasakolawole_session');
+            const localSession = localStorage.getItem('Casakolawole_session');
+            const sessionSession = sessionStorage.getItem('Casakolawole_session');
             
             if (localSession) {
                 return JSON.parse(localSession);
@@ -342,12 +342,12 @@ class LandingPageAuth {
         
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            toggleIcon.classList.remove('fa-eye');
-            toggleIcon.classList.add('fa-eye-slash');
+            toggleIcon.classList.remove('bi-eye');
+            toggleIcon.classList.add('bi-eye-slash');
         } else {
             passwordInput.type = 'password';
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
+            toggleIcon.classList.remove('bi-eye-slash');
+            toggleIcon.classList.add('bi-eye');
         }
     }
 

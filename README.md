@@ -1,4 +1,4 @@
-# Kasa Kolawole Dynamic App
+# Casa Kolawole Dynamic App
 
 A responsive, dynamic web application with JSON-driven content management and tab-based navigation system.
 
@@ -25,7 +25,7 @@ A responsive, dynamic web application with JSON-driven content management and ta
 ## 📁 Project Structure
 
 ```
-kasakolawole/
+Casakolawole/
 ├── index.html                 # Landing/login page
 ├── app.json                   # Global app configuration
 ├── assets/
@@ -91,7 +91,7 @@ Home page content configuration:
 ### Development Server
 ```bash
 # Navigate to project directory
-cd kasakolawole
+cd Casakolawole
 
 # Start HTTP server
 python3 -m http.server 8080
@@ -176,8 +176,8 @@ python3 -m http.server 8080
 
 ## 📧 Contact
 
-**Kasa Kolawole**  
-Email: hello@kasakolawole.com  
+**Casa Kolawole**  
+Email: hello@Casakolawole.com  
 Phone: +1 (555) 123-4567  
 Location: Available Worldwide
 

@@ -1,9 +1,9 @@
 {
   "meta": {
-    "title": "Debts - Kasa Kolawole",
+    "title": "Debts - Casa Kolawole",
     "description": "Strategic debt tracking and management system",
     "keywords": ["debts", "loans", "financial management", "payoff"],
-    "author": "Kasa Kolawole",
+    "author": "Casa Kolawole",
     "version": "1.0.0",
     "lastUpdated": "2025-10-29"
   },
@@ -20,25 +20,25 @@
           {
             "label": "Total Debt",
             "value": "$24,850",
-            "icon": "fas fa-chart-line",
+            "icon": "bi bi-graph-up",
             "color": "danger"
           },
           {
             "label": "Monthly Payments",
             "value": "$1,240",
-            "icon": "fas fa-calendar-check",
+            "icon": "bi bi-calendar-check",
             "color": "warning"
           },
           {
             "label": "Active Debts",
             "value": "5",
-            "icon": "fas fa-list",
+            "icon": "bi bi-list",
             "color": "primary"
           },
           {
             "label": "Paid Off This Year",
             "value": "2",
-            "icon": "fas fa-check-circle",
+            "icon": "bi bi-check-circle-fill",
             "color": "success"
           }
         ]
@@ -56,7 +56,7 @@
                 {
                   "type": "text",
                   "value": "Credit Card",
-                  "icon": "fas fa-credit-card"
+                  "icon": "bi bi-credit-card-fill"
                 },
                 {
                   "type": "currency",
@@ -77,13 +77,13 @@
                   "buttons": [
                     {
                       "text": "Pay",
-                      "icon": "fas fa-dollar-sign",
+                      "icon": "bi bi-currency-dollar",
                       "action": "pay-debt",
                       "type": "primary"
                     },
                     {
                       "text": "Details",
-                      "icon": "fas fa-info-circle",
+                      "icon": "bi bi-info-circle-fill",
                       "action": "debt-details",
                       "type": "outline"
                     }
@@ -97,7 +97,7 @@
                 {
                   "type": "text",
                   "value": "Student Loan",
-                  "icon": "fas fa-graduation-cap"
+                  "icon": "bi bi-mortarboard-fill"
                 },
                 {
                   "type": "currency",
@@ -118,13 +118,13 @@
                   "buttons": [
                     {
                       "text": "Pay",
-                      "icon": "fas fa-dollar-sign",
+                      "icon": "bi bi-currency-dollar",
                       "action": "pay-debt",
                       "type": "primary"
                     },
                     {
                       "text": "Details",
-                      "icon": "fas fa-info-circle",
+                      "icon": "bi bi-info-circle-fill",
                       "action": "debt-details",
                       "type": "outline"
                     }
@@ -138,7 +138,7 @@
                 {
                   "type": "text",
                   "value": "Car Loan",
-                  "icon": "fas fa-car"
+                  "icon": "bi bi-car-front-fill"
                 },
                 {
                   "type": "currency",
@@ -159,13 +159,13 @@
                   "buttons": [
                     {
                       "text": "Pay",
-                      "icon": "fas fa-dollar-sign",
+                      "icon": "bi bi-currency-dollar",
                       "action": "pay-debt",
                       "type": "primary"
                     },
                     {
                       "text": "Details",
-                      "icon": "fas fa-info-circle",
+                      "icon": "bi bi-info-circle-fill",
                       "action": "debt-details",
                       "type": "outline"
                     }
@@ -183,28 +183,28 @@
         "data": [
           {
             "text": "Debt Payoff Calculator",
-            "icon": "fas fa-calculator",
+            "icon": "bi bi-calculator",
             "action": "debt-calculator",
             "type": "primary",
             "description": "Calculate optimal payoff strategies"
           },
           {
             "text": "Add New Debt",
-            "icon": "fas fa-plus",
+            "icon": "bi bi-plus-lg",
             "action": "add-debt",
             "type": "outline",
             "description": "Record a new debt or loan"
           },
           {
             "text": "Payment History",
-            "icon": "fas fa-history",
+            "icon": "bi bi-clock-history",
             "action": "payment-history",
             "type": "outline",
             "description": "View all debt payment records"
           },
           {
             "text": "Debt Consolidation",
-            "icon": "fas fa-compress-arrows-alt",
+            "icon": "bi bi-arrows-angle-contract",
             "action": "debt-consolidation",
             "type": "secondary",
             "description": "Explore consolidation options"
@@ -216,6 +216,6 @@
   "theme": {
     "primaryColor": "#dc2626",
     "accentColor": "#f59e0b",
-    "iconClass": "fas fa-credit-card"
+    "iconClass": "bi bi-credit-card-fill"
   }
 }

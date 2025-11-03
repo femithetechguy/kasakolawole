@@ -1,6 +1,6 @@
 # Firebase Directory
 
-This directory contains all Firebase-related configuration and documentation for the Kasa Kolawole application.
+This directory contains all Firebase-related configuration and documentation for the Casa Kolawole application.
 
 ## Files
 

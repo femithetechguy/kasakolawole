@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasa Kolawole - Secure Access</title>
-    <meta name="description" content="Secure access portal for Kasa Kolawole platform">
+    <title>Casa Kolawole - Secure Access</title>
+    <meta name="description" content="Secure access portal for Casa Kolawole platform">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
             <div class="branding-section animate__animated animate__fadeInDown">
                 <div class="logo-container">
                     <i class="fas fa-crown logo-icon"></i>
-                    <h1 class="brand-name">Kasa Kolawole</h1>
+                    <h1 class="brand-name">Casa Kolawole</h1>
                 </div>
             </div>
 
@@ -121,7 +121,7 @@
         <!-- Footer -->
         <footer class="landing-footer">
             <div class="footer-content">
-                <p>&copy; 2025 Kasa Kolawole. All rights reserved.</p>
+                <p>&copy; 2025 Casa Kolawole. All rights reserved.</p>
                 <div class="footer-links">
                     <a href="#privacy">Privacy Policy</a>
                     <a href="#terms">Terms of Service</a>
@@ -143,8 +143,8 @@
         class RootLandingController {
             constructor() {
                 // Wait for global scripts to be fully loaded
-                if (window.KasaKolawole && window.KasaKolawole.logger) {
-                    window.KasaKolawole.logger.info('Root landing controller starting...');
+                if (window.CasaKolawole && window.CasaKolawole.logger) {
+                    window.CasaKolawole.logger.info('Root landing controller starting...');
                     this.init();
                 } else {
                     // Retry after a short delay
@@ -219,8 +219,8 @@
                         
                         if (username === 'admin' && password === 'admin') {
                             // Show toast using global system
-                            if (window.KasaKolawole && window.KasaKolawole.notify) {
-                                window.KasaKolawole.notify.success(`Welcome back, ${username}! Redirecting...`, 2000);
+                            if (window.CasaKolawole && window.CasaKolawole.notify) {
+                                window.CasaKolawole.notify.success(`Welcome back, ${username}! Redirecting...`, 2000);
                             } else {
                                 alert('Login successful! Redirecting...');
                             }
@@ -229,8 +229,8 @@
                             }, 1500);
                         } else {
                             // Show error toast
-                            if (window.KasaKolawole && window.KasaKolawole.notify) {
-                                window.KasaKolawole.notify.warning('Invalid username or password', 4000);
+                            if (window.CasaKolawole && window.CasaKolawole.notify) {
+                                window.CasaKolawole.notify.warning('Invalid username or password', 4000);
                             } else {
                                 alert('Invalid username or password');
                             }

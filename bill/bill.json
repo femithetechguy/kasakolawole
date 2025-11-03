@@ -1,9 +1,9 @@
 {
   "meta": {
-    "title": "Bills - Kasa Kolawole",
+    "title": "Bills - Casa Kolawole",
     "description": "Comprehensive bill management and tracking system - Template structure (bill data loaded from CSV)",
     "keywords": ["bills", "payments", "financial management", "tracking"],
-    "author": "Kasa Kolawole",
+    "author": "Casa Kolawole",
     "version": "1.0.0",
     "lastUpdated": "2025-10-29",
     "dataSource": "CSV-first architecture - bill_categories.csv is primary data source"

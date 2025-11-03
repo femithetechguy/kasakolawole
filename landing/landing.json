@@ -1,8 +1,8 @@
 {
   "page": {
     "id": "landing",
-    "title": "Kasa Kolawole - Secure Access Portal",
-    "description": "Professional authentication portal for Kasa Kolawole platform",
+    "title": "Casa Kolawole - Secure Access Portal",
+    "description": "Professional authentication portal for Casa Kolawole platform",
     "type": "authentication",
     "theme": "professional"
   },
@@ -36,7 +36,7 @@
       "icon": "bi bi-award-fill",
       "color": "#F39C12"
     },
-    "title": "Kasa Kolawole",
+    "title": "Casa Kolawole",
     "colors": {
       "primary": "#667eea",
       "secondary": "#764ba2",
@@ -169,7 +169,7 @@
   },
   "footer": {
     "enabled": true,
-    "copyright": "© 2025 Kasa Kolawole. All rights reserved.",
+    "copyright": "© 2025 Casa Kolawole. All rights reserved.",
     "links": [
       {
         "text": "Privacy Policy",
@@ -192,6 +192,6 @@
     "created": "2025-10-29",
     "lastModified": "2025-10-29",
     "version": "1.0.0",
-    "author": "Kasa Kolawole Development Team"
+    "author": "Casa Kolawole Development Team"
   }
 }

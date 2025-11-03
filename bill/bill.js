@@ -307,7 +307,7 @@ async function loadBillConfig() {
                     
                     const config = {
                         meta: {
-                            title: "Bills - Kasa Kolawole",
+                            title: "Bills - Casa Kolawole",
                             description: "Comprehensive bill management and tracking system",
                             dataSource: "CSV manually loaded"
                         },
@@ -1275,8 +1275,8 @@ function showBillDetails(element) {
  * Show bill notification
  */
 function showBillNotification(message, type = 'info') {
-    if (window.KasaKolawole?.notify) {
-        window.KasaKolawole.notify[type](message);
+    if (window.CasaKolawole?.notify) {
+        window.CasaKolawole.notify[type](message);
     } else {
         console.log(`Bill Notification [${type}]: ${message}`);
     }

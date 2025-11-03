@@ -144,10 +144,10 @@ function convertBillDataToJSON(csvData) {
     // Add charts configuration for CSV loaded data
     const baseConfig = {
         meta: {
-            title: "Bills - Kasa Kolawole",
+            title: "Bills - Casa Kolawole",
             description: "Comprehensive bill management and tracking system",
             keywords: ["bills", "payments", "financial management", "tracking"],
-            author: "Kasa Kolawole",
+            author: "Casa Kolawole",
             version: "1.0.0",
             lastUpdated: new Date().toISOString().split('T')[0]
         },
@@ -184,10 +184,10 @@ function convertBillDataToJSON(csvData) {
     // Add charts configuration for CSV loaded data
     const finalConfig = {
         meta: {
-            title: "Bills - Kasa Kolawole",
+            title: "Bills - Casa Kolawole",
             description: "Comprehensive bill management and tracking system",
             keywords: ["bills", "payments", "financial management", "tracking"],
-            author: "Kasa Kolawole",
+            author: "Casa Kolawole",
             version: "1.0.0",
             lastUpdated: new Date().toISOString().split('T')[0]
         },

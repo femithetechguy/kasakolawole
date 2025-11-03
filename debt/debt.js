@@ -367,8 +367,8 @@ function showDebtCalculator() {
  * Show debt notification
  */
 function showDebtNotification(message, type = 'info') {
-    if (window.KasaKolawole?.notify) {
-        window.KasaKolawole.notify[type](message);
+    if (window.CasaKolawole?.notify) {
+        window.CasaKolawole.notify[type](message);
     } else {
         console.log(`Debt Notification [${type}]: ${message}`);
     }

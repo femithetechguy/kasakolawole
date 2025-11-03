@@ -1,10 +1,10 @@
 {
   "app": {
-    "name": "Kasa Kolawole",
-    "title": "Kasa Kolawole - Dynamic Portfolio & Business Platform",
-    "description": "A dynamic, responsive application showcasing Kasa Kolawole's work and services",
+    "name": "Casa Kolawole",
+    "title": "Casa Kolawole - Dynamic Portfolio & Business Platform",
+    "description": "A dynamic, responsive application showcasing Casa Kolawole's work and services",
     "version": "1.0.0",
-    "author": "Kasa Kolawole",
+    "author": "Casa Kolawole",
     "responsive": true,
     "theme": {
       "primaryColor": "#2C3E50",
@@ -31,9 +31,9 @@
     "position": "top",
     "sticky": true,
     "logo": {
-      "text": "Kasa Kolawole",
+      "text": "Casa Kolawole",
       "image": "/assets/images/logo.png",
-      "alt": "Kasa Kolawole Logo"
+      "alt": "Casa Kolawole Logo"
     },
     "menu": {
       "hamburger": true,
@@ -55,8 +55,8 @@
     {
       "id": "landing",
       "name": "Landing",
-      "title": "Kasa Kolawole - Access Portal",
-      "description": "Secure access portal for Kasa Kolawole platform",
+      "title": "Casa Kolawole - Access Portal",
+      "description": "Secure access portal for Casa Kolawole platform",
       "path": "/landing",
       "directory": "landing",
       "icon": "lock",
@@ -76,15 +76,15 @@
         "footer"
       ],
       "seo": {
-        "metaTitle": "Kasa Kolawole - Secure Access",
-        "metaDescription": "Secure access portal for Kasa Kolawole platform",
+        "metaTitle": "Casa Kolawole - Secure Access",
+        "metaDescription": "Secure access portal for Casa Kolawole platform",
         "keywords": ["login", "access", "portal", "secure"]
       }
     },
     {
       "id": "home",
       "name": "Home",
-      "title": "Welcome to Kasa Kolawole",
+      "title": "Welcome to Casa Kolawole",
       "description": "Home page showcasing introduction and key highlights",
       "path": "/",
       "directory": "home",
@@ -105,15 +105,15 @@
         "call-to-action"
       ],
       "seo": {
-        "metaTitle": "Kasa Kolawole - Home",
-        "metaDescription": "Welcome to Kasa Kolawole's professional platform",
-        "keywords": ["Kasa Kolawole", "professional", "portfolio"]
+        "metaTitle": "Casa Kolawole - Home",
+        "metaDescription": "Welcome to Casa Kolawole's professional platform",
+        "keywords": ["Casa Kolawole", "professional", "portfolio"]
       }
     },
     {
       "id": "about",
       "name": "About",
-      "title": "About Kasa Kolawole",
+      "title": "About Casa Kolawole",
       "description": "Professional background, skills, and experience",
       "path": "/about",
       "directory": "about",
@@ -134,8 +134,8 @@
         "achievements"
       ],
       "seo": {
-        "metaTitle": "About Kasa Kolawole",
-        "metaDescription": "Learn about Kasa Kolawole's background and expertise",
+        "metaTitle": "About Casa Kolawole",
+        "metaDescription": "Learn about Casa Kolawole's background and expertise",
         "keywords": ["about", "biography", "skills", "experience"]
       }
     },
@@ -163,8 +163,8 @@
         "testimonials"
       ],
       "seo": {
-        "metaTitle": "Kasa Kolawole Portfolio",
-        "metaDescription": "Explore Kasa Kolawole's portfolio of projects and work",
+        "metaTitle": "Casa Kolawole Portfolio",
+        "metaDescription": "Explore Casa Kolawole's portfolio of projects and work",
         "keywords": ["portfolio", "projects", "work", "case studies"]
       }
     },
@@ -192,8 +192,8 @@
         "faq-section"
       ],
       "seo": {
-        "metaTitle": "Kasa Kolawole Services",
-        "metaDescription": "Professional services offered by Kasa Kolawole",
+        "metaTitle": "Casa Kolawole Services",
+        "metaDescription": "Professional services offered by Casa Kolawole",
         "keywords": ["services", "consulting", "professional", "expertise"]
       }
     },
@@ -221,8 +221,8 @@
         "blog-categories"
       ],
       "seo": {
-        "metaTitle": "Kasa Kolawole Blog",
-        "metaDescription": "Read insights and articles by Kasa Kolawole",
+        "metaTitle": "Casa Kolawole Blog",
+        "metaDescription": "Read insights and articles by Casa Kolawole",
         "keywords": ["blog", "articles", "insights", "thoughts"]
       }
     },
@@ -250,8 +250,8 @@
         "social-links"
       ],
       "seo": {
-        "metaTitle": "Contact Kasa Kolawole",
-        "metaDescription": "Get in touch with Kasa Kolawole for inquiries and collaborations",
+        "metaTitle": "Contact Casa Kolawole",
+        "metaDescription": "Get in touch with Casa Kolawole for inquiries and collaborations",
         "keywords": ["contact", "inquiry", "collaboration", "get in touch"]
       }
     }
@@ -343,25 +343,25 @@
     "links": [
       {
         "platform": "LinkedIn",
-        "url": "https://linkedin.com/in/kasakolawole",
+        "url": "https://linkedin.com/in/Casakolawole",
         "icon": "linkedin",
         "visible": true
       },
       {
         "platform": "Twitter",
-        "url": "https://twitter.com/kasakolawole",
+        "url": "https://twitter.com/Casakolawole",
         "icon": "twitter",
         "visible": true
       },
       {
         "platform": "GitHub",
-        "url": "https://github.com/kasakolawole",
+        "url": "https://github.com/Casakolawole",
         "icon": "github",
         "visible": true
       },
       {
         "platform": "Email",
-        "url": "mailto:contact@kasakolawole.com",
+        "url": "mailto:contact@Casakolawole.com",
         "icon": "mail",
         "visible": true
       }
@@ -371,7 +371,7 @@
     "created": "2025-10-29",
     "lastModified": "2025-10-29",
     "version": "1.0.0",
-    "generator": "Kasa Kolawole Dynamic App Builder",
+    "generator": "Casa Kolawole Dynamic App Builder",
     "license": "MIT"
   }
 }

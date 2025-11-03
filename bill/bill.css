@@ -1318,7 +1318,7 @@
     color: #555;
     line-height: 1.8;
     font-size: 0.95rem;
-    white-space: pre-wrap;
+    white-space: normal;
 }
 
 /* Mobile responsive */

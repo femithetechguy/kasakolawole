@@ -91,7 +91,8 @@ function convertBillDataToJSON(csvData) {
                 notifications: {
                     dueDateReminder: parseInt(row['Due Date Reminder']) || 10,
                     overdueAlert: parseInt(row['Overdue Alert']) || 3
-                }
+                },
+                details: (row.Details || "No details available").trim()
             },
             cells: [
                 {
@@ -218,7 +219,11 @@ function convertBillDataToJSON(csvData) {
                 }
             ]
         },
-        theme: config.theme,
+        theme: {
+            primaryColor: "#3b82f6",
+            accentColor: "#10b981",
+            iconClass: "fas fa-file-invoice-dollar"
+        },
         charts: {
             pieChart: {
                 data: {
@@ -259,7 +264,7 @@ function convertBillDataToJSON(csvData) {
         }
     };
     
-    return finalConfig;
+    return baseConfig;
 }
 
 // Helper functions

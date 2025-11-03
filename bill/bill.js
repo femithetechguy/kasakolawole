@@ -289,7 +289,7 @@ async function loadBillConfig() {
                                 provider: row.Provider,
                                 accountNumber: row['Account Number'],
                                 historicalData: historicalData,
-                                details: row.Details || "No details available"
+                                details: (row.Details || "No details available").trim()
                             },
                             cells: [
                                 { type: "serial", value: row.Serial },
@@ -1239,6 +1239,9 @@ function showBillDetails(element) {
         return;
     }
     
+    // Trim details to remove leading/trailing whitespace
+    const details = bill.metadata.details.trim();
+    
     // Create popup
     const popup = document.createElement('div');
     popup.className = 'bill-details-popup';
@@ -1255,7 +1258,7 @@ function showBillDetails(element) {
                     <strong>${bill.cells[1].value}</strong>
                 </div>
                 <div class="bill-details-text">
-                    ${bill.metadata.details}
+                    ${details}
                 </div>
             </div>
         </div>

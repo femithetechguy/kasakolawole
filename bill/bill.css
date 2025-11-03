@@ -1205,3 +1205,138 @@
         font-size: 0.85rem;
     }
 }
+
+/* Bill Details Popup */
+.bill-details-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.bill-details-popup.show {
+    opacity: 1;
+}
+
+.bill-details-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.bill-details-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: auto;
+    z-index: 10001;
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.bill-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 2px solid #f0f0f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.bill-details-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bill-details-header i {
+    font-size: 1.4rem;
+}
+
+.close-details {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.close-details:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.bill-details-body {
+    padding: 24px;
+}
+
+.bill-name-section {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.bill-details-text {
+    color: #555;
+    line-height: 1.8;
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .bill-details-content {
+        max-width: 95%;
+        margin: 20px;
+    }
+    
+    .bill-details-header {
+        padding: 16px 20px;
+    }
+    
+    .bill-details-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .bill-details-body {
+        padding: 20px;
+    }
+}

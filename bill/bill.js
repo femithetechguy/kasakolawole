@@ -288,7 +288,8 @@ async function loadBillConfig() {
                                 autoPayEnabled: row['Auto Pay Enabled'].toLowerCase() === 'true',
                                 provider: row.Provider,
                                 accountNumber: row['Account Number'],
-                                historicalData: historicalData
+                                historicalData: historicalData,
+                                details: row.Details || "No details available"
                             },
                             cells: [
                                 { type: "serial", value: row.Serial },
@@ -297,10 +298,12 @@ async function loadBillConfig() {
                                 { type: "date", value: row['Due Date'] },
                                 { type: "status", value: row.Status, label: row.Status.charAt(0).toUpperCase() + row.Status.slice(1), color: getStatusColor(row.Status) },
                                 { type: "link", value: row['Payment Link'] || "#", text: "Pay Now", icon: "fas fa-credit-card", target: "_blank" },
-                                { type: "actions", buttons: [{ text: "Edit", icon: "fas fa-edit", action: "edit", type: "outline" }] }
+                                { type: "actions", buttons: [{ text: "Details", icon: "fas fa-info-circle", action: "details", type: "primary" }] }
                             ]
                         };
                     });
+                    
+                    console.log('✅ Loaded bills with details:', bills.slice(0, 2)); // Log first 2 bills
                     
                     const config = {
                         meta: {
@@ -323,7 +326,7 @@ async function loadBillConfig() {
                                     title: "Recent Bills",
                                     type: "table",
                                     data: {
-                                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+                                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Details"],
                                         rows: bills
                                     }
                                 },
@@ -1171,6 +1174,10 @@ function handleBillAction(action, element) {
             }, 1000);
             break;
         
+        case 'details':
+            showBillDetails(element);
+            break;
+        
         case 'edit':
             showBillNotification('Edit bill functionality coming soon!', 'info');
             break;
@@ -1202,6 +1209,63 @@ function handleBillAction(action, element) {
         default:
             console.log(`Unknown bill action: ${action}`);
     }
+}
+
+/**
+ * Show bill details in a popup tooltip
+ */
+function showBillDetails(element) {
+    // Find the row containing this button
+    const row = element.closest('tr') || element.closest('.bill-card');
+    if (!row) {
+        console.error('Could not find bill row');
+        return;
+    }
+    
+    // Get bill ID from row
+    const billId = row.dataset.id;
+    if (!billId) {
+        console.error('Could not find bill ID');
+        return;
+    }
+    
+    // Find the bill in config
+    const bill = window.BillModule.config?.content?.sections
+        ?.find(s => s.type === 'table')
+        ?.data?.rows?.find(r => r.id === billId);
+    
+    if (!bill || !bill.metadata?.details) {
+        showBillNotification('No details available for this bill', 'warning');
+        return;
+    }
+    
+    // Create popup
+    const popup = document.createElement('div');
+    popup.className = 'bill-details-popup';
+    popup.innerHTML = `
+        <div class="bill-details-content">
+            <div class="bill-details-header">
+                <h3><i class="fas fa-info-circle"></i> Bill Details</h3>
+                <button class="close-details" onclick="this.closest('.bill-details-popup').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="bill-details-body">
+                <div class="bill-name-section">
+                    <strong>${bill.cells[1].value}</strong>
+                </div>
+                <div class="bill-details-text">
+                    ${bill.metadata.details}
+                </div>
+            </div>
+        </div>
+        <div class="bill-details-overlay" onclick="this.parentElement.remove()"></div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Animate in
+    setTimeout(() => popup.classList.add('show'), 10);
 }
 
 /**

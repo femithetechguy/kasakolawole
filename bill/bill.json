@@ -49,7 +49,7 @@
         "title": "Recent Bills",
         "type": "table",
         "data": {
-          "headers": ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+          "headers": ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Details"],
           "rows": []
         }
       },

@@ -92,7 +92,7 @@ function convertBillDataToJSON(csvData) {
                     dueDateReminder: parseInt(row['Due Date Reminder']) || 10,
                     overdueAlert: parseInt(row['Overdue Alert']) || 3
                 },
-                details: row.Details || "No details available"
+                details: (row.Details || "No details available").trim()
             },
             cells: [
                 {

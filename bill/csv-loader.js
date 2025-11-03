@@ -129,10 +129,10 @@ function convertBillDataToJSON(csvData) {
                     type: "actions",
                     buttons: [
                         {
-                            text: "Edit",
-                            icon: "fas fa-edit",
-                            action: "edit",
-                            type: "outline"
+                            text: "Details",
+                            icon: "fas fa-info-circle",
+                            action: "details",
+                            type: "primary"
                         }
                     ]
                 }
@@ -166,7 +166,7 @@ function convertBillDataToJSON(csvData) {
                     title: "Recent Bills",
                     type: "table",
                     data: {
-                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Details"],
                         rows: bills
                     }
                 },
@@ -206,7 +206,7 @@ function convertBillDataToJSON(csvData) {
                     title: "Recent Bills",
                     type: "table",
                     data: {
-                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Actions"],
+                        headers: ["S/N", "Bill Name", "Amount", "Due Date", "Status", "Payment Link", "Details"],
                         rows: bills
                     }
                 },
@@ -218,6 +218,7 @@ function convertBillDataToJSON(csvData) {
                 }
             ]
         },
+        theme: config.theme,
         charts: {
             pieChart: {
                 data: {

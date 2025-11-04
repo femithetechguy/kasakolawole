@@ -5,6 +5,42 @@
 
 console.log('💵 Starting Bill Module...');
 
+/**
+ * Parse date from MM-DD-YYYY format to Date object
+ * @param {string} dateStr - Date string in MM-DD-YYYY format
+ * @returns {Date} Parsed date object
+ */
+function parseMMDDYYYY(dateStr) {
+    if (!dateStr || dateStr.trim() === '') {
+        return new Date();
+    }
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        // MM-DD-YYYY format
+        const month = parseInt(parts[0], 10) - 1; // Month is 0-indexed
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    }
+    // Fallback to default Date parsing
+    return new Date(dateStr);
+}
+
+/**
+ * Format date to MM-DD-YYYY format
+ * @param {Date} date - Date object to format
+ * @returns {string} Formatted date string
+ */
+function formatToMMDDYYYY(date) {
+    if (!(date instanceof Date) || isNaN(date)) {
+        date = new Date();
+    }
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+}
+
 // Bill module state
 window.BillModule = {
     config: null,
@@ -988,9 +1024,9 @@ function renderTableCell(cell) {
             </td>`;
         
         case 'date':
-            const date = new Date(cell.value);
+            const date = parseMMDDYYYY(cell.value);
             return `<td class="cell-date">
-                ${date.toLocaleDateString()}
+                ${formatToMMDDYYYY(date)}
             </td>`;
         
         case 'status':
@@ -1060,7 +1096,7 @@ function renderBillCard(row) {
         console.log('Rendering card link cell:', linkCell);
     }
     
-    const date = new Date(dateCell.value);
+    const date = parseMMDDYYYY(dateCell.value);
     const urgentClass = linkCell?.urgent ? ' urgent-card' : '';
     
     return `
@@ -1079,7 +1115,7 @@ function renderBillCard(row) {
                     <div class="bill-card-details">
                         <div class="bill-detail">
                             <span class="detail-label">Due Date</span>
-                            <span class="detail-value">${date.toLocaleDateString()}</span>
+                            <span class="detail-value">${formatToMMDDYYYY(date)}</span>
                         </div>
                         <div class="bill-detail">
                             <span class="detail-label">Status</span>

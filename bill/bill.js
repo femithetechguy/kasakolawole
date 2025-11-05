@@ -1019,8 +1019,9 @@ function renderTableCell(cell) {
             </td>`;
         
         case 'currency':
+            const estimateIcon = cell.isEstimate ? '<i class="bi bi-calculator-fill" title="Estimated (using average amount)" style="font-size: 0.8em; color: #6c757d; margin-left: 4px;"></i>' : '';
             return `<td class="cell-currency">
-                $${cell.value.toFixed(2)}
+                $${cell.value.toFixed(2)}${estimateIcon}
             </td>`;
         
         case 'date':
@@ -1098,6 +1099,7 @@ function renderBillCard(row) {
     
     const date = parseMMDDYYYY(dateCell.value);
     const urgentClass = linkCell?.urgent ? ' urgent-card' : '';
+    const estimateIcon = currencyCell.isEstimate ? ' <i class="bi bi-calculator-fill" title="Estimated (using average amount)" style="font-size: 0.8em; color: #6c757d;"></i>' : '';
     
     return `
         <div class="bill-card${urgentClass}" data-id="${row.id}">
@@ -1109,7 +1111,7 @@ function renderBillCard(row) {
                             ${textCell.icon ? `<i class="${textCell.icon}"></i>` : ''}
                             <span>${textCell.value}</span>
                         </div>
-                        <div class="bill-amount">$${currencyCell.value.toFixed(2)}</div>
+                        <div class="bill-amount">$${currencyCell.value.toFixed(2)}${estimateIcon}</div>
                     </div>
                     
                     <div class="bill-card-details">

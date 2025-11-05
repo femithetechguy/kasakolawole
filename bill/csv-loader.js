@@ -43,7 +43,12 @@ function parseCSVLine(line) {
 // Convert CSV bill data to JSON structure compatible with existing app
 function convertBillDataToJSON(csvData) {
     const bills = csvData.filter(row => row.ID && row.ID.startsWith('bill-')).map(row => {
-        const monthlyAmount = parseFloat(row['Monthly Amount']) || 0;
+        // Check if Monthly Amount field is empty or just whitespace
+        const monthlyAmountStr = (row['Monthly Amount'] || '').trim();
+        const hasMonthlyAmount = monthlyAmountStr !== '' && !isNaN(parseFloat(monthlyAmountStr));
+        
+        // Use Monthly Amount if available, otherwise fall back to Average Amount
+        const monthlyAmount = hasMonthlyAmount ? parseFloat(monthlyAmountStr) : (parseFloat(row['Average Amount']) || 0);
         
         // Map CSV Item to chart-friendly subcategory
         const itemToSubcategory = {
@@ -106,8 +111,9 @@ function convertBillDataToJSON(csvData) {
                 },
                 {
                     type: "currency",
-                    value: parseFloat(row['Monthly Amount']) || 0,
-                    currency: "USD"
+                    value: monthlyAmount,
+                    currency: "USD",
+                    isEstimate: !hasMonthlyAmount
                 },
                 {
                     type: "date",

@@ -965,6 +965,26 @@
     border-color: var(--module-primary);
 }
 
+/* Mobile sort control - hidden on desktop, visible on mobile */
+.mobile-sort-control {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-sort-control {
+        display: block;
+        background: linear-gradient(135deg, var(--module-primary) 0%, #2563eb 100%);
+        color: white;
+        border-color: var(--module-primary);
+        font-weight: 500;
+    }
+    
+    .mobile-sort-control:focus {
+        border-color: white;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    }
+}
+
 .btn-outline {
     background: transparent;
     border: 2px solid var(--border-color);

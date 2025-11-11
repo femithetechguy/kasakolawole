@@ -899,6 +899,17 @@ function renderTableSection(section) {
                         <option value="500-1000">$500 - $1000</option>
                         <option value="1000+">$1000+</option>
                     </select>
+                    <select id="sortSelect" class="filter-select mobile-sort-control">
+                        <option value="">Sort By...</option>
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="amount-asc">Amount (Low-High)</option>
+                        <option value="amount-desc">Amount (High-Low)</option>
+                        <option value="date-asc">Due Date (Earliest)</option>
+                        <option value="date-desc">Due Date (Latest)</option>
+                        <option value="status-asc">Status (A-Z)</option>
+                        <option value="status-desc">Status (Z-A)</option>
+                    </select>
                     <button class="btn btn-outline btn-sm" id="clearFilters">
                         <i class="bi bi-funnel-fill"></i> Clear Filters
                     </button>
@@ -2015,13 +2026,47 @@ function initializeSearchAndFilters() {
         applyFilters();
     });
 
+    // Mobile sort dropdown functionality
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+            const sortValue = e.target.value;
+            if (!sortValue || !window.BillModule.columnSorter) {
+                return;
+            }
+
+            // Parse sort value (e.g., "name-asc" -> field: name, direction: asc)
+            const [sortType, direction] = sortValue.split('-');
+            
+            // Map sort type to field path
+            const fieldMap = {
+                'name': 'cells.1.value',
+                'amount': 'cells.2.value',
+                'date': 'cells.3.value',
+                'status': 'cells.4.value'
+            };
+
+            const field = fieldMap[sortType];
+            if (field) {
+                window.BillModule.columnSorter.sortBy(field, direction);
+            }
+        });
+    }
+
     clearFiltersBtn.addEventListener('click', () => {
         currentFilters = { search: '', status: '', category: '', amount: '' };
         searchInput.value = '';
         statusFilter.value = '';
         categoryFilter.value = '';
         amountFilter.value = '';
+        if (sortSelect) sortSelect.value = '';
         clearSearchBtn.style.display = 'none';
+        
+        // Clear sorting
+        if (window.BillModule.columnSorter) {
+            window.BillModule.columnSorter.clearSort();
+        }
+        
         applyFilters();
     });
 

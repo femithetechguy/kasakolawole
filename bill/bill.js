@@ -773,6 +773,11 @@ function renderBillContent() {
         if (searchContainer && searchInput) {
             console.log('✅ Search elements found, initializing...');
             initializeSearchAndFilters();
+            
+            // Initialize column sorting after search is ready
+            if (typeof TableSort !== 'undefined') {
+                setTimeout(() => setupColumnSort(), 100);
+            }
         } else if (initRetryCount < maxInitRetries) {
             console.log(`❌ Search elements not ready, retrying in ${500 * (initRetryCount + 1)}ms...`);
             initRetryCount++;
@@ -1196,6 +1201,118 @@ function setupBillInteractions() {
             handleBillAction(action, actionButton);
         }
     });
+    
+    // Setup column sorting if TableSort is available
+    if (typeof TableSort !== 'undefined') {
+        setupColumnSort();
+    }
+}
+
+/**
+ * Setup column-level sorting on table headers
+ */
+function setupColumnSort() {
+    // Get the table section data
+    const tableSection = window.BillModule.config?.content?.sections?.find(s => s.type === 'table');
+    if (!tableSection || !tableSection.data || !tableSection.data.rows) {
+        console.log('No table data available for sorting');
+        return;
+    }
+    
+    // Check if sort icons already exist to avoid duplicate initialization
+    const existingIcons = document.querySelectorAll('.sort-icon-container');
+    if (existingIcons.length > 0) {
+        console.log('✅ Sort icons already initialized, skipping...');
+        // Just update the sorter data if it exists
+        if (window.BillModule.columnSorter) {
+            window.BillModule.columnSorter.setData(tableSection.data.rows);
+        }
+        return;
+    }
+    
+    // Initialize the TableSort with the bill data
+    const billSorter = new TableSort({
+        data: tableSection.data.rows,
+        onSortChange: (sortedData, sortInfo) => {
+            console.log(`Table sorted by ${sortInfo.field} (${sortInfo.direction})`);
+            // Re-render table with sorted data
+            renderSortedTable(sortedData);
+        },
+        // Custom comparators for specific fields
+        customComparators: {
+            'cells.2.value': (a, b, direction) => {
+                // Custom comparator for currency amounts
+                const aNum = parseFloat(String(a).replace(/[^0-9.-]/g, '')) || 0;
+                const bNum = parseFloat(String(b).replace(/[^0-9.-]/g, '')) || 0;
+                const result = aNum - bNum;
+                return direction === 'asc' ? result : -result;
+            },
+            'cells.3.value': (a, b, direction) => {
+                // Custom comparator for MM-DD-YYYY dates
+                const aDate = parseMMDDYYYY(a);
+                const bDate = parseMMDDYYYY(b);
+                const result = aDate.getTime() - bDate.getTime();
+                return direction === 'asc' ? result : -result;
+            }
+        }
+    });
+    
+    // Store sorter instance for access elsewhere
+    window.BillModule.columnSorter = billSorter;
+    
+    // Add sort icons to table headers
+    const table = document.querySelector('.bill-table');
+    if (!table) return;
+    
+    const headers = table.querySelectorAll('thead th');
+    const headerConfig = {
+        0: null, // S/N - no sort
+        1: 'cells.1.value', // Bill Name (text cell is at index 1)
+        2: 'cells.2.value', // Amount (currency cell at index 2)
+        3: 'cells.3.value', // Due Date (date cell at index 3)
+        4: 'cells.4.value', // Status (status cell at index 4)
+        5: null, // Payment Link - no sort
+        6: null  // Details - no sort
+    };
+    
+    headers.forEach((header, index) => {
+        const field = headerConfig[index];
+        if (field) {
+            billSorter.renderSortUI(field, header);
+        }
+    });
+    
+    console.log('✅ Column sorting initialized');
+}
+
+/**
+ * Re-render the table with sorted data
+ */
+function renderSortedTable(sortedRows) {
+    const table = document.querySelector('.bill-table tbody');
+    const cardsGrid = document.querySelector('.bill-cards-grid');
+    
+    if (!table) return;
+    
+    // Render table rows
+    table.innerHTML = sortedRows.map((row, index) => `
+        <tr data-id="${row.id}">
+            ${row.cells.map((cell, cellIndex) => {
+                // Update S/N column with current index
+                if (cellIndex === 0 && cell.type === 'text') {
+                    return `<td class="text-center">${index + 1}</td>`;
+                }
+                return renderTableCell(cell);
+            }).join('')}
+        </tr>
+    `).join('');
+    
+    // Render cards if cards view is active
+    if (cardsGrid) {
+        cardsGrid.innerHTML = sortedRows.map(row => renderBillCard(row)).join('');
+    }
+    
+    // Note: Results count stays the same since sorting doesn't change number of items
 }
 
 /**
@@ -2014,6 +2131,13 @@ function applyFilters() {
                     return true;
             }
         });
+    }
+
+    // Update sorter with filtered data if sorting is active
+    if (window.BillModule.columnSorter) {
+        window.BillModule.columnSorter.setData(filteredBills);
+        // Get the sorted version of filtered data
+        filteredBills = window.BillModule.columnSorter.getSortedData();
     }
 
     // Update the display
